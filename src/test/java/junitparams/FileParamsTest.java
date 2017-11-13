@@ -99,9 +99,38 @@ public class FileParamsTest {
 	}
 
 	@Test
-	@ExcelParameters(filepath = "classpath:data.xlsx", type = "Excel 2007")
-	public void loadParamsFromCustomAnnotationExcel(String keyword,
-			double count) {
+	@ExcelParameters(filepath = "classpath:data_2007.xlsx", type = "Excel 2007")
+	public void loadParamsFromEmbeddedExcel2007(String keyword, double count) {
+		assumeTrue("search", keyword.matches("(?:junit|testng|spock)"));
+		assertThat((int) count).isGreaterThan(0);
+		System.err.println(
+				String.format("Search keyword:'%s'\tExpected minimum link count:%d",
+						keyword, (int) count));
+	}
+
+	@Test
+	@ExcelParameters(filepath = "classpath:data_2003.xls", type = "Excel 2003")
+	public void loadParamsFromEmbeddedExcel2003(String keyword, double count) {
+		assumeTrue("search", keyword.matches("(?:junit|testng|spock)"));
+		assertThat((int) count).isGreaterThan(0);
+		System.err.println(
+				String.format("Search keyword:'%s'\tExpected minimum link count:%d",
+						keyword, (int) count));
+	}
+
+	@Test
+	@ExcelParameters(filepath = "file:src/test/resources/data_2007.xlsx", type = "Excel 2007")
+	public void loadParamsFromFileExcel2007(String keyword, double count) {
+		assumeTrue("search", keyword.matches("(?:junit|testng|spock)"));
+		assertThat((int) count).isGreaterThan(0);
+		System.err.println(
+				String.format("Search keyword:'%s'\tExpected minimum link count:%d",
+						keyword, (int) count));
+	}
+
+	@Test
+	@ExcelParameters(filepath = "file:src/test/resources/data_2003.xls", type = "Excel 2003")
+	public void loadParamsFromFileExcel2003(String keyword, double count) {
 		assumeTrue("search", keyword.matches("(?:junit|testng|spock)"));
 		assertThat((int) count).isGreaterThan(0);
 		System.err.println(
@@ -113,6 +142,7 @@ public class FileParamsTest {
 	@CustomParameters(provider = ExcelParametersProvider.class)
 	public @interface ExcelParameters {
 		String filepath();
+
 		String type();
 	}
 
@@ -136,19 +166,95 @@ public class FileParamsTest {
 		}
 
 		private Object[] map(InputStream inputStream) {
+			switch (type) {
+			case "Excel 2007":
+				return processExcel2007(inputStream);
+			case "Excel 2003":
+				return processExcel2003(inputStream);
+			default:
+				throw new RuntimeException("wrong format");
+			}
+		}
+
+		private Object[] processExcel2003(InputStream inputStream) {
+			List<Object[]> result = new LinkedList<>();
+			Object[] resultRow = {};
+
+			// String fileName = "data_2003.xls";
+			HSSFWorkbook wb = null;
+			try {
+				wb = new HSSFWorkbook(inputStream);
+
+				HSSFSheet sheet = wb.getSheetAt(0);
+				// String sheetName = "Employee Data";
+				// HSSFSheet sheet = wb.getSheet(sheetName);
+				HSSFRow row;
+				HSSFCell cell;
+
+				String search_keyword = "";
+				double expected_count = 0;
+
+				Iterator<Row> rows = sheet.rowIterator();
+				while (rows.hasNext()) {
+					row = (HSSFRow) rows.next();
+					if (row.getRowNum() == 0) { // ignore the header
+						continue;
+					}
+					Iterator<org.apache.poi.ss.usermodel.Cell> cells = row.cellIterator();
+					while (cells.hasNext()) {
+						cell = (HSSFCell) cells.next();
+						if (cell.getColumnIndex() == 2) {
+							if (cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
+								expected_count = cell.getNumericCellValue();
+							} else {
+								expected_count = 0;
+							}
+						}
+						if (cell.getColumnIndex() == 1) {
+							if (cell.getCellType() == HSSFCell.CELL_TYPE_STRING) {
+								search_keyword = cell.getStringCellValue();
+							} else if (cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
+								search_keyword = Double.toString(cell.getNumericCellValue());
+							} else {
+								// TODO: Boolean, Formula, Errors
+								search_keyword = "";
+							}
+						}
+					}
+					resultRow = new Object[] { search_keyword, expected_count };
+					result.add(resultRow);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				if (wb != null) {
+					try {
+						wb.close();
+					} catch (IOException e) {
+					}
+				}
+			}
+			/*
+			Object[][] resultArray = new Object[result.size()][];
+			result.toArray(resultArray);
+			return resultArray;
+			*/
+			return result.toArray();
+		}
+
+		private Object[] processExcel2007(InputStream inputStream) {
 			List<Object[]> result = new LinkedList<>();
 			HashMap<String, String> columns = new HashMap<>();
-			Object[] testDataRow = {};
+			Object[] resultRow = {};
 			XSSFWorkbook wb = null;
-			String fileName = "data_2007.xlsx";
 			try {
 
-				String sheetName = "Employee Data";
 				wb = new XSSFWorkbook(inputStream);
 
-				// XSSFSheet sheet = wb.getSheet(sheetName);
 				XSSFSheet sheet = wb.getSheetAt(0);
-				sheetName = sheet.getSheetName();
+				// String sheetName = sheet.getSheetName();
+				// String sheetName = "Employee Data";
+				// XSSFSheet sheet = wb.getSheet(sheetName);
 				XSSFRow row;
 				XSSFCell cell;
 				int cellIndex = 0;
@@ -196,9 +302,9 @@ public class FileParamsTest {
 					/* System.err.println(String.format(
 							"Loading row ID:%d\tSearch keyword:'%s'\tExpected minimum link count:%d",
 							id, keyword, (int) count));
-              */
-					testDataRow = new Object[] { keyword, count };
-					result.add(testDataRow);
+					    */
+					resultRow = new Object[] { keyword, count };
+					result.add(resultRow);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
