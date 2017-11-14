@@ -40,6 +40,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -68,8 +69,11 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jopendocument.dom.ODDocument;
+// Open Office Spreadsheet
 import org.jopendocument.dom.ODPackage;
 import org.jopendocument.dom.ODValueType;
+
 import org.jopendocument.dom.spreadsheet.Cell;
 import org.jopendocument.dom.spreadsheet.Sheet;
 import org.jopendocument.dom.spreadsheet.SpreadSheet;
@@ -239,7 +243,7 @@ public class FileParamsTest {
 				// ignore
 			}
 			*/
-			HashMap<String, String> columns = new HashMap<>();
+			Map<String, String> columns = new HashMap<>();
 			List<Object[]> result = new ArrayList<>();
 
 			Sheet sheet;
@@ -389,8 +393,9 @@ public class FileParamsTest {
 		}
 
 		private Object[] createDataFromExcel2007(InputStream inputStream) {
+
 			List<Object[]> result = new LinkedList<>();
-			HashMap<String, String> columns = new HashMap<>();
+			Map<String, String> columns = new HashMap<>();
 			XSSFWorkbook wb = null;
 			try {
 
@@ -497,6 +502,102 @@ public class FileParamsTest {
 			throw new IllegalArgumentException(
 					"Unknown file access protocol. Only 'file' and 'classpath' are supported!");
 		}
+
+		// Safe conversion of type Excel cell object to Object / String value 
+		public static Object safeUserModeCellValue(
+				org.apache.poi.ss.usermodel.Cell cell) {
+			if (cell == null) {
+				return null;
+			}
+			int type = cell.getCellType();
+			Object result;
+			switch (type) {
+			case HSSFCell.CELL_TYPE_NUMERIC: // 0
+				result = cell.getNumericCellValue();
+				break;
+			case HSSFCell.CELL_TYPE_STRING: // 1
+				result = cell.getStringCellValue();
+				break;
+			case HSSFCell.CELL_TYPE_FORMULA: // 2
+				throw new IllegalStateException("The formula cell is not supported");
+			case HSSFCell.CELL_TYPE_BLANK: // 3
+				result = null;
+				break;
+			case HSSFCell.CELL_TYPE_BOOLEAN: // 4
+				result = cell.getBooleanCellValue();
+				break;
+			case HSSFCell.CELL_TYPE_ERROR: // 5
+				throw new RuntimeException("Cell has an error");
+			default:
+				throw new IllegalStateException(
+						"Cell type: " + type + " is not supported");
+			}
+			return result;
+			// return (result == null) ? null : result.toString();
+		}
+
+		// https://www.jopendocument.org/docs/org/jopendocument/dom/ODValueType.html
+		public static Object safeOOCellValue(
+				org.jopendocument.dom.spreadsheet.Cell<ODDocument> cell) {
+			if (cell == null) {
+				return null;
+			}
+			Object result;
+			ODValueType type = cell.getValueType();
+			switch (type) {
+			case FLOAT:
+				result = Double.valueOf(cell.getValue().toString());
+				break;
+			case STRING:
+				result = cell.getTextValue();
+				break;
+			case TIME:
+				result = null; // TODO
+				break;
+			case BOOLEAN:
+				result = Boolean.getBoolean(cell.getValue().toString());
+				break;
+			default:
+				throw new IllegalStateException("Can't evaluate cell value");
+			}
+			// return (result == null) ? null : result.toString();
+			return result;
+		}
+
+		// NOTE: do not need one ?
+		public static Object safeXSSFCellValue(
+				org.apache.poi.xssf.usermodel.XSSFCell cell) {
+			if (cell == null) {
+				return null;
+			}
+			int type = cell.getCellType();
+			Object result;
+			switch (type) {
+			case XSSFCell.CELL_TYPE_NUMERIC: // 0
+				result = cell.getNumericCellValue();
+				break;
+			case XSSFCell.CELL_TYPE_STRING: // 1
+				result = cell.getStringCellValue();
+				break;
+			case XSSFCell.CELL_TYPE_FORMULA: // 2
+				throw new IllegalStateException("The formula cell is not supported");
+			case XSSFCell.CELL_TYPE_BLANK: // 3
+				result = null;
+				break;
+			case XSSFCell.CELL_TYPE_BOOLEAN: // 4
+				result = cell.getBooleanCellValue();
+				break;
+
+			case XSSFCell.CELL_TYPE_ERROR: // 5
+				throw new RuntimeException("Cell has an error");
+			default:
+				throw new IllegalStateException(
+						"Cell type: " + type + " is not supported");
+			}
+			return result;
+			// return (result == null) ? null : result.toString();
+		}
+
 	}
 
 	@Test
