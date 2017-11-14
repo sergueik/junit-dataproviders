@@ -22,6 +22,7 @@ import static org.junit.Assume.assumeFalse;
 import static org.junit.Assume.assumeTrue;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -40,6 +41,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 
 import junitparams.custom.CustomParameters;
 import junitparams.custom.ParametersProvider;
@@ -66,6 +68,11 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import org.jopendocument.dom.ODValueType;
+import org.jopendocument.dom.spreadsheet.Cell;
+import org.jopendocument.dom.spreadsheet.Sheet;
+import org.jopendocument.dom.spreadsheet.SpreadSheet;
 
 @RunWith(JUnitParamsRunner.class)
 public class FileParamsTest {
@@ -98,39 +105,62 @@ public class FileParamsTest {
 		assertThat(age).isGreaterThan(0);
 	}
 
+	@Ignore
 	@Test
 	@ExcelParameters(filepath = "classpath:data_2007.xlsx", type = "Excel 2007")
 	public void loadParamsFromEmbeddedExcel2007(String keyword, double count) {
 		assumeTrue("search", keyword.matches("(?:junit|testng|spock)"));
 		assertThat((int) count).isGreaterThan(0);
+		/*
 		System.err.println(
 				String.format("Search keyword:'%s'\tExpected minimum link count:%d",
 						keyword, (int) count));
+		 */
 	}
 
+	@Ignore
 	@Test
 	@ExcelParameters(filepath = "classpath:data_2003.xls", type = "Excel 2003")
 	public void loadParamsFromEmbeddedExcel2003(String keyword, double count) {
 		assumeTrue("search", keyword.matches("(?:junit|testng|spock)"));
 		assertThat((int) count).isGreaterThan(0);
+		/*
 		System.err.println(
 				String.format("Search keyword:'%s'\tExpected minimum link count:%d",
 						keyword, (int) count));
+		 */
 	}
 
+	@Ignore
 	@Test
 	@ExcelParameters(filepath = "file:src/test/resources/data_2007.xlsx", type = "Excel 2007")
 	public void loadParamsFromFileExcel2007(String keyword, double count) {
 		assumeTrue("search", keyword.matches("(?:junit|testng|spock)"));
 		assertThat((int) count).isGreaterThan(0);
+		/*
 		System.err.println(
 				String.format("Search keyword:'%s'\tExpected minimum link count:%d",
 						keyword, (int) count));
+		 */
 	}
 
+	@Ignore
 	@Test
 	@ExcelParameters(filepath = "file:src/test/resources/data_2003.xls", type = "Excel 2003")
 	public void loadParamsFromFileExcel2003(String keyword, double count) {
+		assumeTrue("search", keyword.matches("(?:junit|testng|spock)"));
+		assertThat((int) count).isGreaterThan(0);
+		/*
+		System.err.println(
+				String.format("Search keyword:'%s'\tExpected minimum link count:%d",
+						keyword, (int) count));
+		 */
+	}
+
+	@Test
+	@ExcelParameters(filepath = "file:src/test/resources/data.ods", type = "OpenOffice Spreadsheet")
+	public void loadParamsFromFileOpenOfficeSpreadsheel(String keyword,
+			double count) {
 		assumeTrue("search", keyword.matches("(?:junit|testng|spock)"));
 		assertThat((int) count).isGreaterThan(0);
 		System.err.println(
@@ -146,11 +176,12 @@ public class FileParamsTest {
 		String type();
 	}
 
-	// TODO: naming is confusing
 	public static class ExcelParametersProvider
 			implements ParametersProvider<ExcelParameters> {
 
 		private String filepath;
+		private String filename;
+		private String protocol;
 		private String type;
 
 		@Override
@@ -158,6 +189,8 @@ public class FileParamsTest {
 				FrameworkMethod frameworkMethod) {
 			filepath = parametersAnnotation.filepath();
 			type = parametersAnnotation.type();
+			protocol = filepath.substring(0, filepath.indexOf(':'));
+			filename = filepath.substring(filepath.indexOf(':') + 1);
 		}
 
 		@Override
@@ -168,15 +201,109 @@ public class FileParamsTest {
 		private Object[] map(InputStream inputStream) {
 			switch (type) {
 			case "Excel 2007":
-				return processExcel2007(inputStream);
+				return createDataFromExcel2007(inputStream);
 			case "Excel 2003":
-				return processExcel2003(inputStream);
+				return createDataFromExcel2003(inputStream);
+			case "OpenOffice Spreadsheet":
+				return createDataFromOpenOfficeSpreadsheet(inputStream);
 			default:
 				throw new RuntimeException("wrong format");
 			}
 		}
 
-		private Object[] processExcel2003(InputStream inputStream) {
+		private Object[] createDataFromOpenOfficeSpreadsheet(
+				InputStream inputStream) {
+
+			// ?
+			try {
+				inputStream.close();
+			} catch (IOException e) {
+				// ignore
+			}
+			HashMap<String, String> columns = new HashMap<>();
+			List<Object[]> result = new ArrayList<>();
+			Object[] resultRow = {};
+
+			Sheet sheet;
+
+			String search_keyword = "";
+			double expected_count = 0;
+			int id = 0;
+
+			try {
+				File file = new File(filename);
+				sheet = SpreadSheet.createFromFile(file).getFirstSheet();
+				// System.err.println("Sheet name: " + sheet.getName());
+				// String sheetName = "Employee Data";
+				// sheet = SpreadSheet.createFromFile(file).getSheet(sheetName);
+				int nColCount = sheet.getColumnCount();
+				int nRowCount = sheet.getRowCount();
+				@SuppressWarnings("rawtypes")
+				Cell cell = null;
+				for (int nColIndex = 0; nColIndex < nColCount; nColIndex++) {
+					String header = sheet.getImmutableCellAt(nColIndex, 0).getValue()
+							.toString();
+					if (StringUtils.isBlank(header)) {
+						break;
+					}
+					String column = CellReference.convertNumToColString(nColIndex);
+					/*
+					System.err.println(nColIndex + " = " + column + " " + header);
+					*/
+					columns.put(column, header);
+
+				}
+				// often there may be no ranges defined
+				Set<String> rangeeNames = sheet.getRangesNames();
+				Iterator<String> rangeNamesIterator = rangeeNames.iterator();
+
+				while (rangeNamesIterator.hasNext()) {
+					System.err.println("Range = " + rangeNamesIterator.next());
+				}
+				// isCellBlank has protected access in Table
+				for (int nRowIndex = 1; nRowIndex < nRowCount
+						&& StringUtils.isNotBlank(sheet.getImmutableCellAt(0, nRowIndex)
+								.getValue().toString()); nRowIndex++) {
+					for (int nColIndex = 0; nColIndex < nColCount && StringUtils
+							.isNotBlank(sheet.getImmutableCellAt(nColIndex, nRowIndex)
+									.getValue().toString()); nColIndex++) {
+						cell = sheet.getImmutableCellAt(nColIndex, nRowIndex);
+						String cellName = CellReference.convertNumToColString(nColIndex);
+						if (columns.get(cellName).equals("COUNT")) {
+							assertEquals(cell.getValueType(), ODValueType.FLOAT);
+							expected_count = Double.valueOf(cell.getValue().toString());
+						}
+						if (columns.get(cellName).equals("SEARCH")) {
+							assertEquals(cell.getValueType(), ODValueType.STRING);
+							search_keyword = cell.getTextValue();
+						}
+						if (columns.get(cellName).equals("ID")) {
+							/*
+							System.err.println("Column: " + columns.get(cellName));
+							*/
+							assertEquals(cell.getValueType(), ODValueType.FLOAT);
+							id = Integer.decode(cell.getValue().toString());
+						}
+					}
+					/*
+					System.err.println(String.format(
+							"Row ID:%d\tSearch term:'%s'\tExpected minimum link count:%d", id,
+							search_keyword, (int) expected_count));
+							*/
+					resultRow = new Object[] { search_keyword, expected_count };
+					result.add(resultRow);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (NullPointerException e) {
+				e.printStackTrace();
+			}
+			Object[][] resultArray = new Object[result.size()][];
+			result.toArray(resultArray);
+			return resultArray;
+		}
+
+		private Object[] createDataFromExcel2003(InputStream inputStream) {
 			List<Object[]> result = new LinkedList<>();
 			Object[] resultRow = {};
 
@@ -242,7 +369,7 @@ public class FileParamsTest {
 			return result.toArray();
 		}
 
-		private Object[] processExcel2007(InputStream inputStream) {
+		private Object[] createDataFromExcel2007(InputStream inputStream) {
 			List<Object[]> result = new LinkedList<>();
 			HashMap<String, String> columns = new HashMap<>();
 			Object[] resultRow = {};
@@ -275,8 +402,10 @@ public class FileParamsTest {
 							String dataHeader = cell.getStringCellValue();
 							cellIndex = cell.getColumnIndex();
 							cellColumn = CellReference.convertNumToColString(cellIndex);
+							/*
 							System.err
 									.println(cellIndex + " = " + cellColumn + " " + dataHeader);
+									*/
 							columns.put(cellColumn, dataHeader);
 						}
 						continue;
@@ -339,13 +468,10 @@ public class FileParamsTest {
 			// TODO: parameter for sheeet name
 			// String encoding = fileParameters.encoding();
 
-			System.err.println("createProperReader:  " + filepath);
+			// System.err.println("createProperReader: " + filepath);
 			if (filepath.indexOf(':') < 0) {
 				return new FileInputStream(filepath);
 			}
-
-			String protocol = filepath.substring(0, filepath.indexOf(':'));
-			String filename = filepath.substring(filepath.indexOf(':') + 1);
 
 			if ("classpath".equals(protocol)) {
 				return getClass().getClassLoader().getResourceAsStream(filename);
@@ -363,9 +489,11 @@ public class FileParamsTest {
 	public void loadParamsFromJSONEmbedded(String keyword, double count) {
 		assertThat((int) count).isGreaterThan(0);
 		assertTrue(keyword.matches("(?:junit|testng|spock)"));
+		/*
 		System.err.println(
 				String.format("Search keyword:'%s'\tExpected minimum link count:%d",
 						keyword, (int) count));
+						*/
 	}
 
 	@Test
@@ -373,9 +501,11 @@ public class FileParamsTest {
 	public void loadParamsFromJSONFile(String keyword, double count) {
 		assertTrue(keyword.matches("(?:junit|testng|spock)"));
 		assertThat(keyword, notNullValue());
+		/*
 		System.err.println(
 				String.format("Search keyword:'%s'\tExpected minimum link count:%d",
 						keyword, (int) count));
+						*/
 	}
 
 	@Ignore
