@@ -105,9 +105,9 @@ public class FileParamsTest {
 		assertThat(age).isGreaterThan(0);
 	}
 
-	@Ignore
+	// @Ignore
 	@Test
-	@ExcelParameters(filepath = "classpath:data_2007.xlsx", type = "Excel 2007")
+	@ExcelParameters(filepath = "classpath:data_2007.xlsx", sheetName = "", type = "Excel 2007")
 	public void loadParamsFromEmbeddedExcel2007(String keyword, double count) {
 		assumeTrue("search", keyword.matches("(?:junit|testng|spock)"));
 		assertThat((int) count).isGreaterThan(0);
@@ -118,9 +118,9 @@ public class FileParamsTest {
 		 */
 	}
 
-	@Ignore
+	// @Ignore
 	@Test
-	@ExcelParameters(filepath = "classpath:data_2003.xls", type = "Excel 2003")
+	@ExcelParameters(filepath = "classpath:data_2003.xls", sheetName = "", type = "Excel 2003")
 	public void loadParamsFromEmbeddedExcel2003(String keyword, double count) {
 		assumeTrue("search", keyword.matches("(?:junit|testng|spock)"));
 		assertThat((int) count).isGreaterThan(0);
@@ -131,9 +131,9 @@ public class FileParamsTest {
 		 */
 	}
 
-	@Ignore
+	// @Ignore
 	@Test
-	@ExcelParameters(filepath = "file:src/test/resources/data_2007.xlsx", type = "Excel 2007")
+	@ExcelParameters(filepath = "file:src/test/resources/data_2007.xlsx", sheetName = "", type = "Excel 2007")
 	public void loadParamsFromFileExcel2007(String keyword, double count) {
 		assumeTrue("search", keyword.matches("(?:junit|testng|spock)"));
 		assertThat((int) count).isGreaterThan(0);
@@ -144,9 +144,9 @@ public class FileParamsTest {
 		 */
 	}
 
-	@Ignore
+	// @Ignore
 	@Test
-	@ExcelParameters(filepath = "file:src/test/resources/data_2003.xls", type = "Excel 2003")
+	@ExcelParameters(filepath = "file:src/test/resources/data_2003.xls", sheetName = "", type = "Excel 2003")
 	public void loadParamsFromFileExcel2003(String keyword, double count) {
 		assumeTrue("search", keyword.matches("(?:junit|testng|spock)"));
 		assertThat((int) count).isGreaterThan(0);
@@ -158,7 +158,7 @@ public class FileParamsTest {
 	}
 
 	@Test
-	@ExcelParameters(filepath = "file:src/test/resources/data.ods", type = "OpenOffice Spreadsheet")
+	@ExcelParameters(filepath = "file:src/test/resources/data.ods", sheetName = "", type = "OpenOffice Spreadsheet")
 	public void loadParamsFromFileOpenOfficeSpreadsheel(String keyword,
 			double count) {
 		assumeTrue("search", keyword.matches("(?:junit|testng|spock)"));
@@ -173,6 +173,8 @@ public class FileParamsTest {
 	public @interface ExcelParameters {
 		String filepath();
 
+		String sheetName(); // optional ?
+
 		String type();
 	}
 
@@ -183,12 +185,17 @@ public class FileParamsTest {
 		private String filename;
 		private String protocol;
 		private String type;
+		// TODO: parameter for sheet name
+		private String sheetName;
+		// private String encoding;
 
 		@Override
 		public void initialize(ExcelParameters parametersAnnotation,
 				FrameworkMethod frameworkMethod) {
 			filepath = parametersAnnotation.filepath();
 			type = parametersAnnotation.type();
+			// encoding = parametersAnnotation.encoding();
+			sheetName = parametersAnnotation.sheetName();
 			protocol = filepath.substring(0, filepath.indexOf(':'));
 			filename = filepath.substring(filepath.indexOf(':') + 1);
 		}
@@ -225,17 +232,19 @@ public class FileParamsTest {
 			Object[] resultRow = {};
 
 			Sheet sheet;
-
+			SpreadSheet spreadSheet;
 			String search_keyword = "";
 			double expected_count = 0;
 			int id = 0;
 
 			try {
 				File file = new File(filename);
-				sheet = SpreadSheet.createFromFile(file).getFirstSheet();
-				// System.err.println("Sheet name: " + sheet.getName());
-				// String sheetName = "Employee Data";
-				// sheet = SpreadSheet.createFromFile(file).getSheet(sheetName);
+				spreadSheet = SpreadSheet.createFromFile(file);
+				sheet = (sheetName.isEmpty()) ? spreadSheet.getFirstSheet()
+						: spreadSheet.getSheet(sheetName);
+				System.err.println( "Reading Open Office Spreadsheet : " +
+				sheet.getName());
+
 				int nColCount = sheet.getColumnCount();
 				int nRowCount = sheet.getRowCount();
 				@SuppressWarnings("rawtypes")
@@ -307,14 +316,14 @@ public class FileParamsTest {
 			List<Object[]> result = new LinkedList<>();
 			Object[] resultRow = {};
 
-			// String fileName = "data_2003.xls";
 			HSSFWorkbook wb = null;
 			try {
 				wb = new HSSFWorkbook(inputStream);
+				HSSFSheet sheet = (sheetName.isEmpty()) ? wb.getSheetAt(0)
+						: wb.getSheet(sheetName);
 
-				HSSFSheet sheet = wb.getSheetAt(0);
-				// String sheetName = "Employee Data";
-				// HSSFSheet sheet = wb.getSheet(sheetName);
+				System.err.println( "Reading Excel 2003 sheet : " +
+				sheet.getSheetName());
 				HSSFRow row;
 				HSSFCell cell;
 
@@ -361,11 +370,7 @@ public class FileParamsTest {
 					}
 				}
 			}
-			/*
-			Object[][] resultArray = new Object[result.size()][];
-			result.toArray(resultArray);
-			return resultArray;
-			*/
+
 			return result.toArray();
 		}
 
@@ -377,11 +382,11 @@ public class FileParamsTest {
 			try {
 
 				wb = new XSSFWorkbook(inputStream);
+				XSSFSheet sheet = (sheetName.isEmpty()) ? wb.getSheetAt(0)
+						: wb.getSheet(sheetName);
 
-				XSSFSheet sheet = wb.getSheetAt(0);
-				// String sheetName = sheet.getSheetName();
-				// String sheetName = "Employee Data";
-				// XSSFSheet sheet = wb.getSheet(sheetName);
+				System.err.println( "Reading Excel 2007 sheet : " +
+				sheet.getSheetName());
 				XSSFRow row;
 				XSSFCell cell;
 				int cellIndex = 0;
@@ -464,9 +469,6 @@ public class FileParamsTest {
 		}
 
 		private InputStream createProperReader() throws IOException {
-
-			// TODO: parameter for sheeet name
-			// String encoding = fileParameters.encoding();
 
 			// System.err.println("createProperReader: " + filepath);
 			if (filepath.indexOf(':') < 0) {
