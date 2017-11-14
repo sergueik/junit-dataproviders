@@ -68,7 +68,7 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
+import org.jopendocument.dom.ODPackage;
 import org.jopendocument.dom.ODValueType;
 import org.jopendocument.dom.spreadsheet.Cell;
 import org.jopendocument.dom.spreadsheet.Sheet;
@@ -120,8 +120,8 @@ public class FileParamsTest {
 
 	// @Ignore
 	@Test
-	@ExcelParameters(filepath = "classpath:data_2003.xls", sheetName = "", type = "Excel 2003")
-	public void loadParamsFromEmbeddedExcel2003(String keyword, double count) {
+	@ExcelParameters(filepath = "file:src/test/resources/data_2007.xlsx", sheetName = "", type = "Excel 2007")
+	public void loadParamsFromFileExcel2007(String keyword, double count) {
 		assumeTrue("search", keyword.matches("(?:junit|testng|spock)"));
 		assertThat((int) count).isGreaterThan(0);
 		/*
@@ -133,8 +133,8 @@ public class FileParamsTest {
 
 	// @Ignore
 	@Test
-	@ExcelParameters(filepath = "file:src/test/resources/data_2007.xlsx", sheetName = "", type = "Excel 2007")
-	public void loadParamsFromFileExcel2007(String keyword, double count) {
+	@ExcelParameters(filepath = "classpath:data_2003.xls", sheetName = "", type = "Excel 2003")
+	public void loadParamsFromEmbeddedExcel2003(String keyword, double count) {
 		assumeTrue("search", keyword.matches("(?:junit|testng|spock)"));
 		assertThat((int) count).isGreaterThan(0);
 		/*
@@ -155,6 +155,17 @@ public class FileParamsTest {
 				String.format("Search keyword:'%s'\tExpected minimum link count:%d",
 						keyword, (int) count));
 		 */
+	}
+
+	@Test
+	@ExcelParameters(filepath = "classpath:data.ods", sheetName = "", type = "OpenOffice Spreadsheet")
+	public void loadParamsFromEmbeddedOpenOfficeSpreadsheel(String keyword,
+			double count) {
+		assumeTrue("search", keyword.matches("(?:junit|testng|spock)"));
+		assertThat((int) count).isGreaterThan(0);
+		System.err.println(
+				String.format("Search keyword:'%s'\tExpected minimum link count:%d",
+						keyword, (int) count));
 	}
 
 	@Test
@@ -221,15 +232,15 @@ public class FileParamsTest {
 		private Object[] createDataFromOpenOfficeSpreadsheet(
 				InputStream inputStream) {
 
-			// ?
+			/*
 			try {
 				inputStream.close();
 			} catch (IOException e) {
 				// ignore
 			}
+			*/
 			HashMap<String, String> columns = new HashMap<>();
 			List<Object[]> result = new ArrayList<>();
-			Object[] resultRow = {};
 
 			Sheet sheet;
 			SpreadSheet spreadSheet;
@@ -238,12 +249,17 @@ public class FileParamsTest {
 			int id = 0;
 
 			try {
+				// https://www.programcreek.com/java-api-examples/index.php?api=org.jopendocument.dom.spreadsheet.Sheet
+				spreadSheet = SpreadSheet.get(new ODPackage(inputStream));
+				/*
 				File file = new File(filename);
 				spreadSheet = SpreadSheet.createFromFile(file);
+				*/
 				sheet = (sheetName.isEmpty()) ? spreadSheet.getFirstSheet()
 						: spreadSheet.getSheet(sheetName);
-				System.err.println( "Reading Open Office Spreadsheet : " +
-				sheet.getName());
+
+				// System.err
+				// .println("Reading Open Office Spreadsheet : " + sheet.getName());
 
 				int nColCount = sheet.getColumnCount();
 				int nRowCount = sheet.getRowCount();
@@ -299,7 +315,7 @@ public class FileParamsTest {
 							"Row ID:%d\tSearch term:'%s'\tExpected minimum link count:%d", id,
 							search_keyword, (int) expected_count));
 							*/
-					resultRow = new Object[] { search_keyword, expected_count };
+					Object[] resultRow = new Object[] { search_keyword, expected_count };
 					result.add(resultRow);
 				}
 			} catch (IOException e) {
@@ -307,23 +323,21 @@ public class FileParamsTest {
 			} catch (NullPointerException e) {
 				e.printStackTrace();
 			}
-			Object[][] resultArray = new Object[result.size()][];
-			result.toArray(resultArray);
-			return resultArray;
+			return result.toArray();
 		}
 
 		private Object[] createDataFromExcel2003(InputStream inputStream) {
-			List<Object[]> result = new LinkedList<>();
-			Object[] resultRow = {};
 
+			List<Object[]> result = new LinkedList<>();
 			HSSFWorkbook wb = null;
 			try {
 				wb = new HSSFWorkbook(inputStream);
 				HSSFSheet sheet = (sheetName.isEmpty()) ? wb.getSheetAt(0)
 						: wb.getSheet(sheetName);
 
-				System.err.println( "Reading Excel 2003 sheet : " +
-				sheet.getSheetName());
+				// System.err
+				// .println("Reading Excel 2003 sheet : " + sheet.getSheetName());
+
 				HSSFRow row;
 				HSSFCell cell;
 
@@ -357,7 +371,7 @@ public class FileParamsTest {
 							}
 						}
 					}
-					resultRow = new Object[] { search_keyword, expected_count };
+					Object[] resultRow = new Object[] { search_keyword, expected_count };
 					result.add(resultRow);
 				}
 			} catch (Exception e) {
@@ -377,7 +391,6 @@ public class FileParamsTest {
 		private Object[] createDataFromExcel2007(InputStream inputStream) {
 			List<Object[]> result = new LinkedList<>();
 			HashMap<String, String> columns = new HashMap<>();
-			Object[] resultRow = {};
 			XSSFWorkbook wb = null;
 			try {
 
@@ -385,8 +398,8 @@ public class FileParamsTest {
 				XSSFSheet sheet = (sheetName.isEmpty()) ? wb.getSheetAt(0)
 						: wb.getSheet(sheetName);
 
-				System.err.println( "Reading Excel 2007 sheet : " +
-				sheet.getSheetName());
+				// System.err
+				// .println("Reading Excel 2007 sheet : " + sheet.getSheetName());
 				XSSFRow row;
 				XSSFCell cell;
 				int cellIndex = 0;
@@ -437,7 +450,7 @@ public class FileParamsTest {
 							"Loading row ID:%d\tSearch keyword:'%s'\tExpected minimum link count:%d",
 							id, keyword, (int) count));
 					    */
-					resultRow = new Object[] { keyword, count };
+					Object[] resultRow = new Object[] { keyword, count };
 					result.add(resultRow);
 				}
 			} catch (Exception e) {
