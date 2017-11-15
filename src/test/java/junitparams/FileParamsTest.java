@@ -53,7 +53,7 @@ import junitparams.mappers.DataMapper;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 //OLE2 Office Documents
 import org.apache.poi.hssf.usermodel.HSSFCell;
