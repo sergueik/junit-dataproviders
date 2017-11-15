@@ -112,7 +112,8 @@ public class FileParamsTest {
 	// @Ignore
 	@Test
 	@ExcelParameters(filepath = "classpath:data_2007.xlsx", sheetName = "", type = "Excel 2007")
-	public void loadParamsFromEmbeddedExcel2007(String keyword, double count) {
+	public void loadParamsFromEmbeddedExcel2007(double rowNum, String keyword,
+			double count) {
 		assumeTrue("search", keyword.matches("(?:junit|testng|spock)"));
 		assertThat((int) count).isGreaterThan(0);
 		/*
@@ -125,7 +126,8 @@ public class FileParamsTest {
 	// @Ignore
 	@Test
 	@ExcelParameters(filepath = "file:src/test/resources/data_2007.xlsx", sheetName = "", type = "Excel 2007")
-	public void loadParamsFromFileExcel2007(String keyword, double count) {
+	public void loadParamsFromFileExcel2007(double rowNum, String keyword,
+			double count) {
 		assumeTrue("search", keyword.matches("(?:junit|testng|spock)"));
 		assertThat((int) count).isGreaterThan(0);
 		/*
@@ -136,9 +138,12 @@ public class FileParamsTest {
 	}
 
 	// @Ignore
+	// TODO: fields?
+	// the rowNum column is not used in the test but present in the spreadsheet
 	@Test
 	@ExcelParameters(filepath = "classpath:data_2003.xls", sheetName = "", type = "Excel 2003")
-	public void loadParamsFromEmbeddedExcel2003(String keyword, double count) {
+	public void loadParamsFromEmbeddedExcel2003(double rowNum, String keyword,
+			double count) {
 		assumeTrue("search", keyword.matches("(?:junit|testng|spock)"));
 		assertThat((int) count).isGreaterThan(0);
 		/*
@@ -151,7 +156,8 @@ public class FileParamsTest {
 	// @Ignore
 	@Test
 	@ExcelParameters(filepath = "file:src/test/resources/data_2003.xls", sheetName = "", type = "Excel 2003")
-	public void loadParamsFromFileExcel2003(String keyword, double count) {
+	public void loadParamsFromFileExcel2003(double rowNum, String keyword,
+			double count) {
 		assumeTrue("search", keyword.matches("(?:junit|testng|spock)"));
 		assertThat((int) count).isGreaterThan(0);
 		/*
@@ -191,6 +197,8 @@ public class FileParamsTest {
 		String sheetName(); // optional ?
 
 		String type();
+		// TODO: parameter for sheet name
+		// TODO: parameter for column names
 	}
 
 	public static class ExcelParametersProvider
@@ -200,16 +208,16 @@ public class FileParamsTest {
 		private String filename;
 		private String protocol;
 		private String type;
-		// TODO: parameter for sheet name
 		private String sheetName;
-		// private String encoding;
+		private String columnNames = "*";
+		// TODO: flag to skip / collect the first row
+		private static Boolean skipFirstRow = false;
 
 		@Override
 		public void initialize(ExcelParameters parametersAnnotation,
 				FrameworkMethod frameworkMethod) {
 			filepath = parametersAnnotation.filepath();
 			type = parametersAnnotation.type();
-			// encoding = parametersAnnotation.encoding();
 			sheetName = parametersAnnotation.sheetName();
 			protocol = filepath.substring(0, filepath.indexOf(':'));
 			filename = filepath.substring(filepath.indexOf(':') + 1);
@@ -236,13 +244,6 @@ public class FileParamsTest {
 		private Object[] createDataFromOpenOfficeSpreadsheet(
 				InputStream inputStream) {
 
-			/*
-			try {
-				inputStream.close();
-			} catch (IOException e) {
-				// ignore
-			}
-			*/
 			Map<String, String> columns = new HashMap<>();
 			List<Object[]> result = new ArrayList<>();
 
@@ -276,11 +277,10 @@ public class FileParamsTest {
 						break;
 					}
 					String column = CellReference.convertNumToColString(nColIndex);
-					/*
-					System.err.println(nColIndex + " = " + column + " " + header);
-					*/
 					columns.put(column, header);
-
+					/*
+					  System.err.println(nColIndex + " = " + column + " " + header);
+					*/
 				}
 				// often there may be no ranges defined
 				Set<String> rangeeNames = sheet.getRangesNames();
@@ -334,49 +334,51 @@ public class FileParamsTest {
 
 			List<Object[]> result = new LinkedList<>();
 			HSSFWorkbook wb = null;
+			Iterator<org.apache.poi.ss.usermodel.Cell> cells;
+			Map<String, String> columnHeaders = new HashMap<>();
+
 			try {
 				wb = new HSSFWorkbook(inputStream);
-				HSSFSheet sheet = (sheetName.isEmpty()) ? wb.getSheetAt(0)
-						: wb.getSheet(sheetName);
+				HSSFSheet sheet = wb.getSheetAt(0);
 
-				// System.err
-				// .println("Reading Excel 2003 sheet : " + sheet.getSheetName());
-
-				HSSFRow row;
-				HSSFCell cell;
-
-				String search_keyword = "";
-				double expected_count = 0;
-
+				/*	System.err
+							.println("Reading Excel 2003 sheet : " + sheet.getSheetName());
+				*/
 				Iterator<Row> rows = sheet.rowIterator();
 				while (rows.hasNext()) {
-					row = (HSSFRow) rows.next();
-					if (row.getRowNum() == 0) { // ignore the header
+					HSSFRow row = (HSSFRow) rows.next();
+					HSSFCell cell;
+
+					if (row.getRowNum() == 0) {
+						cells = row.cellIterator();
+						while (cells.hasNext()) {
+
+							cell = (HSSFCell) cells.next();
+							int columnIndex = cell.getColumnIndex();
+							String columnHeader = cell.getStringCellValue();
+							String columnName = CellReference
+									.convertNumToColString(cell.getColumnIndex());
+							columnHeaders.put(columnName, columnHeader);
+
+							/* System.err.println(
+									 columnIndex + " = " + columnName + " " + columnHeader);
+							*/
+						}
+						// skip the header
 						continue;
 					}
-					Iterator<org.apache.poi.ss.usermodel.Cell> cells = row.cellIterator();
+
+					cells = row.cellIterator();
+					List<Object> resultRow = new LinkedList<>();
 					while (cells.hasNext()) {
 						cell = (HSSFCell) cells.next();
-						if (cell.getColumnIndex() == 2) {
-							if (cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
-								expected_count = cell.getNumericCellValue();
-							} else {
-								expected_count = 0;
-							}
-						}
-						if (cell.getColumnIndex() == 1) {
-							if (cell.getCellType() == HSSFCell.CELL_TYPE_STRING) {
-								search_keyword = cell.getStringCellValue();
-							} else if (cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
-								search_keyword = Double.toString(cell.getNumericCellValue());
-							} else {
-								// TODO: Boolean, Formula, Errors
-								search_keyword = "";
-							}
-						}
+						Object cellValue = safeUserModeCellValue(cell);
+						/* System.err.println("Cell Value: " + cellValue.toString() + " "
+								+ cellValue.getClass());
+						*/
+						resultRow.add(cellValue);
 					}
-					Object[] resultRow = new Object[] { search_keyword, expected_count };
-					result.add(resultRow);
+					result.add(resultRow.toArray());
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -388,75 +390,65 @@ public class FileParamsTest {
 					}
 				}
 			}
-
 			return result.toArray();
 		}
 
 		private Object[] createDataFromExcel2007(InputStream inputStream) {
 
 			List<Object[]> result = new LinkedList<>();
-			Map<String, String> columns = new HashMap<>();
+			Iterator<org.apache.poi.ss.usermodel.Cell> cells;
 			XSSFWorkbook wb = null;
-			try {
+			Map<String, String> columnHeaders = new HashMap<>();
 
+			try {
 				wb = new XSSFWorkbook(inputStream);
 				XSSFSheet sheet = (sheetName.isEmpty()) ? wb.getSheetAt(0)
 						: wb.getSheet(sheetName);
 
-				// System.err
-				// .println("Reading Excel 2007 sheet : " + sheet.getSheetName());
-				XSSFRow row;
-				XSSFCell cell;
-				int cellIndex = 0;
-				String cellColumn = "";
-				String keyword = "";
-				double count = 0;
-				int id = 0;
+				/*	System.err
+							.println("Reading Excel 2007 sheet : " + sheet.getSheetName());
+				*/
+
 				Iterator<Row> rows = sheet.rowIterator();
 				while (rows.hasNext()) {
-					row = (XSSFRow) rows.next();
-
+					XSSFRow row = (XSSFRow) rows.next();
+					XSSFCell cell;
 					if (row.getRowNum() == 0) {
-						// skip the header
-						Iterator<org.apache.poi.ss.usermodel.Cell> cells = row
-								.cellIterator();
+						cells = row.cellIterator();
 						while (cells.hasNext()) {
+
 							cell = (XSSFCell) cells.next();
-							String dataHeader = cell.getStringCellValue();
-							cellIndex = cell.getColumnIndex();
-							cellColumn = CellReference.convertNumToColString(cellIndex);
-							/*
-							System.err
-									.println(cellIndex + " = " + cellColumn + " " + dataHeader);
-									*/
-							columns.put(cellColumn, dataHeader);
+							int columnIndex = cell.getColumnIndex();
+							String columnHeader = cell.getStringCellValue();
+							String columnName = CellReference
+									.convertNumToColString(cell.getColumnIndex());
+							columnHeaders.put(columnName, columnHeader);
+
+							/*	System.err.println(
+										columnIndex + " = " + columnName + " " + columnHeader);
+							*/
 						}
+						// skip the header
 						continue;
 					}
-					Iterator<org.apache.poi.ss.usermodel.Cell> cells = row.cellIterator();
+					List<Object> resultRow = new LinkedList<>();
+					cells = row.cellIterator();
 					while (cells.hasNext()) {
 						cell = (XSSFCell) cells.next();
-						cellColumn = CellReference
-								.convertNumToColString(cell.getColumnIndex());
+						// TODO: column selection
+						/*
 						if (columns.get(cellColumn).equals("ID")) {
 							assertEquals(cell.getCellType(), XSSFCell.CELL_TYPE_NUMERIC);
-							id = (int) cell.getNumericCellValue();
+							// id = (int) cell.getNumericCellValue();
 						}
-						if (cellColumn.equals("B")) {
-							assertEquals(cell.getCellType(), XSSFCell.CELL_TYPE_STRING);
-							keyword = cell.getStringCellValue();
-						}
-						if (cellColumn.equals("C")) {
-							assertEquals(cell.getCellType(), XSSFCell.CELL_TYPE_NUMERIC);
-							count = cell.getNumericCellValue();
-						}
+						*/
+						Object cellValue = safeXSSFCellValue(cell);
+
+						// System.err.println("Cell Value: " + cellValue.toString() + " "
+						// + cellValue.getClass());
+						resultRow.add(cellValue);
 					}
-					/* System.err.println(String.format(
-							"Loading row ID:%d\tSearch keyword:'%s'\tExpected minimum link count:%d",
-							id, keyword, (int) count));
-					    */
-					Object[] resultRow = new Object[] { keyword, count };
-					result.add(resultRow);
+					result.add(resultRow.toArray());
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -503,7 +495,7 @@ public class FileParamsTest {
 					"Unknown file access protocol. Only 'file' and 'classpath' are supported!");
 		}
 
-		// Safe conversion of type Excel cell object to Object / String value 
+		// Safe conversion of type Excel cell object to Object / String value
 		public static Object safeUserModeCellValue(
 				org.apache.poi.ss.usermodel.Cell cell) {
 			if (cell == null) {
