@@ -9,7 +9,7 @@ This is a port of the [TestNG data providers](https://github.com/sergueik/testng
 ```java
 @Test
 @ExcelParameters(filepath = "classpath:data_2007.xlsx", sheetName = "", type = "Excel 2007")
-public void loadParamsFromEmbeddedExcel2007(String keyword, double count) {
+public void loadParamsFromEmbeddedExcel2007(double rowNum, String keyword, double count) {
 	assumeTrue("search", keyword.matches("(?:junit|testng|spock)"));
 	assertThat((int) count).isGreaterThan(0);
 }
@@ -18,17 +18,29 @@ or
 ```java
 @Test
 @ExcelParameters(filepath = "file:src/test/resources/data_2003.xls", sheetName = "", type = "Excel 2003")
-public void loadParamsFromFileExcel2003(String keyword, double count) {
+public void loadParamsFromFileExcel2003(double rownum, String keyword, double count) {
 	assumeTrue("search", keyword.matches("(?:junit|testng|spock)"));
 	assertThat((int) count).isGreaterThan(0);
 }
 ```
+or 
+```java
+@Test
+@ExcelParameters(filepath = "file:src/test/resources/data.ods", sheetName = "", type = "OpenOffice Spreadsheet")
+public void loadParamsFromFileOpenOfficeSpreadsheel(double rowNum,
+    String keyword, double count) {
+  assumeTrue("search", keyword.matches("(?:junit|testng|spock)"));
+  assertThat((int) count).isGreaterThan(0);
+}
 
-You will need to provide your own implementation of 
+```
+The provided implementation of 
 ```java
 public static class ExcelParametersProvider implements ParametersProvider<ExcelParameters>
 ```
-Note: the generic column type support is a W.I.P.
+reads all columns from the Excel 2007, Excel 2003 or Open Office spreadhsheet and executes the test for every row of data. 
+The test developer is responsible for matching the test method argument types and the column data types.
+NOTE: attributes for sheet and column selection and for converting every column type to `String` is a W.I.P.
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
