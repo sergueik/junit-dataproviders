@@ -171,8 +171,8 @@ public class FileParamsTest {
 
 	@Test
 	@ExcelParameters(filepath = "classpath:data.ods", sheetName = "", type = "OpenOffice Spreadsheet")
-	public void loadParamsFromEmbeddedOpenOfficeSpreadsheel(String keyword,
-			double count) {
+	public void loadParamsFromEmbeddedOpenOfficeSpreadsheel(double rowNum,
+			String keyword, double count) {
 		assumeTrue("search", keyword.matches("(?:junit|testng|spock)"));
 		assertThat((int) count).isGreaterThan(0);
 		System.err.println(
@@ -182,8 +182,8 @@ public class FileParamsTest {
 
 	@Test
 	@ExcelParameters(filepath = "file:src/test/resources/data.ods", sheetName = "", type = "OpenOffice Spreadsheet")
-	public void loadParamsFromFileOpenOfficeSpreadsheel(String keyword,
-			double count) {
+	public void loadParamsFromFileOpenOfficeSpreadsheel(double rowNum,
+			String keyword, double count) {
 		assumeTrue("search", keyword.matches("(?:junit|testng|spock)"));
 		assertThat((int) count).isGreaterThan(0);
 		System.err.println(
@@ -247,18 +247,15 @@ public class FileParamsTest {
 				InputStream inputStream) {
 
 			Map<String, String> columns = new HashMap<>();
-			List<Object[]> result = new ArrayList<>();
+			List<Object[]> result = new LinkedList<>();
 
-			Sheet sheet;
-			SpreadSheet spreadSheet;
-			String search_keyword = "";
-			double expected_count = 0;
-			int id = 0;
+			// Sheet sheet;
+			// SpreadSheet spreadSheet;
 
 			try {
 				// https://www.programcreek.com/java-api-examples/index.php?api=org.jopendocument.dom.spreadsheet.Sheet
-				spreadSheet = SpreadSheet.get(new ODPackage(inputStream));
-				sheet = (sheetName.isEmpty()) ? spreadSheet.getFirstSheet()
+				SpreadSheet spreadSheet = SpreadSheet.get(new ODPackage(inputStream));
+				Sheet sheet = (sheetName.isEmpty()) ? spreadSheet.getFirstSheet()
 						: spreadSheet.getSheet(sheetName);
 
 				// System.err
@@ -276,10 +273,10 @@ public class FileParamsTest {
 					}
 					String columnName = CellReference.convertNumToColString(columnIndex);
 					columns.put(columnName, columnHeader);
-
+					/*
 					System.err
 							.println(columnIndex + " = " + columnName + " " + columnHeader);
-					/* */
+					 */
 				}
 				// NOTE: often there may be no ranges defined
 				Set<String> rangeeNames = sheet.getRangesNames();
@@ -292,10 +289,13 @@ public class FileParamsTest {
 				for (int rowIndex = 1; rowIndex < rowCount
 						&& StringUtils.isNotBlank(sheet.getImmutableCellAt(0, rowIndex)
 								.getValue().toString()); rowIndex++) {
+					List<Object> resultRow = new LinkedList<>();
 					for (int columnIndex = 0; columnIndex < columnCount && StringUtils
 							.isNotBlank(sheet.getImmutableCellAt(columnIndex, rowIndex)
 									.getValue().toString()); columnIndex++) {
 						cell = sheet.getImmutableCellAt(columnIndex, rowIndex);
+						// TODO: column selection
+						/*
 						String cellName = CellReference.convertNumToColString(columnIndex);
 						if (columns.get(cellName).equals("COUNT")) {
 							assertEquals(cell.getValueType(), ODValueType.FLOAT);
@@ -306,20 +306,19 @@ public class FileParamsTest {
 							search_keyword = cell.getTextValue();
 						}
 						if (columns.get(cellName).equals("ID")) {
-							/*
 							System.err.println("Column: " + columns.get(cellName));
-							*/
 							assertEquals(cell.getValueType(), ODValueType.FLOAT);
 							id = Integer.decode(cell.getValue().toString());
 						}
+						*/
+						@SuppressWarnings("unchecked")
+						Object cellValue = safeOOCellValue(cell);
+						/* System.err.println("Cell Value: " + cellValue.toString() + " "
+								+ cellValue.getClass());
+						*/
+						resultRow.add(cellValue);
 					}
-					/*
-					System.err.println(String.format(
-							"Row ID:%d\tSearch term:'%s'\tExpected minimum link count:%d", id,
-							search_keyword, (int) expected_count));
-							*/
-					Object[] resultRow = new Object[] { search_keyword, expected_count };
-					result.add(resultRow);
+					result.add(resultRow.toArray());
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
