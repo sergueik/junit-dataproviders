@@ -441,8 +441,7 @@ public class FileParamsTest {
 							// id = (int) cell.getNumericCellValue();
 						}
 						*/
-						Object cellValue = safeXSSFCellValue(cell);
-
+						Object cellValue = safeUserModeCellValue(cell);
 						// System.err.println("Cell Value: " + cellValue.toString() + " "
 						// + cellValue.getClass());
 						resultRow.add(cellValue);
@@ -500,26 +499,27 @@ public class FileParamsTest {
 			if (cell == null) {
 				return null;
 			}
-			// TODO: deprecated
-			/* CellType */
-			int type = cell.getCellType();
+			CellType type = cell.getCellTypeEnum();
 			Object result;
 			switch (type) {
-			case HSSFCell.CELL_TYPE_NUMERIC: // 0
-				result = cell.getNumericCellValue();
-				break;
-			case HSSFCell.CELL_TYPE_STRING: // 1
-				result = cell.getStringCellValue();
-				break;
-			case HSSFCell.CELL_TYPE_FORMULA: // 2
-				throw new IllegalStateException("The formula cell is not supported");
-			case HSSFCell.CELL_TYPE_BLANK: // 3
+			case _NONE:
 				result = null;
 				break;
-			case HSSFCell.CELL_TYPE_BOOLEAN: // 4
+			case NUMERIC:
+				result = cell.getNumericCellValue();
+				break;
+			case STRING:
+				result = cell.getStringCellValue();
+				break;
+			case FORMULA:
+				throw new IllegalStateException("The formula cell is not supported");
+			case BLANK:
+				result = null;
+				break;
+			case BOOLEAN:
 				result = cell.getBooleanCellValue();
 				break;
-			case HSSFCell.CELL_TYPE_ERROR: // 5
+			case ERROR:
 				throw new RuntimeException("Cell has an error");
 			default:
 				throw new IllegalStateException(
@@ -556,41 +556,6 @@ public class FileParamsTest {
 			// return (result == null) ? null : result.toString();
 			return result;
 		}
-
-		// NOTE: do not need one ?
-		public static Object safeXSSFCellValue(
-				org.apache.poi.xssf.usermodel.XSSFCell cell) {
-			if (cell == null) {
-				return null;
-			}
-			int type = cell.getCellType();
-			Object result;
-			switch (type) {
-			case XSSFCell.CELL_TYPE_NUMERIC: // 0
-				result = cell.getNumericCellValue();
-				break;
-			case XSSFCell.CELL_TYPE_STRING: // 1
-				result = cell.getStringCellValue();
-				break;
-			case XSSFCell.CELL_TYPE_FORMULA: // 2
-				throw new IllegalStateException("The formula cell is not supported");
-			case XSSFCell.CELL_TYPE_BLANK: // 3
-				result = null;
-				break;
-			case XSSFCell.CELL_TYPE_BOOLEAN: // 4
-				result = cell.getBooleanCellValue();
-				break;
-
-			case XSSFCell.CELL_TYPE_ERROR: // 5
-				throw new RuntimeException("Cell has an error");
-			default:
-				throw new IllegalStateException(
-						"Cell type: " + type + " is not supported");
-			}
-			return result;
-			// return (result == null) ? null : result.toString();
-		}
-
 	}
 
 	@Test
