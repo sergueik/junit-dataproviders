@@ -60,17 +60,19 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Row;
 
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.ss.usermodel.CellType;
 
 //Office 2007+ XML
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.jopendocument.dom.ODDocument;
+
 // Open Office Spreadsheet
+import org.jopendocument.dom.ODDocument;
 import org.jopendocument.dom.ODPackage;
 import org.jopendocument.dom.ODValueType;
 
@@ -256,33 +258,30 @@ public class FileParamsTest {
 			try {
 				// https://www.programcreek.com/java-api-examples/index.php?api=org.jopendocument.dom.spreadsheet.Sheet
 				spreadSheet = SpreadSheet.get(new ODPackage(inputStream));
-				/*
-				File file = new File(filename);
-				spreadSheet = SpreadSheet.createFromFile(file);
-				*/
 				sheet = (sheetName.isEmpty()) ? spreadSheet.getFirstSheet()
 						: spreadSheet.getSheet(sheetName);
 
 				// System.err
 				// .println("Reading Open Office Spreadsheet : " + sheet.getName());
 
-				int nColCount = sheet.getColumnCount();
-				int nRowCount = sheet.getRowCount();
+				int columnCount = sheet.getColumnCount();
+				int rowCount = sheet.getRowCount();
 				@SuppressWarnings("rawtypes")
 				Cell cell = null;
-				for (int nColIndex = 0; nColIndex < nColCount; nColIndex++) {
-					String header = sheet.getImmutableCellAt(nColIndex, 0).getValue()
-							.toString();
-					if (StringUtils.isBlank(header)) {
+				for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
+					String columnHeader = sheet.getImmutableCellAt(columnIndex, 0)
+							.getValue().toString();
+					if (StringUtils.isBlank(columnHeader)) {
 						break;
 					}
-					String column = CellReference.convertNumToColString(nColIndex);
-					columns.put(column, header);
-					/*
-					  System.err.println(nColIndex + " = " + column + " " + header);
-					*/
+					String columnName = CellReference.convertNumToColString(columnIndex);
+					columns.put(columnName, columnHeader);
+
+					System.err
+							.println(columnIndex + " = " + columnName + " " + columnHeader);
+					/* */
 				}
-				// often there may be no ranges defined
+				// NOTE: often there may be no ranges defined
 				Set<String> rangeeNames = sheet.getRangesNames();
 				Iterator<String> rangeNamesIterator = rangeeNames.iterator();
 
@@ -290,14 +289,14 @@ public class FileParamsTest {
 					System.err.println("Range = " + rangeNamesIterator.next());
 				}
 				// isCellBlank has protected access in Table
-				for (int nRowIndex = 1; nRowIndex < nRowCount
-						&& StringUtils.isNotBlank(sheet.getImmutableCellAt(0, nRowIndex)
-								.getValue().toString()); nRowIndex++) {
-					for (int nColIndex = 0; nColIndex < nColCount && StringUtils
-							.isNotBlank(sheet.getImmutableCellAt(nColIndex, nRowIndex)
-									.getValue().toString()); nColIndex++) {
-						cell = sheet.getImmutableCellAt(nColIndex, nRowIndex);
-						String cellName = CellReference.convertNumToColString(nColIndex);
+				for (int rowIndex = 1; rowIndex < rowCount
+						&& StringUtils.isNotBlank(sheet.getImmutableCellAt(0, rowIndex)
+								.getValue().toString()); rowIndex++) {
+					for (int columnIndex = 0; columnIndex < columnCount && StringUtils
+							.isNotBlank(sheet.getImmutableCellAt(columnIndex, rowIndex)
+									.getValue().toString()); columnIndex++) {
+						cell = sheet.getImmutableCellAt(columnIndex, rowIndex);
+						String cellName = CellReference.convertNumToColString(columnIndex);
 						if (columns.get(cellName).equals("COUNT")) {
 							assertEquals(cell.getValueType(), ODValueType.FLOAT);
 							expected_count = Double.valueOf(cell.getValue().toString());
@@ -501,6 +500,8 @@ public class FileParamsTest {
 			if (cell == null) {
 				return null;
 			}
+			// TODO: deprecated
+			/* CellType */
 			int type = cell.getCellType();
 			Object result;
 			switch (type) {
