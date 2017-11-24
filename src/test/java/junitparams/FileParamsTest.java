@@ -171,6 +171,7 @@ public class FileParamsTest {
 		 */
 	}
 
+	// @Ignore
 	@Test
 	@ExcelParameters(filepath = "classpath:data.ods", sheetName = "", type = "OpenOffice Spreadsheet")
 	public void loadParamsFromEmbeddedOpenOfficeSpreadsheel(double rowNum,
@@ -188,9 +189,11 @@ public class FileParamsTest {
 			String keyword, double count) {
 		assumeTrue("search", keyword.matches("(?:junit|testng|spock)"));
 		assertThat((int) count).isGreaterThan(0);
+		/*
 		System.err.println(
-				String.format("Search keyword:'%s'\tExpected minimum link count:%d",
+				String.format("OpenOffice Spreadsheet: Search keyword:'%s'\tExpected minimum link count:%d",
 						keyword, (int) count));
+						*/
 	}
 
 	@Retention(RetentionPolicy.RUNTIME)
@@ -561,26 +564,29 @@ public class FileParamsTest {
 
 	@Test
 	@FileParameters(value = "classpath:data.json", mapper = JSONMapper.class)
-	public void loadParamsFromJSONEmbedded(String keyword, double count) {
+	public void loadParamsFromJSONEmbedded(String strCount, String strKeyword) {
+
+		assertThat(strKeyword, notNullValue());
+		assertTrue(strKeyword.matches("(?:junit|testng|spock)"));
+		double count = Double.valueOf(strCount);
 		assertThat((int) count).isGreaterThan(0);
-		assertTrue(keyword.matches("(?:junit|testng|spock)"));
-		/*
 		System.err.println(
 				String.format("Search keyword:'%s'\tExpected minimum link count:%d",
-						keyword, (int) count));
-						*/
+						strKeyword, (int) count));
+
 	}
 
+	// @Ignore
 	@Test
 	@FileParameters(value = "file:src/test/resources/data.json", mapper = JSONMapper.class)
-	public void loadParamsFromJSONFile(String keyword, double count) {
-		assertTrue(keyword.matches("(?:junit|testng|spock)"));
-		assertThat(keyword, notNullValue());
-		/*
+	public void loadParamsFromJSONFile(String strCount, String strKeyword) {
+		assertThat(strKeyword, notNullValue());
+		assertTrue(strKeyword.matches("(?:junit|testng|spock)"));
+		double count = Double.valueOf(strCount);
+		assertThat((int) count).isGreaterThan(0);
 		System.err.println(
 				String.format("Search keyword:'%s'\tExpected minimum link count:%d",
-						keyword, (int) count));
-						*/
+						strKeyword, (int) count));
 	}
 
 	@Ignore
@@ -677,6 +683,34 @@ public class FileParamsTest {
 	}
 
 	public static class JSONMapper implements DataMapper {
+
+		private Boolean debug = false;
+		private String testName = "test";
+		private List<String> columns = new ArrayList<>();
+
+		private List<String> getColumns(String payload) {
+			List<String> columns = new ArrayList<>();
+
+			payload = payload.replaceAll("\n", " ").substring(1,
+					payload.length() - 1);
+			if (debug)
+				System.err.println("row: " + payload);
+
+			String[] pairs = payload.split(",");
+
+			for (String pair : pairs) {
+				String[] values = pair.split(":");
+
+				String column = values[0].substring(1, values[0].length() - 1).trim();
+				if (debug) {
+					System.err.println("column: " + column);
+				}
+				columns.add(column);
+			}
+			return columns;
+
+		}
+
 		@Override
 		public Object[] map(Reader reader) {
 
@@ -684,7 +718,6 @@ public class FileParamsTest {
 			String rawData = "{}";
 			JSONObject allTestData = new JSONObject();
 			JSONArray rows = new JSONArray();
-			String testName = "test";
 
 			try {
 				List<String> lines = new LinkedList<>();
@@ -702,12 +735,8 @@ public class FileParamsTest {
 			}
 
 			try {
-				ArrayList<String> hashes = new ArrayList<>();
-				String keyword = "";
-				double count = 0;
-
+				List<String> hashes = new ArrayList<>();
 				allTestData = new JSONObject(rawData);
-
 				assertTrue(allTestData.has(testName));
 				String dataString = allTestData.getString(testName);
 
@@ -716,15 +745,26 @@ public class FileParamsTest {
 					hashes.add(rows.getString(i));
 				}
 				assertTrue(hashes.size() > 0);
-				for (String entry : hashes) {
-					JSONObject entryObj = new JSONObject();
-					entryObj = new JSONObject(entry);
-					@SuppressWarnings("unchecked")
-					Iterator<String> entryKeyIterator = entryObj.keys();
+				columns = getColumns(hashes.get(0));
+				List<Object> resultRow = new LinkedList<>();
 
+				for (String entry : hashes) {
+					resultRow = new LinkedList<>();
+					if (debug)
+						System.err.println("payload = " + entry);
+					JSONObject rowObj = new JSONObject(entry);
+
+					for (String column : columns) {
+						resultRow.add(rowObj.get(column).toString());
+					}
+					result.add(resultRow.toArray());
+					/*
+					@SuppressWarnings("unchecked")
+					// NOTE: key order will be random
+					Iterator<String> entryKeyIterator = rowObj.keys();
 					while (entryKeyIterator.hasNext()) {
 						String entryKey = entryKeyIterator.next();
-						String entryData = entryObj.get(entryKey).toString();
+						String entryData = rowObj.get(entryKey).toString();
 						switch (entryKey) {
 						case "keyword":
 							keyword = entryData;
@@ -733,17 +773,25 @@ public class FileParamsTest {
 							count = Double.valueOf(entryData);
 							break;
 						}
-					}
-					// System.err.println("keyword: " + keyword);
-					// System.err.println(String.format("count: %.2f", count));
 					result.add(new Object[] { keyword, count });
+					*/
 				}
 			} catch (org.json.JSONException e) {
 				e.printStackTrace();
 			}
+			if (debug) {
+				System.err.println("result: ");
+				for (Object[] row : result) {
+					for (int cnt = 0; cnt != row.length; cnt++) {
+						System.err.print(row[cnt] + " ");
+					}
+				}
+				System.err.println("end");
+			}
 			return result.toArray();
 
 		}
+
 	}
 
 	@Ignore
