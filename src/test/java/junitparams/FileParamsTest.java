@@ -715,6 +715,7 @@ public class FileParamsTest {
 		public Object[] map(Reader reader) {
 
 			List<Object[]> result = new LinkedList<>();
+			List<Object> resultRow = new LinkedList<>();
 			String rawData = "{}";
 			JSONObject allTestData = new JSONObject();
 			JSONArray rows = new JSONArray();
@@ -736,6 +737,7 @@ public class FileParamsTest {
 
 			try {
 				List<String> hashes = new ArrayList<>();
+				// possible org.json.JSONException
 				allTestData = new JSONObject(rawData);
 				assertTrue(allTestData.has(testName));
 				String dataString = allTestData.getString(testName);
@@ -745,8 +747,9 @@ public class FileParamsTest {
 					hashes.add(rows.getString(i));
 				}
 				assertTrue(hashes.size() > 0);
+				// NOTE: order of keys after invoking JSON library will be non-deterministic
+				// https://stackoverflow.com/questions/4515676/keep-the-order-of-the-json-keys-during-json-conversion-to-csv
 				columns = getColumns(hashes.get(0));
-				List<Object> resultRow = new LinkedList<>();
 
 				for (String entry : hashes) {
 					resultRow = new LinkedList<>();
@@ -760,7 +763,6 @@ public class FileParamsTest {
 					result.add(resultRow.toArray());
 					/*
 					@SuppressWarnings("unchecked")
-					// NOTE: key order will be random
 					Iterator<String> entryKeyIterator = rowObj.keys();
 					while (entryKeyIterator.hasNext()) {
 						String entryKey = entryKeyIterator.next();
