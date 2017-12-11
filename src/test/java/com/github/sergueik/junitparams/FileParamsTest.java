@@ -1,4 +1,4 @@
-package junitparams;
+package com.github.sergueik.junitparams;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -44,6 +44,9 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
+import junitparams.FileParameters;
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
 import junitparams.custom.CustomParameters;
 import junitparams.custom.ParametersProvider;
 import junitparams.custom.FileParametersProvider;
@@ -84,34 +87,6 @@ import org.jopendocument.dom.spreadsheet.SpreadSheet;
 
 @RunWith(JUnitParamsRunner.class)
 public class FileParamsTest {
-
-	@Ignore
-	@Test
-	@FileParameters("src/test/resources/test.csv")
-	public void loadParamsFromFileWithIdentityMapper(int age, String name) {
-		assertThat(age).isGreaterThan(0);
-	}
-
-	@Ignore
-	@Test
-	@FileParameters(value = "src/test/resources/test.csv", mapper = PersonMapper.class)
-	public void loadParamsFromFileWithCustomMapper(Person person) {
-		assertThat(person.getAge()).isGreaterThan(0);
-	}
-
-	@Ignore
-	@Test
-	@FileParameters("classpath:test.csv")
-	public void loadParamsFromFileAtClasspath(int age, String name) {
-		assertThat(age).isGreaterThan(0);
-	}
-
-	@Ignore
-	@Test
-	@FileParameters("file:src/test/resources/test.csv")
-	public void loadParamsFromFileAtFilesystem(int age, String name) {
-		assertThat(age).isGreaterThan(0);
-	}
 
 	// @Ignore
 	@Test
@@ -703,6 +678,7 @@ public class FileParamsTest {
 
 				String column = values[0].substring(1, values[0].length() - 1).trim();
 				if (debug) {
+					// the order of keys will be random
 					System.err.println("column: " + column);
 				}
 				columns.add(column);
