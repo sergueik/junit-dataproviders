@@ -39,6 +39,10 @@ import org.junit.runners.model.FrameworkMethod;
 import junitparams.JUnitParamsRunner;
 import junitparams.custom.ParametersProvider;
 
+/**
+ * ExcelParametersProvider junitparams data providers for Excel and OpenOffice spreadsheet content 
+ * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
+ */
 @RunWith(JUnitParamsRunner.class)
 public class ExcelParametersProvider
 		implements ParametersProvider<ExcelParameters> {
@@ -49,8 +53,9 @@ public class ExcelParametersProvider
 	private String type;
 	private String sheetName;
 	private String columnNames = "*";
-	// TODO: flag to skip / collect the first row
-	private static Boolean skipFirstRow = false;
+	// TODO: pass flag to skip / collect the first row through ExcelParameters
+	// interface annotation - may be an overkill
+	// private static Boolean skipFirstRow = false;
 
 	@Override
 	public void initialize(ExcelParameters parametersAnnotation,

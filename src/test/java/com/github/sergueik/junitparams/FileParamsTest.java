@@ -85,6 +85,11 @@ import org.jopendocument.dom.spreadsheet.Cell;
 import org.jopendocument.dom.spreadsheet.Sheet;
 import org.jopendocument.dom.spreadsheet.SpreadSheet;
 
+/**
+ * Selected test scenarios annotated for ExcelParametersProvider junitparams data provider and JSON mapper
+ * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
+ */
+
 @RunWith(JUnitParamsRunner.class)
 public class FileParamsTest {
 

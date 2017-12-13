@@ -8,6 +8,11 @@ import org.junit.runner.RunWith;
 import junitparams.JUnitParamsRunner;
 import junitparams.custom.CustomParameters;
 
+/**
+ * @ExcelParameters annotation interface for ExcelParametersProvider junitparams data provider
+ * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
+ */
+
 @RunWith(JUnitParamsRunner.class)
 @Retention(RetentionPolicy.RUNTIME)
 @CustomParameters(provider = ExcelParametersProvider.class)

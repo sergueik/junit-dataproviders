@@ -13,6 +13,10 @@ import org.json.JSONObject;
 
 import junitparams.mappers.DataMapper;
 
+/**
+ * JSON mapper for junitparams data provider.
+ * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
+ */
 public class JSONMapper implements DataMapper {
 
 	private Boolean debug = false;
@@ -42,6 +46,7 @@ public class JSONMapper implements DataMapper {
 
 	}
 
+	// NOTE: column order is indeterministic
 	@Override
 	public Object[] map(Reader reader) {
 
