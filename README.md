@@ -1,4 +1,4 @@
-### Info
+###  JUnit-DataProviders [![BuildStatus](https://travis-ci.org/sergueik/junit-dataproviders.svg?branch=master)](https://https://travis-ci.org/sergueik/junit-dataproviders)
 
 This project exercises the following data providers with [JUnitParams](https://github.com/Pragmatists/JUnitParams):
 
