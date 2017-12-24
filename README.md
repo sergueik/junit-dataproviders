@@ -72,6 +72,8 @@ reads all columns from the Excel 2007, Excel 2003 or Open Office spreadhsheet an
 The test developer is responsible for matching the test method argument types and the column data types.
 NOTE: attributes for sheet and column selection and for converting every column type to `String` is a W.I.P.
 
+### Maven Central
+ Status: [pending](https://issues.sonatype.org/browse/OSSRH-36771?page=com.atlassian.jira.plugin.system.issuetabpanels:all-tabpanel)
 
 ### See Also
 
