@@ -3,36 +3,7 @@ package com.github.sergueik.junitparams;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
-//OLE2 Office Documents
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
-// conflicts with org.jopendocument.dom.spreadsheet.Cell;
-// import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.util.CellReference;
-//Office 2007+ XML
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-// Open Office Spreadsheet
-import org.jopendocument.dom.ODDocument;
-import org.jopendocument.dom.ODPackage;
-import org.jopendocument.dom.ODValueType;
-import org.jopendocument.dom.spreadsheet.Cell;
-import org.jopendocument.dom.spreadsheet.Sheet;
-import org.jopendocument.dom.spreadsheet.SpreadSheet;
 import org.junit.runner.RunWith;
 import org.junit.runners.model.FrameworkMethod;
 
