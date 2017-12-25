@@ -3,6 +3,7 @@ package com.github.sergueik.junitparams;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.model.FrameworkMethod;
@@ -94,18 +95,19 @@ public class ExcelParametersProvider
 
 	private Object[] createDataFromOpenOfficeSpreadsheet(
 			InputStream inputStream) {
-		Object[] result = utils.createDataFromOpenOfficeSpreadsheet(inputStream);
-		return result;
+		List<Object[]> result = utils
+				.createDataFromOpenOfficeSpreadsheet(inputStream);
+		return result.toArray();
 	}
 
 	private Object[] createDataFromExcel2003(InputStream inputStream) {
-		Object[] result = utils.createDataFromExcel2003(inputStream);
-		return result;
+		List<Object[]> result = utils.createDataFromExcel2003(inputStream);
+		return result.toArray();
 	}
 
 	private Object[] createDataFromExcel2007(InputStream inputStream) {
-		Object[] result = utils.createDataFromExcel2007(inputStream);
-		return result;
+		List<Object[]> result = utils.createDataFromExcel2007(inputStream);
+		return result.toArray();
 	}
 
 }
