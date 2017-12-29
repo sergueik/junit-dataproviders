@@ -73,7 +73,9 @@ The test developer is responsible for matching the test method argument types an
 NOTE: attributes for sheet and column selection and for converting every column type to `String` is a W.I.P.
 
 ### Maven Central
- Status: [pending](https://issues.sonatype.org/browse/OSSRH-36771?page=com.atlassian.jira.plugin.system.issuetabpanels:all-tabpanel)
+
+The snapshot versions are deployed to [https://oss.sonatype.org/content/repositories/snapshots/com/github/sergueik/junitparams/junit_params/](https://oss.sonatype.org/content/repositories/snapshots/com/github/sergueik/junitparams/junit_params/)
+Release versions status: [pending](https://issues.sonatype.org/browse/OSSRH-36771?page=com.atlassian.jira.plugin.system.issuetabpanels:all-tabpanel)
 
 ### See Also
 

@@ -18,10 +18,7 @@ import junitparams.custom.CustomParameters;
 @CustomParameters(provider = ExcelParametersProvider.class)
 public @interface ExcelParameters {
 	String filepath();
-
-	String sheetName(); // optional ?
-
+	String sheetName() default "";
 	String type();
-	// TODO: parameter for sheet name
 	// TODO: parameter for column names
 }
