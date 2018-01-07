@@ -75,7 +75,23 @@ NOTE: attributes for sheet and column selection and for converting every column 
 ### Maven Central
 
 The snapshot versions are deployed to [https://oss.sonatype.org/content/repositories/snapshots/com/github/sergueik/junitparams/junit_params/](https://oss.sonatype.org/content/repositories/snapshots/com/github/sergueik/junitparams/junit_params/)
-Release versions status: [pending](https://issues.sonatype.org/browse/OSSRH-36771?page=com.atlassian.jira.plugin.system.issuetabpanels:all-tabpanel)
+Release versions status: [pending](https://issues.sonatype.org/browse/OSSRH-36771?page=com.atlassian.jira.plugin.system.issuetabpanels:all-tabpanel).
+
+To use the snapshot version, add the following to `pom.xml`:
+```xml
+<dependency>
+  <groupId>com.github.sergueik.jprotractor</groupId>
+  <artifactId>junit_params</artifactId>
+  <version>0.0.7-SNAPSHOT</version>
+</dependency>
+
+<repositories>
+  <repository>
+    <id>ossrh</id>
+    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+  </repository>
+</repositories>
+```
 
 ### See Also
 
