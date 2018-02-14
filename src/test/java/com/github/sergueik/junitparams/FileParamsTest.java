@@ -94,10 +94,11 @@ import org.jopendocument.dom.spreadsheet.SpreadSheet;
 @RunWith(JUnitParamsRunner.class)
 public class FileParamsTest {
 
-	// TODO: java.lang.IllegalStateException:
+	// TODO: handle java.lang.IllegalStateException:
 	// While trying to create object of class double could not find constructor
 	// with arguments matching (type-wise) the ones given in parameters.
-	@Ignore
+	// when the  Excel 2007 file is corrupt  by LibreOffice 6.x
+	// @Ignore
 	@Test
 	@ExcelParameters(filepath = "classpath:data_2007.xlsx", sheetName = "", type = "Excel 2007")
 	public void loadParamsFromEmbeddedExcel2007(double rowNum, String keyword,
@@ -105,10 +106,6 @@ public class FileParamsTest {
 		dataTest(keyword, count);
 	}
 
-	// TODO: java.lang.IllegalStateException:
-	// While trying to create object of class double could not find constructor
-	// with arguments matching (type-wise) the ones given in parameters.
-	@Ignore
 	@Test
 	@ExcelParameters(filepath = "file:src/test/resources/data_2007.xlsx", sheetName = "", type = "Excel 2007")
 	public void loadParamsFromFileExcel2007(double rowNum, String keyword,
@@ -121,9 +118,8 @@ public class FileParamsTest {
 		}
 	}
 
-	// TODO: fields?
-	// the rowNum column is not used in the test but present in the spreadsheet
-	// @Ignore
+	// TODO: Fields?
+	// the rowNum column which is present in the spreadsheet is not used in the test 
 	@Test
 	@ExcelParameters(filepath = "classpath:data_2003.xls", sheetName = "", type = "Excel 2003")
 	public void loadParamsFromEmbeddedExcel2003(double rowNum, String keyword,
@@ -131,7 +127,6 @@ public class FileParamsTest {
 		dataTest(keyword, count);
 	}
 
-	// @Ignore
 	@Test
 	@ExcelParameters(filepath = "file:src/test/resources/data_2003.xls", sheetName = "", type = "Excel 2003")
 	public void loadParamsFromFileExcel2003(double rowNum, String keyword,
@@ -139,7 +134,6 @@ public class FileParamsTest {
 		dataTest(keyword, count);
 	}
 
-	// @Ignore
 	@Test
 	@ExcelParameters(filepath = "classpath:data.ods", sheetName = "", type = "OpenOffice Spreadsheet")
 	public void loadParamsFromEmbeddedOpenOfficeSpreadsheel(double rowNum,
@@ -257,12 +251,12 @@ public class FileParamsTest {
 
 	private void dataTest(String keyword, double count) {
 		assertThat(keyword, notNullValue());
-		assertThat("search", keyword, anyOf(is("junit"), is("testng"), is("spock"),
-				is("whatever"), is("there is no such thing")));
-		assertThat((int) count).isGreaterThan(0);
 		System.err.println(
 				String.format("Search keyword:'%s'\tExpected minimum link count:%d",
 						keyword, (int) count));
+		assertThat("search", keyword, anyOf(is("junit"), is("testng"), is("spock"),
+				is("whatever"), is("there is no such thing")));
+		assertThat((int) count).isGreaterThan(0);
 	}
 
 	private void dataTest(String strCount, String keyword) {
