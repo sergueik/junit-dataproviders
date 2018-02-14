@@ -12,7 +12,9 @@
     <commons-lang3.version>3.5</commons-lang3.version>
     <java.version>1.8</java.version>
     <jOpenDocument.version>1.3</jOpenDocument.version>
+    <json.version>20170516</json.version>
     <junit.version>4.12</junit.version>
+    <jUnitParams.version>1.1.1</jUnitParams.version>
     <maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
     <poi.version>3.17</poi.version>
     <poiooxml.version>3.17</poiooxml.version>
@@ -66,7 +68,7 @@
     <dependency>
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
-      <version>20080701</version>
+      <version>${json.version}</version>
     </dependency>
     <dependency>
       <groupId>org.assertj</groupId>
@@ -76,7 +78,7 @@
     <dependency>
       <groupId>pl.pragmatists</groupId>
       <artifactId>JUnitParams</artifactId>
-      <version>1.1.1</version>
+      <version>${jUnitParams.version}</version>
     </dependency>
   </dependencies>
   <build>

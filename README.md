@@ -97,6 +97,9 @@ To use the snapshot version, add the following to `pom.xml`:
 
  * Using Excel/Open Office / JSON as [testNG data providers](https://github.com/sergueik/testng-dataproviders)
  * [testng dataProviders](http://testng.org/doc/documentation-main.html#parameters-dataproviders)
-
+ * [TNG/junit-dataprovider](https://github.com/TNG/junit-dataprovider) - a TestNG-like dataprovider runner for JUnit and Allure.
+ * [Pragmatists/JunitParams](https://github.com/Pragmatists/JUnitParams)
+ * [junit contribution: test "assumes" anotation to build inter test dependencies](https://github.com/junit-team/junit.contrib/tree/master/assumes)
+ 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
