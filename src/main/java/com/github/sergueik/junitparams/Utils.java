@@ -166,8 +166,8 @@ public class Utils {
 				@SuppressWarnings("unchecked")
 				Object cellValue = safeOOCellValue(cell);
 				if (debug) {
-					System.err.println("Cell Value: " + cellValue.toString() + " "
-							+ cellValue.getClass());
+					System.err.println(String.format("Cell Value: \"%s\" %s",
+							cellValue.toString(), cellValue.getClass()));
 				}
 				resultRow.add(cellValue);
 			}
@@ -243,16 +243,18 @@ public class Utils {
 
 			cells = row.cellIterator();
 			List<Object> resultRow = new LinkedList<>();
-			while (cells.hasNext()) {
-				cell = (HSSFCell) cells.next();
-				Object cellValue = safeUserModeCellValue(cell);
-				if (debug) {
-					System.err.println("Cell Value: " + cellValue.toString() + " "
-							+ cellValue.getClass());
+			if (cells.hasNext()) {
+				while (cells.hasNext()) {
+					cell = (HSSFCell) cells.next();
+					Object cellValue = safeUserModeCellValue(cell);
+					if (debug) {
+						System.err.println("Cell Value: " + cellValue.toString() + " "
+								+ cellValue.getClass());
+					}
+					resultRow.add(cellValue);
 				}
-				resultRow.add(cellValue);
+				result.add(resultRow.toArray());
 			}
-			result.add(resultRow.toArray());
 		}
 		return result;
 	}
@@ -309,6 +311,7 @@ public class Utils {
 		Iterator<Row> rows = sheet.rowIterator();
 		Iterator<org.apache.poi.ss.usermodel.Cell> cells;
 		while (rows.hasNext()) {
+
 			XSSFRow row = (XSSFRow) rows.next();
 			XSSFCell cell;
 			if (row.getRowNum() == 0) {
@@ -327,27 +330,35 @@ public class Utils {
 					}
 				}
 				// skip the header
+				if (debug) {
+					System.err.println("Skipped the header");
+				}
 				continue;
 			}
 			List<Object> resultRow = new LinkedList<>();
 			cells = row.cellIterator();
-			while (cells.hasNext()) {
-				cell = (XSSFCell) cells.next();
-				// TODO: column selection
-				/*
-				if (columns.get(cellColumn).equals("ID")) {
-					assertEquals(cell.getCellType(), XSSFCell.CELL_TYPE_NUMERIC);
-					// id = (int) cell.getNumericCellValue();
+			if (cells.hasNext()) {
+				while (cells.hasNext()) {
+					cell = (XSSFCell) cells.next();
+					// TODO: column selection
+					/*
+					if (columns.get(cellColumn).equals("ID")) {
+						assertEquals(cell.getCellType(), XSSFCell.CELL_TYPE_NUMERIC);
+						// id = (int) cell.getNumericCellValue();
+					}
+					*/
+					Object cellValue = safeUserModeCellValue(cell);
+					if (debug) {
+						System.err.println(String.format("Cell Value: \"%s\" %s",
+								cellValue.toString(), cellValue.getClass()));
+					}
+					resultRow.add(cellValue);
 				}
-				*/
-				Object cellValue = safeUserModeCellValue(cell);
-				if (debug) {
-					System.err.println("Cell Value: " + cellValue.toString() + " "
-							+ cellValue.getClass());
-				}
-				resultRow.add(cellValue);
+				result.add(resultRow.toArray());
 			}
-			result.add(resultRow.toArray());
+		}
+		if (debug) {
+			System.err.println("Loaded " + result.size() + " rows");
 		}
 		return result;
 	}

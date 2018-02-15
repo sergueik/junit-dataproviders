@@ -3,6 +3,7 @@ package com.github.sergueik.junitparams;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.runner.RunWith;
@@ -30,6 +31,12 @@ public class ExcelParametersProvider
 	// TODO: pass flag to skip / collect the first row through ExcelParameters
 	// interface annotation - may be an overkill
 	// private static Boolean skipFirstRow = false;
+
+	private boolean debug = true;
+
+	public void setDebug(boolean debug) {
+		this.debug = debug;
+	}
 
 	@Override
 	public void initialize(ExcelParameters parametersAnnotation,
@@ -106,7 +113,18 @@ public class ExcelParametersProvider
 	}
 
 	private Object[] createDataFromExcel2007(InputStream inputStream) {
+		if (debug) {
+			utils.setDebug(debug);
+		}
 		List<Object[]> result = utils.createDataFromExcel2007(inputStream);
+		if (debug) {
+			int cnt = 0;
+			for (Object[] row : result) {
+				System.err
+						.println(String.format("row %d : %s", cnt, Arrays.toString(row)));
+				cnt++;
+			}
+		}
 		return result.toArray();
 	}
 

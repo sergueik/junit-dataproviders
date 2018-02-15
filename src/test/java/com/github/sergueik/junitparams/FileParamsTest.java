@@ -94,11 +94,6 @@ import org.jopendocument.dom.spreadsheet.SpreadSheet;
 @RunWith(JUnitParamsRunner.class)
 public class FileParamsTest {
 
-	// TODO: handle java.lang.IllegalStateException:
-	// While trying to create object of class double could not find constructor
-	// with arguments matching (type-wise) the ones given in parameters.
-	// when the  Excel 2007 file is corrupt  by LibreOffice 6.x
-	// @Ignore
 	@Test
 	@ExcelParameters(filepath = "classpath:data_2007.xlsx", sheetName = "", type = "Excel 2007")
 	public void loadParamsFromEmbeddedExcel2007(double rowNum, String keyword,
