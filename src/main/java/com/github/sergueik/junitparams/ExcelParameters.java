@@ -21,4 +21,5 @@ public @interface ExcelParameters {
 	String sheetName() default "";
 	String type();
 	// TODO: parameter for column names
+	boolean debug() default false;
 }

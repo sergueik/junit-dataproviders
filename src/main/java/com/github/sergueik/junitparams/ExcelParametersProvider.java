@@ -27,16 +27,17 @@ public class ExcelParametersProvider
 	private String type;
 	private String sheetName;
 	private String columnNames = "*";
+	private boolean debug = false;
 
 	// TODO: pass flag to skip / collect the first row through ExcelParameters
 	// interface annotation - may be an overkill
 	// private static Boolean skipFirstRow = false;
 
-	private boolean debug = true;
 
-	public void setDebug(boolean debug) {
-		this.debug = debug;
-	}
+	// passed via ExcelParameters
+	// public void setDebug(boolean debug) {
+	// this.debug = debug;
+	// }
 
 	@Override
 	public void initialize(ExcelParameters parametersAnnotation,
@@ -46,6 +47,8 @@ public class ExcelParametersProvider
 		sheetName = parametersAnnotation.sheetName();
 		protocol = filepath.substring(0, filepath.indexOf(':'));
 		filename = filepath.substring(filepath.indexOf(':') + 1);
+		debug = parametersAnnotation.debug();
+		utils.setDebug(debug);
 		utils.setSheetName(sheetName);
 		utils.setColumnNames(columnNames);
 	}
@@ -113,9 +116,6 @@ public class ExcelParametersProvider
 	}
 
 	private Object[] createDataFromExcel2007(InputStream inputStream) {
-		if (debug) {
-			utils.setDebug(debug);
-		}
 		List<Object[]> result = utils.createDataFromExcel2007(inputStream);
 		if (debug) {
 			int cnt = 0;

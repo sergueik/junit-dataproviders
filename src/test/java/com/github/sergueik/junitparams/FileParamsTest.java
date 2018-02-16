@@ -95,7 +95,7 @@ import org.jopendocument.dom.spreadsheet.SpreadSheet;
 public class FileParamsTest {
 
 	@Test
-	@ExcelParameters(filepath = "classpath:data_2007.xlsx", sheetName = "", type = "Excel 2007")
+	@ExcelParameters(filepath = "classpath:data_2007.xlsx", sheetName = "", type = "Excel 2007", debug = true)
 	public void loadParamsFromEmbeddedExcel2007(double rowNum, String keyword,
 			double count) {
 		dataTest(keyword, count);
@@ -114,7 +114,8 @@ public class FileParamsTest {
 	}
 
 	// TODO: Fields?
-	// the rowNum column which is present in the spreadsheet is not used in the test 
+	// the rowNum column which is present in the spreadsheet is not used in the
+	// test
 	@Test
 	@ExcelParameters(filepath = "classpath:data_2003.xls", sheetName = "", type = "Excel 2003")
 	public void loadParamsFromEmbeddedExcel2003(double rowNum, String keyword,

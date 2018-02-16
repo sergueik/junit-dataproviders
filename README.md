@@ -7,6 +7,7 @@ This project exercises the following data providers with [JUnitParams](https://g
   * OpenOffice SpreadSheet (.ods) [example1](http://www.programcreek.com/java-api-examples/index.php?api=org.jopendocument.dom.spreadsheet.Sheet), [example 2](http://half-wit4u.blogspot.com/2011/05/read-openoffice-spreadsheet-ods.html)
   * Custom JSON [org.json.JSON](http://www.docjar.com/docs/api/org/json/JSONObject.html)
 
+  
 ### Usage
 
 * Create the Excel 2003, Excel 2007 or Open Office Spreadsheet with test parameters e.g.
@@ -64,13 +65,35 @@ public void loadParamsFromFileOpenOfficeSpreadsheel(double rowNum,
 }
 
 ```
-The provided implementation of
-```java
-public static class ExcelParametersProvider implements ParametersProvider<ExcelParameters>
-```
-reads all columns from the Excel 2007, Excel 2003 or Open Office spreadhsheet and executes the test for every row of data.
+The `ExcelParametersProvider` class will read all columns from the Excel 2007, Excel 2003 or Open Office spreadhsheet and executes the test for every row of data.
 The test developer is responsible for matching the test method argument types and the column data types.
-NOTE: attributes for sheet and column selection and for converting every column type to `String` is a W.I.P.
+
+To enable debug messages during the data loading, set the `debug` flag with `@ExcelParameters` attribute:
+```java
+@Test
+@ExcelParameters(filepath = "classpath:data_2007.xlsx", sheetName = "", type = "Excel 2007", debug = true)
+public void loadParamsFromEmbeddedExcel2007(double rowNum, String keyword,
+    double count) {
+  dataTest(keyword, count);
+}
+```
+
+this will show the following:
+```shell
+0 = A ID
+1 = B SEARCH
+2 = C COUNT
+Skipped the header
+Cell Value: "1.0" class java.lang.Double
+Cell Value: "junit" class java.lang.String
+Cell Value: "104.0" class java.lang.Double
+...
+Loaded 3 rows
+row 0 : [1.0, junit, 104.0]
+...
+```
+
+NOTE: attributes for column selection and for converting every column type to `String` is *work in progress*.
 
 ### Maven Central
 
@@ -80,7 +103,7 @@ Release versions status: [pending](https://issues.sonatype.org/browse/OSSRH-3677
 To use the snapshot version, add the following to `pom.xml`:
 ```xml
 <dependency>
-  <groupId>com.github.sergueik.jprotractor</groupId>
+  <groupId>com.github.sergueik.junitparams</groupId>
   <artifactId>junit_params</artifactId>
   <version>0.0.7-SNAPSHOT</version>
 </dependency>
@@ -93,13 +116,18 @@ To use the snapshot version, add the following to `pom.xml`:
 </repositories>
 ```
 
+### Note
+This project and the [testNg-DataProviders](https://github.com/sergueik/testng-dataproviders) - 
+have large code overlap for processing spreadsheets and only differ in test methdod annotation details.
+
+
 ### See Also
 
  * Using Excel/Open Office / JSON as [testNG data providers](https://github.com/sergueik/testng-dataproviders)
  * [testng dataProviders](http://testng.org/doc/documentation-main.html#parameters-dataproviders)
- * [TNG/junit-dataprovider](https://github.com/TNG/junit-dataprovider) - a TestNG-like dataprovider runner for JUnit and Allure.
+ * [TNG/junit-dataprovider](https://github.com/TNG/junit-dataprovider) - a different TestNG-like dataprovider runner for JUnit and Allure.
  * [Pragmatists/JunitParams](https://github.com/Pragmatists/JUnitParams)
- * [junit contribution: test "assumes" anotation to build inter test dependencies](https://github.com/junit-team/junit.contrib/tree/master/assumes)
- 
+ * [junit contribution: test "assumes" annotation to build inter test dependencies](https://github.com/junit-team/junit.contrib/tree/master/assumes)
+
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
