@@ -117,14 +117,14 @@ public class FileParamsTest {
 	// the rowNum column which is present in the spreadsheet is not used in the
 	// test
 	@Test
-	@ExcelParameters(filepath = "classpath:data_2003.xls", sheetName = "", type = "Excel 2003")
+	@ExcelParameters(filepath = "classpath:data_2003.xls", sheetName = "", type = "Excel 2003", debug = true)
 	public void loadParamsFromEmbeddedExcel2003(double rowNum, String keyword,
 			double count) {
 		dataTest(keyword, count);
 	}
 
 	@Test
-	@ExcelParameters(filepath = "file:src/test/resources/data_2003.xls", sheetName = "", type = "Excel 2003")
+	@ExcelParameters(filepath = "file:src/test/resources/data_2003.xls", sheetName = "", type = "Excel 2003", debug = true)
 	public void loadParamsFromFileExcel2003(double rowNum, String keyword,
 			double count) {
 		dataTest(keyword, count);
