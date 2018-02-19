@@ -27,12 +27,12 @@ public class ExcelParametersProvider
 	private String type;
 	private String sheetName;
 	private String columnNames = "*";
+	private boolean loadEmptyColumns = true;
 	private boolean debug = false;
 
 	// TODO: pass flag to skip / collect the first row through ExcelParameters
 	// interface annotation - may be an overkill
 	// private static Boolean skipFirstRow = false;
-
 
 	// passed via ExcelParameters
 	// public void setDebug(boolean debug) {
@@ -48,9 +48,11 @@ public class ExcelParametersProvider
 		protocol = filepath.substring(0, filepath.indexOf(':'));
 		filename = filepath.substring(filepath.indexOf(':') + 1);
 		debug = parametersAnnotation.debug();
+		loadEmptyColumns = parametersAnnotation.loadEmptyColumns();
 		utils.setDebug(debug);
 		utils.setSheetName(sheetName);
 		utils.setColumnNames(columnNames);
+		utils.setLoadEmptyColumns(loadEmptyColumns);
 	}
 
 	@Override
@@ -127,5 +129,4 @@ public class ExcelParametersProvider
 		}
 		return result.toArray();
 	}
-
 }

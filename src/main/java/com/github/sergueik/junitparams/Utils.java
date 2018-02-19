@@ -58,18 +58,23 @@ public class Utils {
 
 	private String sheetName;
 	private String columnNames = "*";
+	private boolean loadEmptyColumns = true;
 	private boolean debug = false;
 
-	public void setSheetName(String sheetName) {
-		this.sheetName = sheetName;
+	public void setLoadEmptyColumns(boolean value) {
+		this.loadEmptyColumns = value;
 	}
 
-	public void setColumnNames(String columnNames) {
-		this.columnNames = columnNames;
+	public void setSheetName(String value) {
+		this.sheetName = value;
 	}
 
-	public void setDebug(boolean debug) {
-		this.debug = debug;
+	public void setColumnNames(String value) {
+		this.columnNames = value;
+	}
+
+	public void setDebug(boolean value) {
+		this.debug = value;
 	}
 
 	public static String resolveEnvVars(String input) {
@@ -142,34 +147,40 @@ public class Utils {
 		for (int rowIndex = 1; rowIndex < rowCount && StringUtils.isNotBlank(sheet
 				.getImmutableCellAt(0, rowIndex).getValue().toString()); rowIndex++) {
 			List<Object> resultRow = new LinkedList<>();
-			for (int columnIndex = 0; columnIndex < columnCount && StringUtils
-					.isNotBlank(sheet.getImmutableCellAt(columnIndex, rowIndex).getValue()
-							.toString()); columnIndex++) {
+
+			// TODO: add loadEmptyColumns property
+			for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
 				cell = sheet.getImmutableCellAt(columnIndex, rowIndex);
-				// TODO: column selection
-				/*
-				String cellName = CellReference.convertNumToColString(columnIndex);
-				if (columns.get(cellName).equals("COUNT")) {
-					assertEquals(cell.getValueType(), ODValueType.FLOAT);
-					expected_count = Double.valueOf(cell.getValue().toString());
+				if (StringUtils.isNotBlank(cell.getValue().toString())) {
+					// TODO: column selection
+					/*
+					String cellName = CellReference.convertNumToColString(columnIndex);
+					if (columns.get(cellName).equals("COUNT")) {
+						assertEquals(cell.getValueType(), ODValueType.FLOAT);
+						expected_count = Double.valueOf(cell.getValue().toString());
+					}
+					if (columns.get(cellName).equals("SEARCH")) {
+						assertEquals(cell.getValueType(), ODValueType.STRING);
+						search_keyword = cell.getTextValue();
+					}
+					if (columns.get(cellName).equals("ID")) {
+						System.err.println("Column: " + columns.get(cellName));
+						assertEquals(cell.getValueType(), ODValueType.FLOAT);
+						id = Integer.decode(cell.getValue().toString());
+					}
+					*/
+					@SuppressWarnings("unchecked")
+					Object cellValue = safeOOCellValue(cell);
+					if (debug) {
+						System.err.println(String.format("Cell Value: \"%s\" %s",
+								cellValue.toString(), cellValue.getClass()));
+					}
+					resultRow.add(cellValue);
+				} else {
+					if (loadEmptyColumns) {
+						resultRow.add(null);
+					}
 				}
-				if (columns.get(cellName).equals("SEARCH")) {
-					assertEquals(cell.getValueType(), ODValueType.STRING);
-					search_keyword = cell.getTextValue();
-				}
-				if (columns.get(cellName).equals("ID")) {
-					System.err.println("Column: " + columns.get(cellName));
-					assertEquals(cell.getValueType(), ODValueType.FLOAT);
-					id = Integer.decode(cell.getValue().toString());
-				}
-				*/
-				@SuppressWarnings("unchecked")
-				Object cellValue = safeOOCellValue(cell);
-				if (debug) {
-					System.err.println(String.format("Cell Value: \"%s\" %s",
-							cellValue.toString(), cellValue.getClass()));
-				}
-				resultRow.add(cellValue);
 			}
 			result.add(resultRow.toArray());
 		}

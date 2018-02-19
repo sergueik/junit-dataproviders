@@ -20,6 +20,7 @@ public @interface ExcelParameters {
 	String filepath();
 	String sheetName() default "";
 	String type();
+	boolean loadEmptyColumns() default false; // NOTE: may lead to NPE
 	// TODO: parameter for column names
 	boolean debug() default false;
 }
