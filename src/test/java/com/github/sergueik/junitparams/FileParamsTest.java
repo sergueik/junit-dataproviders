@@ -208,7 +208,6 @@ public class FileParamsTest {
 		}
 	}
 
-	@Ignore
 	@Test
 	@Parameters(source = ParamSetProvider.class)
 	public void paramSetFromClassTest(String str, Integer val) {
@@ -222,7 +221,6 @@ public class FileParamsTest {
 		}
 	}
 
-	@Ignore
 	@Test
 	@CustomParameters(provider = MethodNameReader.class)
 	public void getDataMethodName(String name) throws Exception {

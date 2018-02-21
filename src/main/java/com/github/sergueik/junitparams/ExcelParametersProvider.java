@@ -27,7 +27,7 @@ public class ExcelParametersProvider
 	private String type;
 	private String sheetName;
 	private String columnNames = "*";
-	private boolean loadEmptyColumns = true;
+	private boolean loadEmptyColumns = false;
 	private boolean debug = false;
 
 	// TODO: pass flag to skip / collect the first row through ExcelParameters

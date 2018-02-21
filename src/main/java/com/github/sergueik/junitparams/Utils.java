@@ -122,7 +122,8 @@ public class Utils {
 		int rowCount = sheet.getRowCount();
 		@SuppressWarnings("rawtypes")
 		Cell cell = null;
-		for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
+		for (int columnIndex = 0; columnIndex < columns.keySet()
+				.size(); columnIndex++) {
 			String columnHeader = sheet.getImmutableCellAt(columnIndex, 0).getValue()
 					.toString();
 			if (StringUtils.isBlank(columnHeader)) {
@@ -149,7 +150,6 @@ public class Utils {
 				.getImmutableCellAt(0, rowIndex).getValue().toString()); rowIndex++) {
 			List<Object> resultRow = new LinkedList<>();
 
-			// TODO: add loadEmptyColumns property
 			for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
 				cell = sheet.getImmutableCellAt(columnIndex, rowIndex);
 				if (StringUtils.isNotBlank(cell.getValue().toString())) {
@@ -353,7 +353,6 @@ public class Utils {
 	public List<Object[]> createDataFromExcel2007(XSSFWorkbook workBook) {
 
 		// TODO
-		loadEmptyColumns = false;
 		List<Object[]> result = new LinkedList<>();
 		Map<String, String> columns = new HashMap<>();
 		XSSFSheet sheet = (sheetName.isEmpty()) ? workBook.getSheetAt(0)
