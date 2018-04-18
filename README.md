@@ -120,6 +120,11 @@ To use the snapshot version, add the following to `pom.xml`:
 This project and the [testNg-DataProviders](https://github.com/sergueik/testng-dataproviders) - 
 have large code overlap for processing spreadsheets and only differ in test methdod annotation details.
 
+The Google Spreadsheet API portion of the project is the work in progress and ifin the absence of `client_secret.json` (not checked in) some tests fail please simply remove the
+```shell
+src/{main,test}/java/com/github/sergueik/utils
+```
+
 
 ### See Also
 
@@ -128,6 +133,7 @@ have large code overlap for processing spreadsheets and only differ in test meth
  * [TNG/junit-dataprovider](https://github.com/TNG/junit-dataprovider) - a different TestNG-like dataprovider runner for JUnit and Allure.
  * [Pragmatists/JunitParams](https://github.com/Pragmatists/JUnitParams)
  * [junit contribution: test "assumes" annotation to build inter test dependencies](https://github.com/junit-team/junit.contrib/tree/master/assumes)
+ * [how to use Google Sheets API to read data from Spreadsheet](http://www.seleniumeasy.com/selenium-tutorials/read-data-from-google-spreadsheet-using-api) 
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)

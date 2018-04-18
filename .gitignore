@@ -15,4 +15,4 @@
 *.unc-backup~
 *.uncrustify
 *~
-
+**/client_secret.json
