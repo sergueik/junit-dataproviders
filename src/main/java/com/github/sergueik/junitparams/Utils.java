@@ -108,6 +108,7 @@ public class Utils {
 		return value;
 	}
 
+	// https://www.jopendocument.org/docs/org/jopendocument/dom/spreadsheet/Table.html
 	public List<Object[]> createDataFromOpenOfficeSpreadsheet(
 			SpreadSheet spreadSheet) {
 		HashMap<String, String> columns = new HashMap<>();
@@ -122,6 +123,7 @@ public class Utils {
 		int rowCount = sheet.getRowCount();
 		@SuppressWarnings("rawtypes")
 		Cell cell = null;
+
 		for (int columnIndex = 0; columnIndex < columns.keySet()
 				.size(); columnIndex++) {
 			String columnHeader = sheet.getImmutableCellAt(columnIndex, 0).getValue()
@@ -145,13 +147,15 @@ public class Utils {
 				System.err.println("Range = " + rangeNamesIterator.next());
 			}
 		}
-		// isCellBlank has protected access in Table
+		// NOTE: org.jopendocument.dom.spreadsheet.Table.isCellBlank(columnIndex,
+		// rowIndex, false) method is protected
 		for (int rowIndex = 1; rowIndex < rowCount && StringUtils.isNotBlank(sheet
 				.getImmutableCellAt(0, rowIndex).getValue().toString()); rowIndex++) {
 			List<Object> resultRow = new LinkedList<>();
 
 			for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
 				cell = sheet.getImmutableCellAt(columnIndex, rowIndex);
+
 				if (StringUtils.isNotBlank(cell.getValue().toString())) {
 					// TODO: column selection
 					/*
@@ -223,16 +227,67 @@ public class Utils {
 		List<Object[]> result = new LinkedList<>();
 
 		Iterator<org.apache.poi.ss.usermodel.Cell> cells;
+		HSSFRow row;
+		HSSFCell cell;
+		String columnHeader = null;
+		String columnName = null;
+		Object cellValue = null;
+
 		Map<String, String> columnHeaders = new HashMap<>();
 		HSSFSheet sheet = (sheetName.isEmpty()) ? workBook.getSheetAt(0)
 				: workBook.getSheet(sheetName);
 		if (debug) {
-			System.err.println("Reading Excel 2003 sheet : " + sheet.getSheetName());
+			System.err.println("createDataFromExcel2003: Reading Excel 2003 sheet : "
+					+ sheet.getSheetName());
 		}
+		// alternatively compute index boundaries explicitly
+		// https://poi.apache.org/apidocs/org/apache/poi/xssf/usermodel/
+		// the commented code fragment below exercises that
+		// NOTE: only applicable to XSS, HSS (?), not collection-friendly
+		// and does not handle sparse sheets with empty cells
+		/*
+		row = sheet.getRow(sheet.getFirstRowNum());
+		for (int columnIndex = row.getFirstCellNum(); columnIndex < row
+				.getLastCellNum(); columnIndex++) {
+			cell = row.getCell(columnIndex);
+			columnHeader = cell.getStringCellValue();
+			columnName = CellReference.convertNumToColString(cell.getColumnIndex());
+			// columnHeaders.put(columnName, columnHeader);
+			if (debug) {
+				System.err.println(
+						String.format("createDataFromExcel2003: Header[%d](%s) = %s",
+								columnIndex, columnName, columnHeader));
+			}
+		}
+		for (int rowIndex = sheet.getFirstRowNum() + 1; rowIndex <= sheet
+				.getLastRowNum(); rowIndex++) {
+			row = sheet.getRow(rowIndex);
+			List<Object> resultRow = new LinkedList<>();
+			for (int columnIndex = row.getFirstCellNum(); columnIndex <= row
+					.getLastCellNum(); columnIndex++) {
+				cell = row.getCell(columnIndex);
+				if (cell != null) {
+					cellValue = safeUserModeCellValue(cell);
+					if (debug) {
+						try {
+							System.err.println(String.format(
+									"createDataFromExcel2003: Loading Cell[%d] = %s %s",
+									columnIndex, cellValue.toString(), cellValue.getClass()));
+						} catch (NullPointerException e) {
+							System.err
+									.println("Exception loading cell " + cell.getColumnIndex());
+						}
+					}
+					resultRow.add(cellValue);
+				}
+			}
+			result.add(resultRow.toArray());
+		}
+		return result;
+		*/
 		Iterator<Row> rows = sheet.rowIterator();
 		while (rows.hasNext()) {
-			HSSFRow row = (HSSFRow) rows.next();
-			HSSFCell cell;
+			row = (HSSFRow) rows.next();
 
 			if (row.getRowNum() == 0) {
 				cells = row.cellIterator();
@@ -240,8 +295,8 @@ public class Utils {
 
 					cell = (HSSFCell) cells.next();
 					int columnIndex = cell.getColumnIndex();
-					String columnHeader = cell.getStringCellValue();
-					String columnName = CellReference
+					columnHeader = cell.getStringCellValue();
+					columnName = CellReference
 							.convertNumToColString(cell.getColumnIndex());
 					columnHeaders.put(columnName, columnHeader);
 					if (debug) {
@@ -258,6 +313,8 @@ public class Utils {
 
 			cells = row.cellIterator();
 			if (cells.hasNext()) {
+				// NOTE: Local variable resultRow defined in an enclosing scope must be
+				// final or effectively final
 				List<Object> resultRow = new LinkedList<>();
 				if (loadEmptyColumns) {
 					// fill the Array with nulls
@@ -267,7 +324,7 @@ public class Utils {
 					while (cells.hasNext()) {
 						cell = (HSSFCell) cells.next();
 						if (cell != null) {
-							Object cellValue = safeUserModeCellValue(cell);
+							cellValue = safeUserModeCellValue(cell);
 							if (debug) {
 								try {
 									System.err.println(String.format("Loading Cell[%d] = %s %s",
@@ -286,7 +343,7 @@ public class Utils {
 					while (cells.hasNext()) {
 						cell = (HSSFCell) cells.next();
 						if (cell != null) {
-							Object cellValue = safeUserModeCellValue(cell);
+							cellValue = safeUserModeCellValue(cell);
 							if (debug) {
 								try {
 									System.err.println(String.format("Loading Cell[%d] = %s %s",
