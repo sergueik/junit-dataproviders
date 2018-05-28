@@ -120,9 +120,12 @@ To use the snapshot version, add the following to `pom.xml`:
 This project and the [testNg-DataProviders](https://github.com/sergueik/testng-dataproviders) -
 have large code overlap for processing spreadsheets and only differ in test methdod annotation details.
 
+### TODO
+Support `org.junit.runners.Parameterized` of [Junit](https://github.com/junit-team/junit4/blob/master/src/main/java/org/junit/runners/Parameterized.java). See intro [JUnit - Parameterized Test](https://www.tutorialspoint.com/junit/junit_parameterized_test.htm)
+
 ### See Also
 
- * Using Excel/Open Office / JSON as [testNG data providers](https://github.com/sergueik/testng-dataproviders)
+ * Using Excel,Open Office,JSON as [testNG data providers](https://github.com/sergueik/testng-dataproviders)
  * [testng dataProviders](http://testng.org/doc/documentation-main.html#parameters-dataproviders)
  * [TNG/junit-dataprovider](https://github.com/TNG/junit-dataprovider) - a different TestNG-like dataprovider runner for JUnit and Allure.
  * [Pragmatists/JunitParams](https://github.com/Pragmatists/JUnitParams)
