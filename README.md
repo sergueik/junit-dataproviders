@@ -130,6 +130,7 @@ Support `org.junit.runners.Parameterized` of [Junit](https://github.com/junit-te
  * [TNG/junit-dataprovider](https://github.com/TNG/junit-dataprovider) - a different TestNG-like dataprovider runner for JUnit and Allure.
  * [Pragmatists/JunitParams](https://github.com/Pragmatists/JUnitParams)
  * [junit contribution: test "assumes" annotation to build inter test dependencies](https://github.com/junit-team/junit.contrib/tree/master/assumes)
+ * [XLS Test - Excel testing library](https://github.com/codeborne/xls-test)
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
