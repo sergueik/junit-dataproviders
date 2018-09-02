@@ -1,6 +1,6 @@
 package com.github.sergueik.junitparams;
 
-import static org.assertj.core.api.Assertions.assertThat;
+// import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 import org.junit.AfterClass;
@@ -9,18 +9,20 @@ import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.model.FrameworkMethod;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import static org.junit.Assume.assumeFalse;
 import static org.junit.Assume.assumeTrue;
+
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.core.AnyOf.anyOf;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -211,8 +213,8 @@ public class FileParamsTest {
 	@Test
 	@Parameters(source = ParamSetProvider.class)
 	public void paramSetFromClassTest(String str, Integer val) {
-		assertThat(str).isEqualTo("a");
-		assertThat(val).isEqualTo(1);
+		assertThat(str, is(equalTo("a")));
+		assertThat(val, is(equalTo(1)));
 	}
 
 	public static class ParamSetProvider {
@@ -224,7 +226,7 @@ public class FileParamsTest {
 	@Test
 	@CustomParameters(provider = MethodNameReader.class)
 	public void getDataMethodName(String name) throws Exception {
-		assertThat(name).isEqualTo("getDataMethodName");
+		assertThat(name, equalTo("getDataMethodName"));
 	}
 
 	public static class MethodNameReader
@@ -250,7 +252,7 @@ public class FileParamsTest {
 						keyword, (int) count));
 		assertThat("search", keyword, anyOf(is("junit"), is("testng"), is("spock"),
 				is("whatever"), is("there is no such thing")));
-		assertThat((int) count).isGreaterThan(0);
+		assertThat((int) count, greaterThan(0));
 	}
 
 	private void dataTest(String strCount, String keyword) {
@@ -258,7 +260,7 @@ public class FileParamsTest {
 		assertThat("search", keyword, anyOf(is("junit"), is("testng"), is("spock"),
 				is("whatever"), is("there is no such thing")));
 		double count = Double.valueOf(strCount);
-		assertThat((int) count).isGreaterThan(0);
+		assertThat((int) count, greaterThan(0));
 		System.err.println(
 				String.format("Search keyword:'%s'\tExpected minimum link count: %s",
 						keyword, strCount));

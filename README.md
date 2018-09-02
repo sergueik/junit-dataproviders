@@ -7,7 +7,6 @@ This project exercises the following data providers with [JUnitParams](https://g
   * OpenOffice SpreadSheet (.ods) [example1](http://www.programcreek.com/java-api-examples/index.php?api=org.jopendocument.dom.spreadsheet.Sheet), [example 2](http://half-wit4u.blogspot.com/2011/05/read-openoffice-spreadsheet-ods.html)
   * Custom JSON [org.json.JSON](http://www.docjar.com/docs/api/org/json/JSONObject.html)
 
-
 ### Usage
 
 * Create the Excel 2003, Excel 2007 or Open Office Spreadsheet with test parameters e.g.
@@ -131,6 +130,8 @@ Support `org.junit.runners.Parameterized` of [Junit](https://github.com/junit-te
  * [Pragmatists/JunitParams](https://github.com/Pragmatists/JUnitParams)
  * [junit contribution: test "assumes" annotation to build inter test dependencies](https://github.com/junit-team/junit.contrib/tree/master/assumes)
  * [XLS Test - Excel testing library](https://github.com/codeborne/xls-test)
-
+ * [Selenium data driven testing with Excel](https://www.swtestacademy.com/data-driven-excel-selenium/)
+ * [using google spreadsheet with java](https://www.baeldung.com/google-sheets-java-client) 
+ 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
