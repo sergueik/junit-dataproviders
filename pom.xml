@@ -25,7 +25,7 @@
     <jUnitParams.version>1.1.1</jUnitParams.version>
     <maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
     <poi.version>3.17</poi.version>
-    <poiooxml.version>3.17</poiooxml.version>
+    <poiooxml.version>${poi.version}</poiooxml.version>
   </properties>
   <dependencies>
     <dependency>
@@ -203,4 +203,13 @@
       <url>https://oss.sonatype.org/content/repositories/snapshots</url>
     </repository>
   </distributionManagement>
+  <profiles>
+    <profile>
+      <id>poi40</id>
+      <properties>
+        <poi.version>4.0.0</poi.version>
+        <poiooxml.version>${poi.version}</poiooxml.version>
+      </properties>
+    </profile>
+  </profiles>
 </project>

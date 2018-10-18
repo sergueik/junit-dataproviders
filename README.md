@@ -122,6 +122,12 @@ have large code overlap for processing spreadsheets and only differ in test meth
 ### TODO
 Support `org.junit.runners.Parameterized` of [Junit](https://github.com/junit-team/junit4/blob/master/src/main/java/org/junit/runners/Parameterized.java). See intro [JUnit - Parameterized Test](https://www.tutorialspoint.com/junit/junit_parameterized_test.htm)
 
+### Apache POI compatibility
+
+  * The default version of the supported Apache POI is 3.17.
+  * Project  can be compiled with release of Apache POI 4.0.0 with the help of profile `poi40`.
+  * Older versions of the package require minor code refactoring. Note that you may also have to clear the other versions of poi and poi-ooxml jars from maven cache '~/.m2/repository'
+  * Creating branches and tags is a work in progress.
 ### See Also
 
  * Using Excel,Open Office,JSON as [testNG data providers](https://github.com/sergueik/testng-dataproviders)
@@ -131,7 +137,7 @@ Support `org.junit.runners.Parameterized` of [Junit](https://github.com/junit-te
  * [junit contribution: test "assumes" annotation to build inter test dependencies](https://github.com/junit-team/junit.contrib/tree/master/assumes)
  * [XLS Test - Excel testing library](https://github.com/codeborne/xls-test)
  * [Selenium data driven testing with Excel](https://www.swtestacademy.com/data-driven-excel-selenium/)
- * [using google spreadsheet with java](https://www.baeldung.com/google-sheets-java-client) 
- 
+ * [using google spreadsheet with java](https://www.baeldung.com/google-sheets-java-client)
+
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
