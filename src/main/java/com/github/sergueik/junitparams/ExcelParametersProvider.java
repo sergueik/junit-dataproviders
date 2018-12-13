@@ -55,17 +55,7 @@ public class ExcelParametersProvider
 		debug = parametersAnnotation.debug();
 		if (testEnvironment != null && testEnvironment != "") {
 			if (protocol.matches("file")) {
-				if (debug) {
-					System.err.print(String.format("Amending the %s with %s", filename,
-							testEnvironment));
-				}
-			}
-			// Inject the directory into the file path
-			String updatedFilename = filename.replaceAll("^(.*)/([^/]+)$",
-					String.format("$1/%s/$2", testEnvironment));
-			filename = updatedFilename;
-			if (debug) {
-				System.err.println(String.format(" => %s", filename));
+				filename = amendFileName(filename);
 			}
 		}
 		loadEmptyColumns = parametersAnnotation.loadEmptyColumns();
@@ -148,5 +138,19 @@ public class ExcelParametersProvider
 			}
 		}
 		return result.toArray();
+	}
+
+	private String amendFileName(String filename) {
+		if (debug) {
+			System.err.print(
+					String.format("Amending the %s with %s", filename, testEnvironment));
+		}
+		// Inject the directory into the file path
+		String updatedFilename = filename.replaceAll("^(.*)/([^/]+)$",
+				String.format("$1/%s/$2", testEnvironment));
+		if (debug) {
+			System.err.println(String.format(" => %s", updatedFilename));
+		}
+		return updatedFilename;
 	}
 }

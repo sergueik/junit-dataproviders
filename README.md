@@ -151,10 +151,9 @@ Compilation failure:
 ```
 so it likely not doable.
 
-However it is quite easy to allow such flexibility in the data provider class `ExcelParametersProvider` itself by adding an extra class variable named  e.g. `testEnvironment` that would receive its value from e.g. the environment variable named `TEST_ENVIRONMENT` that, when set, would override the data file paths
-that in were specified through the `file://` protocol
-and which therefore refer to the system files (not to data embedded in the jar):
-so  the regular test data provider annotation
+However it is quite easy to implement this functionality in the data provider class `ExcelParametersProvider` itself by adding an extra class variable named e.g. `testEnvironment` that would receive its value from e.g. the environment variable named `TEST_ENVIRONMENT` and, when non-blank, would override the data file paths which were specified through the `file://` protocol prefix
+and which therefore referred to the system file paths (not to data embedded inside the jar):
+After this is done the original test data provider annotation
 ```java
   @Test
   @ExcelParameters(filepath = "file:src/test/resources/data.xlsx")
@@ -166,20 +165,18 @@ so  the regular test data provider annotation
     .println(String.format("keyword: %s , cound : %d ", keyword, count));
     }
   }
-
 ```
-in the presence of the environment `TEST_ENVIRONMENT` with the value `dev` will make it read parameters of the test from `src/test/resources/dev/data.xlsx` dather then `src/test/resources/data.xlsx`.
+combined with environment `TEST_ENVIRONMENT` set to e.g. `dev` will make dataprovider read the test data from `src/test/resources/dev/data.xlsx` rather then `src/test/resources/data.xlsx`.
 
 It is implemented directly in the `ExcelParametersProvider` provider in a very basic fashion as shown below:
 
 ```java
-public class ExcelParametersProvider
-implements ParametersProvider<ExcelParameters> {
+public class ExcelParametersProvider implements ParametersProvider<ExcelParameters> {
 
-private final static String testEnvironment = (System.getenv("TEST_ENVIRONMENT") != null) ? System.getenv("TEST_ENVIRONMENT") : "";
+  private final static String testEnvironment = (System.getenv("TEST_ENVIRONMENT") != null) ? System.getenv("TEST_ENVIRONMENT") : "";
 ```
 
-and take it into account to redefine the inputs during initialization:
+and
 
 ```java
   public void initialize(ExcelParameters parametersAnnotation, FrameworkMethod frameworkMethod) {
@@ -201,15 +198,17 @@ and take it into account to redefine the inputs during initialization:
           String.format("$1/%s/$2", testEnvironment));
       filename = updatedFilename;
     }
+    // ... rest of initialization 
+  }
 ```
 
-therefore the test
+Running the test in debug mode
 ```cmd
 copy src\test\resources\data.* src\test\resources\dev\
 set  TEST_ENVIRONMENT=dev
 mvn test
 ```
-works as expectedi (in the example we were using Open Office data file `data.ods`):
+works just as expected (in the example we were logging the Open Office data file `data.ods` processing):
 
 ```cmd
 Amending the src/test/resources/data.ods with dev
@@ -219,7 +218,7 @@ Cell Value: "junit" class java.lang.String
 Cell Value: "202.0" class java.lang.Double
 Cell Value: "2.0" class java.lang.Double
 ```
-One can easily make this behavior optional, turn the `TEST_ENVIRONMENT` envirnmant name a separate parameter or switch to store definitions of environment specifics into the property file (this is work in progress). Similar changes will be soon available to
+One can easily make this behavior optional, turn the `TEST_ENVIRONMENT` envirnmant name itself a separate parameter or switch to store definitions of environment specifics in the property file (this is work in progress). Similar changes will be soon available to
 [testNg-DataProviders](https://github.com/sergueik/testng-dataproviders).
 
 ### Note

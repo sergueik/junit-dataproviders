@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.sergueik.junitparams</groupId>
   <artifactId>junit_params</artifactId>
-  <version>0.0.9-SNAPSHOT</version>
+  <version>0.0.10-SNAPSHOT</version>
   <developers>
     <developer>
       <name>Serguei Kouzmine</name>
