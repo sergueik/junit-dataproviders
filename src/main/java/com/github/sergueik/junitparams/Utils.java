@@ -117,7 +117,7 @@ public class Utils {
 				: spreadSheet.getSheet(sheetName);
 		if (debug) {
 			System.err
-					.println("Reading Open Office Spreadsheet : " + sheet.getName());
+					.println("Reading Open Office Spreadsheet: " + sheet.getName());
 		}
 		int columnCount = sheet.getColumnCount();
 		int rowCount = sheet.getRowCount();
@@ -212,6 +212,10 @@ public class Utils {
 		List<Object[]> result = new LinkedList<>();
 
 		try {
+			if (debug) {
+				System.err
+						.println("Reading Open Office file: " + filePath);
+			}
 			File file = new File(filePath);
 			SpreadSheet spreadSheet = SpreadSheet.createFromFile(file);
 			result = createDataFromOpenOfficeSpreadsheet(spreadSheet);
@@ -237,7 +241,7 @@ public class Utils {
 		HSSFSheet sheet = (sheetName.isEmpty()) ? workBook.getSheetAt(0)
 				: workBook.getSheet(sheetName);
 		if (debug) {
-			System.err.println("createDataFromExcel2003: Reading Excel 2003 sheet : "
+			System.err.println("createDataFromExcel2003: Reading Excel 2003 sheet: "
 					+ sheet.getSheetName());
 		}
 		// alternatively compute index boundaries explicitly

@@ -44,6 +44,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -61,19 +62,19 @@ import org.json.JSONObject;
 
 import org.apache.commons.lang3.StringUtils;
 
-//OLE2 Office Documents
+// OLE2 Office Documents
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import org.apache.poi.ss.usermodel.Row;
-// conflicts with org.jopendocument.dom.spreadsheet.Cell;
+// NOTE: conflicts with org.jopendocument.dom.spreadsheet.Cell;
 // import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.usermodel.CellType;
 
-//Office 2007+ XML
+// Office 2007+ XML
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -88,6 +89,8 @@ import org.jopendocument.dom.spreadsheet.Cell;
 import org.jopendocument.dom.spreadsheet.Sheet;
 import org.jopendocument.dom.spreadsheet.SpreadSheet;
 
+import com.github.sergueik.junitparams.ParamDataUtils;
+
 /**
  * Selected test scenarios annotated for ExcelParametersProvider junitparams data provider and JSON mapper
  * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
@@ -95,6 +98,17 @@ import org.jopendocument.dom.spreadsheet.SpreadSheet;
 
 @RunWith(JUnitParamsRunner.class)
 public class FileParamsTest {
+
+	// Not doable this way:
+	// Compilation failure:
+	// [ERROR] FileParamsTest.java:
+	// element value must be a constant expression
+
+	// private final String jsonDataPath = ParamDataUtils.param();
+	// private final static String testDataPath = ParamDataUtils.testDataPath;
+
+	private final String jsonDataPath = "file:src/test/resources/data.json";
+	private final static String testDataPath = "file:src/test/resources/data.ods";
 
 	@Test
 	@ExcelParameters(filepath = "classpath:data_2007.xlsx", sheetName = "", type = "Excel 2007", debug = true)
@@ -134,14 +148,21 @@ public class FileParamsTest {
 
 	@Test
 	@ExcelParameters(filepath = "classpath:data.ods", sheetName = "", type = "OpenOffice Spreadsheet")
-	public void loadParamsFromEmbeddedOpenOfficeSpreadsheel(double rowNum,
+	public void loadParamsFromEmbeddedOpenOfficeSpreadsheet(double rowNum,
 			String keyword, double count) {
 		dataTest(keyword, count);
 	}
 
 	@Test
-	@ExcelParameters(filepath = "file:src/test/resources/data.ods", sheetName = "", type = "OpenOffice Spreadsheet")
-	public void loadParamsFromFileOpenOfficeSpreadsheel(double rowNum,
+	@ExcelParameters(filepath = testDataPath, sheetName = "", type = "OpenOffice Spreadsheet", debug = true)
+	public void loadParamsFromFileOpenOfficeSpreadsheetUsingVariable(
+			double rowNum, String keyword, double count) {
+		dataTest(keyword, count);
+	}
+
+	@Test
+	@ExcelParameters(filepath = "file:src/test/resources/data.ods", sheetName = "", type = "OpenOffice Spreadsheet", debug = true)
+	public void loadParamsFromFileOpenOfficeSpreadsheet(double rowNum,
 			String keyword, double count) {
 		dataTest(keyword, count);
 	}
@@ -159,8 +180,16 @@ public class FileParamsTest {
 	// org.json.JSONException: JSONObject["test"] not a string.
 	@Ignore
 	@Test
-	@FileParameters(value = "file:src/test/resources/data.json", mapper = JSONMapper.class)
+	@FileParameters(value = jsonDataPath /* "file:src/test/resources/data.json"*/ , mapper = JSONMapper.class)
 	public void loadParamsFromJSONFile(String strCount, String strKeyword) {
+		dataTest(strCount, strKeyword);
+	}
+
+	@Ignore
+	@Test
+	@FileParameters(value = jsonDataPath, mapper = JSONMapper.class)
+	public void loadParamsFromJSONFileFromStaticValue(String strCount,
+			String strKeyword) {
 		dataTest(strCount, strKeyword);
 	}
 

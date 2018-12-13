@@ -7,6 +7,9 @@ This project exercises the following data providers with [JUnitParams](https://g
   * OpenOffice SpreadSheet (.ods) [example1](http://www.programcreek.com/java-api-examples/index.php?api=org.jopendocument.dom.spreadsheet.Sheet), [example 2](http://half-wit4u.blogspot.com/2011/05/read-openoffice-spreadsheet-ods.html)
   * Custom JSON [org.json.JSON](http://www.docjar.com/docs/api/org/json/JSONObject.html)
 
+Note: Unlike core Data Providers in Junit (5?) and TestNg this provider features runtime-flexible data file paths enabling one running the jar
+different inputs e.g. for __DEV__ / __TEST__ / __UAT__ environments. See details in __Extra Features__ section below
+
 ### Usage
 
 * Create the Excel 2003, Excel 2007 or Open Office Spreadsheet with test parameters e.g.
@@ -114,6 +117,118 @@ To use the snapshot version, add the following to `pom.xml`:
   </repository>
 </repositories>
 ```
+
+### Extra Features
+
+Core TestNG or Junit parameter
+annotations
+[block](https://stackoverflow.com/questions/16509065/get-rid-of-the-value-for-annotation-attribute-must-be-a-constant-expression-me) one from redefining the dataprovider attributes like data source:
+
+```java
+public static final String testDataPath = "file:src/test/resources/data.json";
+@Test
+	@ExcelParameters(filepath = testDataPath, sheetName = "", type = "OpenOffice Spreadsheet", debug = true)
+	public void loadParamsFromFileOpenOfficeSpreadsheetUsingVariable(
+			double rowNum, String keyword, double count) {
+		dataTest(keyword, count);
+	}
+```
+In the above, the only allowed rhs for the `testDataPath` is `String` or `int` primitive type,
+even declaring the same (pseudo-const) data in another class:
+
+```java
+public class ParamDataUtils {
+	public final static String testDataPath = "file:src/test/resources/data.json";
+}
+```
+```java
+public class FileParamsTest {
+
+	// private final String jsonDataPath = ParamDataUtils.param();
+	// private final static String testDataPath = ParamDataUtils.testDataPath;
+```
+will fail to compile:
+```sh
+Compilation failure:
+[ERROR] FileParamsTest.java: element value must be a constant expression
+```
+so it likely not doable.
+
+To allow this flexibility the data provider class `ExcelParametersProvider` itself has added
+support for the environment variable named `TEST_ENVIRONMENT` that, when set, makes
+it amend the data filepaths that are specified through the `file://` protocol
+and which therefore refer to the system files (not to data embedded in the  jar):
+so setting the test data provider to
+```java
+@Test
+	@ExcelParameters(filepath = "file:src/test/resources/data_2007.xlsx", sheetName = "", type = "Excel 2007")
+	public void loadParamsFromFileExcel2007(double rowNum, String keyword,
+			double count) {
+		try {
+			dataTest(keyword, count);
+		} catch (IllegalStateException e) {
+			System.err
+					.println(String.format("keyword: %s , cound : %d ", keyword, count));
+		}
+	}
+
+```
+and `TEST_ENVIRONMENT` to `dev` will make it read parameters of the test from `src/test/resources/dev`.
+
+It is implemented directly in the `ExcelParametersProvider` provider in a very basic fashion like shown below:
+
+```java
+public class ExcelParametersProvider
+		implements ParametersProvider<ExcelParameters> {
+
+	private final static String testEnvironment = (System
+			.getenv("TEST_ENVIRONMENT") != null) ? System.getenv("TEST_ENVIRONMENT")
+					: "";
+```
+
+and take it into account to redefine the inputs during the initialization:
+
+```java
+public void initialize(ExcelParameters parametersAnnotation,
+			FrameworkMethod frameworkMethod) {
+		filepath = parametersAnnotation.filepath();
+		type = parametersAnnotation.type();
+		sheetName = parametersAnnotation.sheetName();
+		protocol = filepath.substring(0, filepath.indexOf(':'));
+		filename = filepath.substring(filepath.indexOf(':') + 1);
+		debug = parametersAnnotation.debug();
+		if (testEnvironment != null && testEnvironment != "") {
+			if (protocol.matches("file")) {
+				if (debug) {
+					System.err.println(String.format("Amending the %s with %s", filename,
+							testEnvironment));
+				}
+			}
+			// Inject the directory into the file path
+			String updatedFilename = filename.replaceAll("^(.*)/([^/]+)$",
+					String.format("$1/%s/$2", testEnvironment));
+			filename = updatedFilename;
+		}
+```
+
+therefore the test
+```cmd
+copy src\test\resources\data.* src\test\resources\dev\
+set  TEST_ENVIRONMENT=dev
+mvn test
+```
+works as expected:
+
+```cmd
+Amending the src/test/resources/data.ods with dev
+Reading Open Office Spreadsheet: Employee Data
+Cell Value: "1.0" class java.lang.Double
+Cell Value: "junit" class java.lang.String
+Cell Value: "202.0" class java.lang.Double
+Cell Value: "2.0" class java.lang.Double
+```
+One can easily make this behavior optional and move the definition of amendments into the property file (this is work in progress). Similar changes will be soon available to
+[testNg-DataProviders](https://github.com/sergueik/testng-dataproviders).
 
 ### Note
 This project and the [testNg-DataProviders](https://github.com/sergueik/testng-dataproviders) -

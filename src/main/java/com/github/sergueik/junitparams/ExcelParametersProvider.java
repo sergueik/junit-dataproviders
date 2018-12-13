@@ -11,6 +11,8 @@ import org.junit.runners.model.FrameworkMethod;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.custom.ParametersProvider;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * ExcelParametersProvider junitparams data providers for Excel and OpenOffice spreadsheet content 
@@ -20,6 +22,9 @@ import junitparams.custom.ParametersProvider;
 public class ExcelParametersProvider
 		implements ParametersProvider<ExcelParameters> {
 
+	private final static String testEnvironment = (System
+			.getenv("TEST_ENVIRONMENT") != null) ? System.getenv("TEST_ENVIRONMENT")
+					: "";
 	private Utils utils = Utils.getInstance();
 	private String filepath;
 	private String filename;
@@ -48,6 +53,21 @@ public class ExcelParametersProvider
 		protocol = filepath.substring(0, filepath.indexOf(':'));
 		filename = filepath.substring(filepath.indexOf(':') + 1);
 		debug = parametersAnnotation.debug();
+		if (testEnvironment != null && testEnvironment != "") {
+			if (protocol.matches("file")) {
+				if (debug) {
+					System.err.print(String.format("Amending the %s with %s", filename,
+							testEnvironment));
+				}
+			}
+			// Inject the directory into the file path
+			String updatedFilename = filename.replaceAll("^(.*)/([^/]+)$",
+					String.format("$1/%s/$2", testEnvironment));
+			filename = updatedFilename;
+			if (debug) {
+				System.err.println(String.format(" => %s", filename));
+			}
+		}
 		loadEmptyColumns = parametersAnnotation.loadEmptyColumns();
 		utils.setDebug(debug);
 		utils.setSheetName(sheetName);
