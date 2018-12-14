@@ -106,7 +106,7 @@ To use the snapshot version, add the following to `pom.xml`:
 <dependency>
   <groupId>com.github.sergueik.junitparams</groupId>
   <artifactId>junit_params</artifactId>
-  <version>0.0.7-SNAPSHOT</version>
+  <version>0.0.11-SNAPSHOT</version>
 </dependency>
 
 <repositories>
@@ -194,11 +194,10 @@ and
         }
       }
       // Inject the directory into the file path
-      String updatedFilename = filename.replaceAll("^(.*)/([^/]+)$",
-          String.format("$1/%s/$2", testEnvironment));
+      String updatedFilename = filename.replaceAll("^(.*)/([^/]+)$", String.format("$1/%s/$2", testEnvironment));
       filename = updatedFilename;
     }
-    // ... rest of initialization 
+    // ... rest of initialization
   }
 ```
 
@@ -208,18 +207,22 @@ copy src\test\resources\data.* src\test\resources\dev\
 set  TEST_ENVIRONMENT=dev
 mvn test
 ```
-works just as expected (in the example we were logging the Open Office data file `data.ods` processing):
+works just as expected - in the example the processing of the Open Office data file `data.ods` and Excel 2003 data file `data_2003.xls` driven tests is shown:
 
 ```cmd
-Amending the src/test/resources/data.ods with dev
+Amending the src/test/resources/data.ods with dev => src/test/resources/dev/data.ods
 Reading Open Office Spreadsheet: Employee Data
-Cell Value: "1.0" class java.lang.Double
-Cell Value: "junit" class java.lang.String
-Cell Value: "202.0" class java.lang.Double
-Cell Value: "2.0" class java.lang.Double
 ```
-One can easily make this behavior optional, turn the `TEST_ENVIRONMENT` envirnmant name itself a separate parameter or switch to store definitions of environment specifics in the property file (this is work in progress). Similar changes will be soon available to
-[testNg-DataProviders](https://github.com/sergueik/testng-dataproviders).
+```sh
+export TEST_ENVIRONMENT=test
+mkdir -p src/test/resources/$TEST_ENVIRONMENT
+cp src/test/resources/data* src/test/resources/$TEST_ENVIRONMENT
+mvn test
+Amending the src/test/resources/data_2003.xls with test => src/test/resources/test/data_2003.xls
+createDataFromExcel2003: Reading Excel 2003 sheet: Employee Data
+```
+
+One can easily tweak this behavior further: e.g. turn the name `TEST_ENVIRONMENT` of the key envirnment variable into a separate parameter or define environment specifics via property file (this is work in progress). Similar changes are available for [testNg-DataProviders](https://github.com/sergueik/testng-dataproviders).
 
 ### Note
 This project and the [testNg-DataProviders](https://github.com/sergueik/testng-dataproviders) -
