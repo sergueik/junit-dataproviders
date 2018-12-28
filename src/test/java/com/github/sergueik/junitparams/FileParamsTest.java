@@ -36,7 +36,7 @@ public class FileParamsTest extends DataTest {
 	// private final String jsonDataPath = ParamDataUtils.param();
 	// private final static String testDataPath = ParamDataUtils.testDataPath;
 
-	private final String jsonDataPath = "file:///c:src/test/resources/data.json";
+	private final String jsonDataPath = "file:src/test/resources/data.json";
 	private final static String testDataPath = "file:src/test/resources/data.ods";
 
 	@Test

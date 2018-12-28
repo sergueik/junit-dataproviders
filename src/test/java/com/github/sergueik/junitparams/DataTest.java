@@ -20,7 +20,7 @@ public class DataTest {
 				String.format("Search keyword:'%s'\tExpected minimum link count:%d",
 						keyword, (int) count));
 		assertThat("search", keyword, anyOf(is("junit"), is("testng"), is("spock"),
-				is("whatever"), is("there is no such thing")));
+				is("whatever"), is("allure"), is("there is no such thing")));
 		assertThat((int) count, greaterThan(0));
 	}
 
@@ -28,7 +28,7 @@ public class DataTest {
 	protected void dataTest(String strCount, String keyword) {
 		assertThat(keyword, notNullValue());
 		assertThat("search", keyword, anyOf(is("junit"), is("testng"), is("spock"),
-				is("whatever"), is("there is no such thing")));
+				is("whatever"), is("allure"), is("there is no such thing")));
 		double count = Double.valueOf(strCount);
 		assertThat((int) count, greaterThan(0));
 		System.err.println(

@@ -35,7 +35,48 @@ import org.json.JSONException;
  */
 
 public class DataSource {
-	// TODO: debug if DataSource has to be a singleton or else
+
+	private String dataFile = "";
+	private String defaultKey = "row";
+
+	public void setDataFile(String value) {
+		this.dataFile = value;
+		filePath = String.format("%s/%s", System.getProperty("user.dir"),
+				this.dataFile);
+	}
+
+	public String getDataKey() {
+		return this.dataKey;
+	}
+
+	public void setDataKey(String value) {
+		this.dataKey = value;
+	}
+
+	public void setColumns(List<String> value) {
+		this.columns = value;
+	}
+
+	public String getDefaultKey() {
+		return this.defaultKey;
+	}
+
+	public void setDefaultKey(String value) {
+		this.defaultKey = value;
+	}
+
+	private String filePath = null;
+	private static String encoding = "UTF-8";
+	private String dataKey = "datakey";
+	private List<String> columns = Arrays
+			.asList(new String[] { "row", "keyword", "count" });
+	private boolean debug = true;
+
+	public void setDebug(boolean value) {
+		this.debug = value;
+	}
+
+	// TODO: debug if the DataSource has to be a singleton or else
 	private static DataSource instance = new DataSource();
 
 	private DataSource() {
@@ -45,26 +86,24 @@ public class DataSource {
 		return instance;
 	}
 
+	// De-serialize the @Parameters collection from the JSON path passed
+	// see also
+	// https://stackoverflow.com/questions/3763937/gson-and-deserializing-an-array-of-objects-with-arrays-in-it
+	// https://futurestud.io/tutorials/gson-mapping-of-arrays-and-lists-of-objects
 	public Collection<Object[]> getdata() {
-		// call but not use
-		/*
-			String payload = "";
-			assertFalse(payload.isEmpty());
-			Map<String, String> details = new HashMap<>();
-			readData(payload, Optional.of(details));
-		*/
+
 		try {
+			// temporarily store a replica of code from JSONMapper class
 			return Arrays.asList(createDataFromJSON());
 		} catch (JSONException e) {
-
-			// return new ArrayList<Object[]>();
-			return Arrays.asList(new Object[][] { { 1.0, "junit", 204 },
-					{ 2.0, "testng", 51 }, { 3.0, "spock", 28 } });
+			if (debug) {
+				System.err.println("Failed to load data from datafile: " + dataFile);
+			}
+			return new ArrayList<Object[]>();
 		}
-		// ExcelParametersProvider and JSON
 	}
 
-	// NOTE: put inside "WEB-INF/classes" for web hosted app
+	// NOTE: not currently used.
 	public String getScriptContent(String resourceFileName) {
 		try {
 			if (debug) {
@@ -90,47 +129,8 @@ public class DataSource {
 				System.getProperty("user.dir"), resourceFileName);
 	}
 
-	public String readData(Optional<Map<String, String>> parameters) {
-		return readData(null, parameters);
-	}
-
-	private final String defaultKey = "rowNum";
-
-	// Deserialize the hashmap from the JSON
-	// see also
-	// https://stackoverflow.com/questions/3763937/gson-and-deserializing-an-array-of-objects-with-arrays-in-it
-	// https://futurestud.io/tutorials/gson-mapping-of-arrays-and-lists-of-objects
-	public String readData(String payload,
-			Optional<Map<String, String>> parameters) {
-
-		Map<String, String> collector = (parameters.isPresent()) ? parameters.get()
-				: new HashMap<>();
-
-		String data = (payload == null)
-				? "{ \"rowNum\": \"1.0\", \"keyword\": \"testng\", \"count\": \"100\" }"
-				: payload;
-		try {
-			JSONObject elementObj = new JSONObject(data);
-			@SuppressWarnings("unchecked")
-			Iterator<String> propIterator = elementObj.keys();
-			while (propIterator.hasNext()) {
-				String propertyKey = propIterator.next();
-				String propertyVal = elementObj.getString(propertyKey);
-				// logger.info(propertyKey + ": " + propertyVal);
-				if (debug) {
-					System.err.println("readData: " + propertyKey + ": " + propertyVal);
-				}
-				collector.put(propertyKey, propertyVal);
-			}
-		} catch (JSONException e) {
-			System.err.println("Exception (ignored): " + e.toString());
-			return null;
-		}
-		return collector.get(defaultKey);
-	}
-
-	// NOTE: getResourceURI may not work with standalone or web hosted
-	// application
+	// NOTE: getResourceURI may not work well with
+	// standalone or a web-hosted application
 	public String getResourceURI(String resourceFileName) {
 		try {
 			URI uri = this.getClass().getClassLoader().getResource(resourceFileName)
@@ -144,20 +144,8 @@ public class DataSource {
 		}
 	}
 
-	private static String filePath = String.format("%s/%s",
-			System.getProperty("user.dir"), "src/test/resources/data2.json");
-	private static String encoding = "UTF-8";
-	private static String dataKey = "datakey";
-	private static List<String> columns = Arrays
-			.asList(new String[] { "row", "keyword", "count" });
-	private static boolean debug = true;
-
-	public void setDebug(boolean value) {
-		debug = value;
-	}
-
 	// different method name
-	public static Object[][] createDataFromJSON() throws org.json.JSONException {
+	public Object[][] createDataFromJSON() throws org.json.JSONException {
 
 		if (debug) {
 			System.err.println("file path: " + filePath);
@@ -176,26 +164,52 @@ public class DataSource {
 			byte[] encoded = Files.readAllBytes(Paths.get(filePath));
 			obj = new JSONObject(new String(encoded, Charset.forName("UTF-8")));
 		} catch (org.json.JSONException e) {
-			e.printStackTrace();
+			System.err.println("Exception (ignord) : " + e.toString());
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.err.println("Exception (ignord) : " + e.toString());
 		}
 
 		if (debug) {
 			System.err.println("Verifying presence of " + dataKey);
 		}
 		Assert.assertTrue(obj.has(dataKey));
-		String dataString = obj.getString(dataKey);
+		String dataString = null;
+		try {
+			dataString = obj.getString(dataKey);
+			if (debug) {
+				System.err
+						.println("Loaded data for key: " + dataKey + " as " + dataString);
+			}
+		} catch (org.json.JSONException e) {
+			// org.json.JSONException: JSONObject["datakey"] not a string.
+			System.err.println("Exception (ignord) : " + e.toString());
+		}
 
 		// possible org.json.JSONException
-		try {
-			rows = new JSONArray(dataString);
-		} catch (org.json.JSONException e) {
-			e.printStackTrace();
+		if (dataString != null) {
+			try {
+				rows = new JSONArray(dataString);
+			} catch (org.json.JSONException e) {
+				System.err.println("Exception (ignord) : " + e.toString());
+			}
+		} else {
+			try {
+				rows = obj.getJSONArray(dataKey);
+				if (debug) {
+					System.err.println("Loaded data rows for key: " + dataKey + " "
+							+ rows.length() + " rows.");
+				}
+			} catch (org.json.JSONException e) {
+				System.err.println("Exception (ignord) : " + e.toString());
+			}
 		}
 		for (int i = 0; i < rows.length(); i++) {
-			String entry = rows.getString(i);
-			hashes.add(entry);
+			try {
+				String entry = rows.getString(i);
+				hashes.add(entry);
+			} catch (org.json.JSONException e) {
+				System.err.println("Exception (ignord) : " + e.toString());
+			}
 		}
 		Assert.assertTrue(hashes.size() > 0);
 

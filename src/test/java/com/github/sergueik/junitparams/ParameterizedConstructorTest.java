@@ -17,19 +17,24 @@ import org.junit.runners.Parameterized.Parameters;
 public class ParameterizedConstructorTest extends DataTest {
 
 	private static DataSource dataSource = DataSource.getInstance();
+	private static String dataFile = "src/test/resources/data2.json";
 
 	@Parameters
 	public static Collection<Object[]> data() {
+		dataSource.setDataFile(dataFile);
 		return dataSource.getdata();
 	}
 
-	private double rowNum;
+	private String  rowNum;
 	private String keyword;
-	private int count;
+	private String  count;
 
 	// constructor injection
-	public ParameterizedConstructorTest(double rowNum, String keyword,
-			int count) {
+	// NOTE: with JSON the column order is not predictable - needs to be enforced
+//	public ParameterizedConstructorTest(int count, double rowNum,
+//			String keyword) {
+		public ParameterizedConstructorTest(String  rowNum, String keyword, String count
+				) {
 		this.rowNum = rowNum;
 		this.keyword = keyword;
 		this.count = count;
@@ -42,7 +47,7 @@ public class ParameterizedConstructorTest extends DataTest {
 	// java.lang.IllegalArgumentException: wrong number of arguments
 	public void parameterizedTest() {
 		try {
-			dataTest(keyword, count);
+			dataTest(count, keyword);
 		} catch (IllegalStateException e) {
 			System.err
 					.println(String.format("keyword: %s , count : %d ", keyword, count));
