@@ -233,11 +233,12 @@ Support `org.junit.runners.Parameterized` of [Junit](https://github.com/junit-te
 
 ### Apache POI compatibility
 
-  * The default version of the supported Apache POI is 3.17.
-  * Project  can be compiled with release of Apache POI 4.0.0 with the help of profile `poi40`.
+  * The default version of the supported Apache POI is __3.17__.
+  * Project can be compiled with release of Apache POI __4.0.0__ with the help of profile `poi40`.
   * Older versions of the package require minor code refactoring. Note that you may also have to clear the other versions of poi and poi-ooxml jars from maven cache '~/.m2/repository'
   * Creating branches and tags is a work in progress.
-### See Also
+
+  ### See Also
 
  * Using Excel,Open Office,JSON as [testNG data providers](https://github.com/sergueik/testng-dataproviders)
  * [testng dataProviders](http://testng.org/doc/documentation-main.html#parameters-dataproviders)
@@ -247,6 +248,7 @@ Support `org.junit.runners.Parameterized` of [Junit](https://github.com/junit-te
  * [XLS Test - Excel testing library](https://github.com/codeborne/xls-test)
  * [Selenium data driven testing with Excel](https://www.swtestacademy.com/data-driven-excel-selenium/)
  * [using google spreadsheet with java](https://www.baeldung.com/google-sheets-java-client)
-
+ * [parmeterized tests with junit 4](https://github.com/junit-team/junit4/wiki/parameterized-tests)
+ 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)

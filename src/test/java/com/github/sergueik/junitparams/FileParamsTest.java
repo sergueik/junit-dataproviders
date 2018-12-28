@@ -1,105 +1,34 @@
 package com.github.sergueik.junitparams;
 
-// import static org.assertj.core.api.Assertions.assertThat;
-
-import org.junit.Test;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.runner.RunWith;
-import org.junit.runners.model.FrameworkMethod;
-
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import static org.junit.Assume.assumeFalse;
-import static org.junit.Assume.assumeTrue;
-
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.core.AnyOf.anyOf;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.core.Is.is;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
-import java.nio.charset.Charset;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Scanner;
-import java.util.Set;
+
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.model.FrameworkMethod;
 
 import junitparams.FileParameters;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import junitparams.custom.CustomParameters;
 import junitparams.custom.ParametersProvider;
-import junitparams.custom.FileParametersProvider;
 import junitparams.mappers.CsvWithHeaderMapper;
-import junitparams.mappers.DataMapper;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import org.apache.commons.lang3.StringUtils;
-
-// OLE2 Office Documents
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-
-import org.apache.poi.ss.usermodel.Row;
-// NOTE: conflicts with org.jopendocument.dom.spreadsheet.Cell;
-// import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.ss.usermodel.CellType;
-
-// Office 2007+ XML
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-// Open Office Spreadsheet
-import org.jopendocument.dom.ODDocument;
-import org.jopendocument.dom.ODPackage;
-import org.jopendocument.dom.ODValueType;
-
-import org.jopendocument.dom.spreadsheet.Cell;
-import org.jopendocument.dom.spreadsheet.Sheet;
-import org.jopendocument.dom.spreadsheet.SpreadSheet;
-
-import com.github.sergueik.junitparams.ParamDataUtils;
 
 /**
- * Selected test scenarios annotated for ExcelParametersProvider junitparams data provider and JSON mapper
+ * Sampe parameterized Juit test scenarios annotated for ExcelParametersProvider junitparams data provider and JSON mapper
  * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
  */
 
 @RunWith(JUnitParamsRunner.class)
-public class FileParamsTest {
+public class FileParamsTest extends DataTest {
 
-	// Not doable this way:
+	// NOTE: one is not allowed to define annotation parameter dynamically:
 	// Compilation failure:
 	// [ERROR] FileParamsTest.java:
 	// element value must be a constant expression
@@ -272,27 +201,6 @@ public class FileParamsTest {
 		public Object[] getParameters() {
 			return new Object[] { frameworkMethod.getName() };
 		}
-	}
-
-	private void dataTest(String keyword, double count) {
-		assertThat(keyword, notNullValue());
-		System.err.println(
-				String.format("Search keyword:'%s'\tExpected minimum link count:%d",
-						keyword, (int) count));
-		assertThat("search", keyword, anyOf(is("junit"), is("testng"), is("spock"),
-				is("whatever"), is("there is no such thing")));
-		assertThat((int) count, greaterThan(0));
-	}
-
-	private void dataTest(String strCount, String keyword) {
-		assertThat(keyword, notNullValue());
-		assertThat("search", keyword, anyOf(is("junit"), is("testng"), is("spock"),
-				is("whatever"), is("there is no such thing")));
-		double count = Double.valueOf(strCount);
-		assertThat((int) count, greaterThan(0));
-		System.err.println(
-				String.format("Search keyword:'%s'\tExpected minimum link count: %s",
-						keyword, strCount));
 	}
 
 }
