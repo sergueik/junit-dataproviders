@@ -11,10 +11,10 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
-// Boilerplate code for default test class parameter injection supported by Junit 4
-// origin: https://github.com/junit-team/junit4/wiki/parameterized-tests
+// Boilerplate code for "straight junit" test class with propertiesinjection
+// documented in Junit 4 wiki https://github.com/junit-team/junit4/wiki/parameterized-tests
 @RunWith(Parameterized.class)
-public class ParameterizedPropertiesTest extends DataTest {
+public class StraightParameterizedPropertiesTest extends DataTest {
 
 	@Parameters
 	public static Collection<Object[]> data() {
