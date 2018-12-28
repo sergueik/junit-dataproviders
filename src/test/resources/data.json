@@ -1,17 +1,16 @@
 {
-    "test": [{
-        "keyword": "junit",
-        "zcount": 101.0
-    }, {
-        "keyword": "testng",
-        "zcount": 31.0
-    }, {
-        "keyword": "spock",
-        "zcount": 11.0
-    }],
-    "other_test": [{
-        "keyword": "not used",
-        "zcount": 1.0
-    }]
-}
+  "test": [{
+    "keyword": "junit",
+    "zcount": 101.0
+  }, {
+    "keyword": "testng",
+    "zcount": 31.0
+  }, {
+    "keyword": "spock",
+    "zcount": 11.0
+  }],
+  "other_test": [{
+    "keyword": "not used",
+    "zcount": 1.0
+  }]
 }

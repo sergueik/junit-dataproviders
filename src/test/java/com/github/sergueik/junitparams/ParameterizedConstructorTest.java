@@ -16,10 +16,11 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class ParameterizedConstructorTest extends DataTest {
 
+	private static DataSource dataSource = DataSource.getInstance();
+
 	@Parameters
 	public static Collection<Object[]> data() {
-		return Arrays.asList(new Object[][] { { 1.0, "junit", 204 },
-				{ 2.0, "testng", 51 }, { 3.0, "spock", 28 } });
+		return dataSource.getdata();
 	}
 
 	private double rowNum;
@@ -27,7 +28,8 @@ public class ParameterizedConstructorTest extends DataTest {
 	private int count;
 
 	// constructor injection
-	public ParameterizedConstructorTest(double rowNum, String keyword, int count) {
+	public ParameterizedConstructorTest(double rowNum, String keyword,
+			int count) {
 		this.rowNum = rowNum;
 		this.keyword = keyword;
 		this.count = count;
