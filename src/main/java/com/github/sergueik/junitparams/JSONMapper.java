@@ -130,5 +130,4 @@ public class JSONMapper implements DataMapper {
 		return result.toArray();
 
 	}
-
 }

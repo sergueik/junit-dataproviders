@@ -228,8 +228,110 @@ One can easily tweak this behavior further: e.g. turn the name `TEST_ENVIRONMENT
 This project and the [testNg-DataProviders](https://github.com/sergueik/testng-dataproviders) -
 have large code overlap for processing spreadsheets and only differ in test methdod annotation details.
 
-### TODO
-Support `org.junit.runners.Parameterized` of [Junit](https://github.com/junit-team/junit4/blob/master/src/main/java/org/junit/runners/Parameterized.java). See intro [JUnit - Parameterized Test](https://www.tutorialspoint.com/junit/junit_parameterized_test.htm)
+### Parmeterized tests injection
+
+Instance Constructor and Class propetry injection annotations for test
+parameterization are basically supported by [Junit 4 onward](https://github.com/junit-team/junit4/wiki/parameterized-tests)
+via `org.junit.runners.Parameterized` class.
+However the JUnit wiki does not demonstrate reading the test data from external file which is entirely possible:
+
+instead of hard coding the data in the test class
+```java
+@RunWith(Parameterized.class)
+public class StraightParameterizedConstructorTest extends DataTest {
+
+	@Parameters
+	public static Collection<Object[]> data() {
+		return Arrays.asList(new Object[][] { { 1.0, "junit", 204 }});
+	}
+
+	private double rowNum;
+	private String keyword;
+	private int count;
+
+	// constructor injection
+	public StraightParameterizedConstructorTest(double rowNum, String keyword, int count) {
+		this.rowNum = rowNum;
+		this.keyword = keyword;
+		this.count = count;
+	}
+```
+one can define a singleton class based on one of the classes currently available in `com.github.sergueik.junitparams`:
+```
+public class DataSource {
+
+	private static DataSource instance = new DataSource();
+
+	private DataSource() {
+	}
+
+	public static DataSource getInstance() {
+		return instance;
+	}
+
+	// De-serialize the rowset of String data parameters from the JSON file from
+	// the provided path property
+	// for later become injected in the test via @Parameters collection
+	public Collection<Object[]> getdata() {
+
+		try {
+			// temporarily store a replica of code from JSONMapper class
+			return Arrays.asList(createDataFromJSON());
+		} catch (JSONException e) {
+			if (debug) {
+				System.err.println("Failed to load data from datafile: " + dataFile);
+			}
+			return new ArrayList<Object[]>();
+		}
+	}
+
+	public Object[][] createDataFromJSON {
+  // read and parse JSON
+  }
+```
+and then set the instance of `DataSource` class within the `Test` class with path to the data,
+optionally with other paratemetes like column selection:
+
+```java
+@RunWith(Parameterized.class)
+public class DataProviderClassParameterizedPropertiesInjectionTest
+		extends DataTest {
+
+	private static DataSource dataSource = DataSource.getInstance();
+	private static String dataFile = "src/test/resources/data2.json";
+
+	@Parameters
+	public static Collection<Object[]> data() {
+		dataSource.setDataFile(dataFile);
+		return dataSource.getdata();
+	}
+
+  private String rowNum;
+	private String keyword;
+	private String count;
+
+	public DataProviderClassParameterizedConstructorTest(String rowNum,
+			String keyword, String count) {
+		this.rowNum = rowNum;
+		this.keyword = keyword;
+		this.count = count;
+	}
+
+	@Test
+	public void parameterizedTest() {
+		try {
+			dataTest(count, keyword);
+		} catch (IllegalStateException e) {
+			System.err
+					.println(String.format("keyword: %s , count : %d ", keyword, count));
+		}
+	}
+
+```
+
+The only downside is (at least with JSON data files), every `@parameter` will have to be of the `String` primitive 
+type and when loading from JSON the column order is not predictable and so is better be enforced through an extra property
+(this is work in progrss).
 
 ### Apache POI compatibility
 
@@ -248,7 +350,8 @@ Support `org.junit.runners.Parameterized` of [Junit](https://github.com/junit-te
  * [XLS Test - Excel testing library](https://github.com/codeborne/xls-test)
  * [Selenium data driven testing with Excel](https://www.swtestacademy.com/data-driven-excel-selenium/)
  * [using google spreadsheet with java](https://www.baeldung.com/google-sheets-java-client)
- * [parmeterized tests with junit 4](https://github.com/junit-team/junit4/wiki/parameterized-tests)
- 
+ * [JUnit 4 Wiki about Parameterization of test classes](https://github.com/junit-team/junit4/wiki/parameterized-tests)
+ * [JUnit - Parameterized Test intro ](https://www.tutorialspoint.com/junit/junit_parameterized_test.htm).
+
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)

@@ -36,6 +36,32 @@ import org.json.JSONException;
 
 public class DataSource {
 
+	// TODO: debug if the DataSource has to be a singleton or else
+	private static DataSource instance = new DataSource();
+
+	private DataSource() {
+	}
+
+	public static DataSource getInstance() {
+		return instance;
+	}
+
+	// De-serialize the rowset of String data parameters from the JSON file from
+	// the provided path property
+	// for later become injected in the test via @Parameters collection
+	public Collection<Object[]> getdata() {
+
+		try {
+			// temporarily store a replica of code from JSONMapper class
+			return Arrays.asList(createDataFromJSON());
+		} catch (JSONException e) {
+			if (debug) {
+				System.err.println("Failed to load data from datafile: " + dataFile);
+			}
+			return new ArrayList<Object[]>();
+		}
+	}
+
 	private String dataFile = "";
 	private String defaultKey = "row";
 
@@ -74,33 +100,6 @@ public class DataSource {
 
 	public void setDebug(boolean value) {
 		this.debug = value;
-	}
-
-	// TODO: debug if the DataSource has to be a singleton or else
-	private static DataSource instance = new DataSource();
-
-	private DataSource() {
-	}
-
-	public static DataSource getInstance() {
-		return instance;
-	}
-
-	// De-serialize the @Parameters collection from the JSON path passed
-	// see also
-	// https://stackoverflow.com/questions/3763937/gson-and-deserializing-an-array-of-objects-with-arrays-in-it
-	// https://futurestud.io/tutorials/gson-mapping-of-arrays-and-lists-of-objects
-	public Collection<Object[]> getdata() {
-
-		try {
-			// temporarily store a replica of code from JSONMapper class
-			return Arrays.asList(createDataFromJSON());
-		} catch (JSONException e) {
-			if (debug) {
-				System.err.println("Failed to load data from datafile: " + dataFile);
-			}
-			return new ArrayList<Object[]>();
-		}
 	}
 
 	// NOTE: not currently used.
@@ -144,7 +143,6 @@ public class DataSource {
 		}
 	}
 
-	// different method name
 	public Object[][] createDataFromJSON() throws org.json.JSONException {
 
 		if (debug) {
