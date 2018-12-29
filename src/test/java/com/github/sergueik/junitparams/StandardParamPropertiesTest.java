@@ -1,4 +1,8 @@
 package com.github.sergueik.junitparams;
+/**
+ * Copyright 2017-2018 Serguei Kouzmine
+ */
+
 
 import static org.junit.Assert.assertEquals;
 
@@ -11,7 +15,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
-// Boilerplate code for "straight junit" test class with propertiesinjection
+// Boilerplate code for straightforward JUnit test class with propertiesinjection
 // documented in Junit 4 wiki https://github.com/junit-team/junit4/wiki/parameterized-tests
 @RunWith(Parameterized.class)
 public class StandardParamPropertiesTest extends DataTest {

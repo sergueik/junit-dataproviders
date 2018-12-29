@@ -1,4 +1,7 @@
 package com.github.sergueik.junitparams;
+/**
+ * Copyright 2017-2018 Serguei Kouzmine
+ */
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -52,10 +55,19 @@ public class ExcelParametersProvider
 		sheetName = parametersAnnotation.sheetName();
 		protocol = filepath.substring(0, filepath.indexOf(':'));
 		filename = filepath.substring(filepath.indexOf(':') + 1);
+
 		debug = parametersAnnotation.debug();
 		if (testEnvironment != null && testEnvironment != "") {
 			if (protocol.matches("file")) {
 				filename = amendFileName(filename);
+			}
+		} else {			
+			if (debug) {
+				System.err.println("Evaluating: " + filename);
+			}
+			filename = Utils.resolveEnvVars(filename);
+			if (debug) {
+				System.err.println("Final value: " + filename);
 			}
 		}
 		loadEmptyColumns = parametersAnnotation.loadEmptyColumns();

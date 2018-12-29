@@ -1,4 +1,7 @@
 package com.github.sergueik.junitparams;
+/**
+ * Copyright 2017-2018 Serguei Kouzmine
+ */
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

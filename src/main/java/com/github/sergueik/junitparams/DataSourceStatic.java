@@ -1,4 +1,7 @@
 package com.github.sergueik.junitparams;
+/**
+ * Copyright 2018 Serguei Kouzmine
+ */
 
 import java.io.IOException;
 import java.nio.charset.Charset;

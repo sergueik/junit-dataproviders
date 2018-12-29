@@ -1,4 +1,7 @@
 package com.github.sergueik.junitparams;
+/**
+ * Copyright 2017-2018 Serguei Kouzmine
+ */
 
 import static org.junit.Assert.assertTrue;
 

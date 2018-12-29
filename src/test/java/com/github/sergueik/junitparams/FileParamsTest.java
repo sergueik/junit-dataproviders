@@ -1,4 +1,7 @@
 package com.github.sergueik.junitparams;
+/**
+ * Copyright 2017-2018 Serguei Kouzmine
+ */
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -21,7 +24,8 @@ import junitparams.custom.ParametersProvider;
 import junitparams.mappers.CsvWithHeaderMapper;
 
 /**
- * Sampe parameterized Juit test scenarios annotated for ExcelParametersProvider junitparams data provider and JSON mapper
+ * Sampe parameterized JUnit test scenarios annotated for ExcelParametersProvider 
+ * JUnitparams data provider plugin and JSON mapper
  * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
  */
 
@@ -89,14 +93,15 @@ public class FileParamsTest extends DataTest {
 		dataTest(keyword, count);
 	}
 
+	// TODO: "nice to have" recognize apache syntax variations like $env:USERPROFILE
 	@Test
-	@ExcelParameters(filepath = "file:src/test/resources/data.ods", sheetName = "", type = "OpenOffice Spreadsheet", debug = true)
+	@ExcelParameters(filepath = "file:${USERPROFILE}/Desktop/data.ods", sheetName = "", type = "OpenOffice Spreadsheet", debug = true)
 	public void loadParamsFromFileOpenOfficeSpreadsheet(double rowNum,
 			String keyword, double count) {
 		dataTest(keyword, count);
 	}
 
-	// NOTE: unstable:
+	// TODO: fix JSON jar version-specific error:
 	// org.json.JSONException: JSONObject["test"] not a string.
 	@Ignore
 	@Test
@@ -105,7 +110,7 @@ public class FileParamsTest extends DataTest {
 		dataTest(strCount, keyword);
 	}
 
-	// NOTE: unstable:
+	// TODO: fix JSON jar version-specific error:
 	// org.json.JSONException: JSONObject["test"] not a string.
 	@Ignore
 	@Test

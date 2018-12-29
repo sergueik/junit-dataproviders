@@ -1,7 +1,7 @@
 package com.github.sergueik.junitparams;
 
 /**
- * Copyright 2017 Serguei Kouzmine
+ * Copyright 2017-2018 Serguei Kouzmine
  */
 import java.io.File;
 import java.io.FileInputStream;
@@ -116,8 +116,7 @@ public class Utils {
 		Sheet sheet = (sheetName.isEmpty()) ? spreadSheet.getFirstSheet()
 				: spreadSheet.getSheet(sheetName);
 		if (debug) {
-			System.err
-					.println("Reading Open Office Spreadsheet: " + sheet.getName());
+			System.err.println("Reading Open Office Spreadsheet: " + sheet.getName());
 		}
 		int columnCount = sheet.getColumnCount();
 		int rowCount = sheet.getRowCount();
@@ -213,8 +212,7 @@ public class Utils {
 
 		try {
 			if (debug) {
-				System.err
-						.println("Reading Open Office file: " + filePath);
+				System.err.println("Reading Open Office file: " + filePath);
 			}
 			File file = new File(filePath);
 			SpreadSheet spreadSheet = SpreadSheet.createFromFile(file);
