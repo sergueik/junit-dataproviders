@@ -1,8 +1,8 @@
-###  JUnit-DataProviders 
+###  JUnit-DataProviders
 
 [![BuildStatus](https://travis-ci.org/sergueik/junit-dataproviders.svg?branch=master)](https://travis-ci.org/sergueik/junit-dataproviders)
 
-This project exercises following data providers with 
+This project exercises following data providers with
 [JUnitParams](https://github.com/Pragmatists/JUnitParams) Junit plugin and core Junit 4+ `Parameterized` [test runner](https://junit.org/junit4/javadoc/latest/org/junit/runners/Parameterized.html) class:
 
   * Excel 2003 OLE documents - a.k.a. [Horrible SpreadSheet Format](http://shanmugavelc.blogspot.com/2011/08/apache-poi-read-excel-for-use-of.html) `org.apache.poi.hssf.usermodel.*`
@@ -10,7 +10,7 @@ This project exercises following data providers with
   * OpenOffice SpreadSheet (.ods) [Open Document Format for Office Applications](http://www.jopendocument.org/docs/) `org.jopendocument.dom.*`
   * JSON via [org.json](https://stleary.github.io/JSON-java/) or [com.google.gson](https://www.javadoc.io/doc/com.google.code.gson/gson) (*work in progress*) package
 
-Unlike core Data Providers in Junit (5?) and TestNg this provider class allows 
+Unlike core Data Providers in Junit (5?) and TestNg this provider class allows
 runtime-flexible data file path modification via environment setting which is useful e.g. for enabling one to exercize different test configurations for  __DEV__ / __TEST__ / __UAT__ environments without modifying or recompiling the test suite java code.  The technical  details in __Extra Features__ section below.
 
 ### Usage
@@ -78,12 +78,34 @@ public void loadParamsFromFileOpenOfficeSpreadsheel(double rowNum,
   assumeTrue("search", keyword.matches("(?:junit|testng|spock)"));
   assertThat((int) count).isGreaterThan(0);
 }
-
 ```
-The `ExcelParametersProvider` class will read all columns from the __Excel 2007__, __Excel 2003__ or __Open Office__ spreadhsheet 
-from the file system with path relative to the project directory or absolute path with 
-known environment settings interpolated
-when `filepath` is defined with a `file:` prefix 
+or
+```java
+	private final String jsonDataPath = "file:c:/ProgramData/Temp/data.json";
+	@Test
+	@FileParameters(value = jsonDataPath, mapper = JSONMapper.class)
+	public void loadParamsFromJSONFile(String strCount,
+			String strKeyword) {
+    // actual test code
+		dataTest(strCount, strKeyword);
+	}
+```
+or
+```java
+	private final static String testDataPath = "file:c:/Users/${env:USERNAME}/Documents/data.ods";
+	@Test
+	@ExcelParameters(filepath = testDataPath, sheetName = "", type = "OpenOffice Spreadsheet", debug = true)
+	public void loadParamsFromFileOpenOfficeSpreadsheetUsingVariable(
+			double rowNum, String keyword, double count) {
+		dataTest(keyword, count);
+	}
+```
+The `ExcelParametersProvider`-annotated class will read all columns from the __Excel 2007__, __Excel 2003__ or __Open Office__ spreadhsheet
+from the file system using relative (to the project directory) or absolute path when `filepath` is defined with a `file:` prefix .
+The known system environment settings are being interpolated:
+`file:c:/Users/${env:USERNAME}/Documents/data.json`
+`file:${USERPROFILE}`
+for Excel and Opend Office but not yet for the JSON mapper (*work in progress*)
 or from inside the jar when `filepath` is defined with a `classpath:` prefix and executes the test for every row of data.
 The test developer is responsible for matching the test method argument types and the column data types.
 
@@ -112,7 +134,7 @@ row 0 : [1.0, junit, 104.0]
 ...
 ```
 
-NOTE: attributes for column selection and a flag for forcing every column type to primitive `String` type 
+NOTE: attributes for column selection and a flag for forcing every column type to primitive `String` type
 are *work in progress*.
 
 ### Maven Central
@@ -121,6 +143,21 @@ The snapshot versions are deployed to [https://oss.sonatype.org/content/reposito
 Release versions status: [pending](https://issues.sonatype.org/browse/OSSRH-36771?page=com.atlassian.jira.plugin.system.issuetabpanels:all-tabpanel).
 
 To use the snapshot version, add the following to `pom.xml`:
+```xml
+<dependency>
+  <groupId>com.github.sergueik.junitparams</groupId>
+  <artifactId>junit_dataproviders</artifactId>
+  <version>0.0.15-SNAPSHOT</version>
+</dependency>
+
+<repositories>
+  <repository>
+    <id>ossrh</id>
+    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+  </repository>
+</repositories>
+```
+or, for earlier versions of the jar,
 ```xml
 <dependency>
   <groupId>com.github.sergueik.junitparams</groupId>
@@ -135,11 +172,10 @@ To use the snapshot version, add the following to `pom.xml`:
   </repository>
 </repositories>
 ```
-
 ### Extra Features
 
 This data provider overcomes the known difficulty of core TestNG or Junit parameter annotations: developer is
-[not allowed](https://stackoverflow.com/questions/16509065/get-rid-of-the-value-for-annotation-attribute-must-be-a-constant-expression-me) 
+[not allowed](https://stackoverflow.com/questions/16509065/get-rid-of-the-value-for-annotation-attribute-must-be-a-constant-expression-me)
 to redefine the dataprovider attributes like for example the data source path:
 
 ```java
@@ -169,9 +205,9 @@ would fail to compile:
 Compilation failure:
 [ERROR] FileParamsTest.java: element value must be a constant expression
 ```
-so it likely not doable. 
-No such limitation arises when one uses core Junit `Parameterized` test runner class. 
-Porting all data file kinds to use with this provideris 
+so it likely not doable.
+No such limitation arises when one uses core Junit `Parameterized` test runner class.
+Porting all data file kinds to use with this provideris
 a work in progress, currently only the JSON provider is converted.
 
 However it is quite easy to implement this functionality in the data provider class `ExcelParametersProvider` itself by adding an extra class variable named e.g. `testEnvironment` that would receive its value from e.g. the environment variable named `TEST_ENVIRONMENT` and, when non-blank, would override the data file paths which were specified through the `file://` protocol prefix
@@ -348,11 +384,12 @@ public class DataProviderClassParameterizedPropertiesInjectionTest
 
 ```
 
-The only downside is that, at least with JSON data files, every `@parameter` will have to be of the `String` primitive 
+The only downside is that, at least with JSON data files, every `@parameter` will have to be of the `String` primitive
 type and when loading from JSON the column order is not predictable and so is better be enforced through an extra property
 (this is *work in progress*).
 
 ### Note
+
 This project and the [testNg-DataProviders](https://github.com/sergueik/testng-dataproviders) -
 have large code overlap for processing spreadsheets and only differ in test methdod annotation details.
 

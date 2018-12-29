@@ -1,6 +1,6 @@
 package com.github.sergueik.junitparams;
 /**
- * Copyright 2017-2018 Serguei Kouzmine
+ *	 Copyright 2017-2018 Serguei Kouzmine
  */
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -40,8 +40,8 @@ public class FileParamsTest extends DataTest {
 	// private final String jsonDataPath = ParamDataUtils.param();
 	// private final static String testDataPath = ParamDataUtils.testDataPath;
 
-	private final String jsonDataPath = "file:src/test/resources/data.json";
-	private final static String testDataPath = "file:src/test/resources/data.ods";
+	private final String jsonDataPath = "file:c:/ProgramData/Temp/data.json";
+	private final static String testDataPath = "file:c:/Users/${env:USERNAME}/Documents/data.ods";
 
 	@Test
 	@ExcelParameters(filepath = "classpath:data_2007.xlsx", sheetName = "", type = "Excel 2007", debug = true)
@@ -62,9 +62,9 @@ public class FileParamsTest extends DataTest {
 		}
 	}
 
-	// TODO: Fields?
-	// the rowNum column which is present in the spreadsheet is not used in the
-	// test
+	// TODO: Allow columns specification interface
+	// e.g. the rowNum column is present in the spreadsheet 
+	// but not needed for the test
 	@Test
 	@ExcelParameters(filepath = "classpath:data_2003.xls", sheetName = "", type = "Excel 2003", debug = true)
 	public void loadParamsFromEmbeddedExcel2003(double rowNum, String keyword,
@@ -93,7 +93,6 @@ public class FileParamsTest extends DataTest {
 		dataTest(keyword, count);
 	}
 
-	// TODO: "nice to have" recognize apache syntax variations like $env:USERPROFILE
 	@Test
 	@ExcelParameters(filepath = "file:${USERPROFILE}/Desktop/data.ods", sheetName = "", type = "OpenOffice Spreadsheet", debug = true)
 	public void loadParamsFromFileOpenOfficeSpreadsheet(double rowNum,
@@ -103,7 +102,7 @@ public class FileParamsTest extends DataTest {
 
 	// TODO: fix JSON jar version-specific error:
 	// org.json.JSONException: JSONObject["test"] not a string.
-	@Ignore
+	// @Ignore
 	@Test
 	@FileParameters(value = "classpath:data.json", mapper = JSONMapper.class)
 	public void loadParamsFromJSONEmbedded(String strCount, String keyword) {
@@ -119,7 +118,7 @@ public class FileParamsTest extends DataTest {
 		dataTest(strCount, strKeyword);
 	}
 
-	@Ignore
+	// @Ignore
 	@Test
 	@FileParameters(value = jsonDataPath, mapper = JSONMapper.class)
 	public void loadParamsFromJSONFileFromStaticValue(String strCount,

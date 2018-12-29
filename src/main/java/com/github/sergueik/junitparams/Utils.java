@@ -41,8 +41,12 @@ import org.jopendocument.dom.spreadsheet.Cell;
 import org.jopendocument.dom.spreadsheet.Sheet;
 import org.jopendocument.dom.spreadsheet.SpreadSheet;
 
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
+
 /**
- * Common utilities class for jUnitPArams dataProviders
+ * Common utilities class for JUnitParams Dataproviders
  * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
  */
 
@@ -82,12 +86,12 @@ public class Utils {
 		if (null == input) {
 			return null;
 		}
-		Pattern p = Pattern.compile("\\$(?:\\{(\\w+)\\}|(\\w+))");
+		Pattern p = Pattern.compile("\\$(?:\\{(?:env:)?(\\w+)\\}|(\\w+))");
 		Matcher m = p.matcher(input);
 		StringBuffer sb = new StringBuffer();
 		while (m.find()) {
 			String envVarName = null == m.group(1) ? m.group(2) : m.group(1);
-			String envVarValue = getPropertyEnv(envVarName, null);
+			String envVarValue = System.getenv(envVarName);
 			m.appendReplacement(sb,
 					null == envVarValue ? "" : envVarValue.replace("\\", "\\\\"));
 		}

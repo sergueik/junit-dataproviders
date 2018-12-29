@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.sergueik.junitparams</groupId>
-  <artifactId>junit_params</artifactId>
+  <artifactId>junit_dataproviders</artifactId>
   <description>Demo project for parameterized Junit tests with external file based dataproviers</description>
   <url>https://github.com/sergueik/junit-dataproviders</url>
   <name>JUnit Data Providers</name>
@@ -17,6 +17,7 @@
   </developers>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <commons-configuration.version>1.10</commons-configuration.version>
     <commons-exec.version>1.3</commons-exec.version>
     <commons-io.version>2.5</commons-io.version>
     <commons-lang3.version>3.5</commons-lang3.version>
@@ -40,6 +41,11 @@
       <groupId>org.jopendocument</groupId>
       <artifactId>jOpenDocument</artifactId>
       <version>${jOpenDocument.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-configuration</groupId>
+      <artifactId>commons-configuration</artifactId>
+      <version>${commons-configuration.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
