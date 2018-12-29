@@ -13,6 +13,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
+import com.github.sergueik.junitparams.DataSourceStatic;
 
 /* Test class parameter injection that is supported by Junit 4
  * out of the box
@@ -22,16 +23,16 @@ import org.junit.runners.Parameterized.Parameters;
 */
 
 @RunWith(Parameterized.class)
-public class DataProviderClassParameterizedPropertiesInjectionTest
+public class DataProviderParamPropertiesInjectTest
 		extends DataTest {
 
-	private static DataSource dataSource = DataSource.getInstance();
-	private static String dataFile = "src/test/resources/data2.json";
+	private static String dataFile = "src/test/resources/param_array.json";
 
 	@Parameters
 	public static Collection<Object[]> data() {
-		dataSource.setDataFile(dataFile);
-		return dataSource.getdata();
+		DataSourceStatic.setDataFilePath(
+				String.format("%s/%s", System.getProperty("user.dir"), dataFile));
+		return DataSourceStatic.getdata();
 	}
 
 	// NOTE: the first property annotation is value (0) is default

@@ -28,31 +28,43 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 /**
- * Skeleton class for feeding the data 
- * for a "@Parameter" - annotated 
- * Juit4 test from the file
+ * Class with an (optional) Singleton constructor for loading the data 
+ * from a JSON (poi and OpenDoc also possible) data file  
+ * through a Juit4 @Parameter annotation into test class parameterized constructor 
  * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
  */
 
-public class DataSource {
+public class DataSourceSingleton {
 
-	// TODO: debug if the DataSource has to be a singleton or else
-	private static DataSource instance = new DataSource();
+	private String dataFile = "";
+	private String filePath = null;
+	private static String encoding = "UTF-8";
+	private String dataKey = "datakey";
+	private List<String> columns = Arrays
+			.asList(new String[] { "row", "keyword", "count" });
+	private boolean debug = true;
 
-	private DataSource() {
+	// currently unused
+	// private String defaultKey = "row";
+
+	// DataSource does not have to be a singleton
+	private static DataSourceSingleton instance = new DataSourceSingleton();
+
+	private DataSourceSingleton() {
 	}
 
-	public static DataSource getInstance() {
+	public static DataSourceSingleton getInstance() {
 		return instance;
 	}
 
-	// De-serialize the rowset of String data parameters from the JSON file from
-	// the provided path property
-	// for later become injected in the test via @Parameters collection
+	// De-serialize from the JSON file under caller provided path into a row set
+	// of String or strongly-typed (?)
+	// for injection into the test class instance via @Parameters annotated
+	// constructor
 	public Collection<Object[]> getdata() {
 
 		try {
-			// temporarily store a replica of code from JSONMapper class
+			// NOTE: temporarily store a close replica of JSONMapper class method
 			return Arrays.asList(createDataFromJSON());
 		} catch (JSONException e) {
 			if (debug) {
@@ -61,9 +73,6 @@ public class DataSource {
 			return new ArrayList<Object[]>();
 		}
 	}
-
-	private String dataFile = "";
-	private String defaultKey = "row";
 
 	public void setDataFile(String value) {
 		this.dataFile = value;
@@ -83,72 +92,16 @@ public class DataSource {
 		this.columns = value;
 	}
 
-	public String getDefaultKey() {
-		return this.defaultKey;
-	}
-
-	public void setDefaultKey(String value) {
-		this.defaultKey = value;
-	}
-
-	private String filePath = null;
-	private static String encoding = "UTF-8";
-	private String dataKey = "datakey";
-	private List<String> columns = Arrays
-			.asList(new String[] { "row", "keyword", "count" });
-	private boolean debug = true;
-
 	public void setDebug(boolean value) {
 		this.debug = value;
-	}
-
-	// NOTE: not currently used.
-	public String getScriptContent(String resourceFileName) {
-		try {
-			if (debug) {
-				System.err
-						.println("Script contents: " + getResourceURI(resourceFileName));
-			}
-			final InputStream stream = getResourceStream(resourceFileName);
-			final byte[] bytes = new byte[stream.available()];
-			stream.read(bytes);
-			return new String(bytes, "UTF-8");
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	public InputStream getResourceStream(String resourceFilePath) {
-		return this.getClass().getClassLoader()
-				.getResourceAsStream(resourceFilePath);
-	}
-
-	public String getResourcePath(String resourceFileName) {
-		return String.format("%s/src/main/resources/%s",
-				System.getProperty("user.dir"), resourceFileName);
-	}
-
-	// NOTE: getResourceURI may not work well with
-	// standalone or a web-hosted application
-	public String getResourceURI(String resourceFileName) {
-		try {
-			URI uri = this.getClass().getClassLoader().getResource(resourceFileName)
-					.toURI();
-			if (debug) {
-				System.err.println("Resource URI: " + uri.toString());
-			}
-			return uri.toString();
-		} catch (URISyntaxException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	public Object[][] createDataFromJSON() throws org.json.JSONException {
 
 		if (debug) {
-			System.err.println("file path: " + filePath);
-			System.err.println("data key: " + dataKey);
-			System.err.println("columns: " + Arrays.deepToString(columns.toArray()));
+			System.err.println(
+					"File path: " + filePath + "\n" + "Data key: " + dataKey + "\n"
+							+ "Data Columns: " + Arrays.deepToString(columns.toArray()));
 		}
 
 		JSONObject obj = new JSONObject();
@@ -158,37 +111,35 @@ public class DataSource {
 
 		JSONArray rows = new JSONArray();
 
+		// NOTE: some code here is JSON-20080701 legacy
 		try {
 			byte[] encoded = Files.readAllBytes(Paths.get(filePath));
-			obj = new JSONObject(new String(encoded, Charset.forName("UTF-8")));
+			obj = new JSONObject(new String(encoded, Charset.forName(encoding)));
 		} catch (org.json.JSONException e) {
-			System.err.println("Exception (ignord) : " + e.toString());
+			System.err.println("Exception (ignored) : " + e.toString());
 		} catch (IOException e) {
-			System.err.println("Exception (ignord) : " + e.toString());
+			System.err.println("Exception (ignored) : " + e.toString());
 		}
 
-		if (debug) {
-			System.err.println("Verifying presence of " + dataKey);
-		}
-		Assert.assertTrue(obj.has(dataKey));
+		Assert.assertTrue("Verifying presence of " + dataKey, obj.has(dataKey));
 		String dataString = null;
 		try {
 			dataString = obj.getString(dataKey);
 			if (debug) {
-				System.err
-						.println("Loaded data for key: " + dataKey + " as " + dataString);
+				System.err.println(
+						"Loaded data as string for key: " + dataKey + " as " + dataString);
 			}
 		} catch (org.json.JSONException e) {
+			// JSON-20170516 and later
 			// org.json.JSONException: JSONObject["datakey"] not a string.
-			System.err.println("Exception (ignord) : " + e.toString());
+			System.err.println("Exception (ignored) : " + e.toString());
 		}
 
-		// possible org.json.JSONException
 		if (dataString != null) {
 			try {
 				rows = new JSONArray(dataString);
 			} catch (org.json.JSONException e) {
-				System.err.println("Exception (ignord) : " + e.toString());
+				System.err.println("Exception (ignored) : " + e.toString());
 			}
 		} else {
 			try {
@@ -198,7 +149,7 @@ public class DataSource {
 							+ rows.length() + " rows.");
 				}
 			} catch (org.json.JSONException e) {
-				System.err.println("Exception (ignord) : " + e.toString());
+				System.err.println("Exception (ignored) : " + e.toString());
 			}
 		}
 		for (int i = 0; i < rows.length(); i++) {
@@ -206,15 +157,15 @@ public class DataSource {
 				String entry = rows.getString(i);
 				hashes.add(entry);
 			} catch (org.json.JSONException e) {
-				System.err.println("Exception (ignord) : " + e.toString());
+				System.err.println("Exception (ignored) : " + e.toString());
 			}
 		}
-		Assert.assertTrue(hashes.size() > 0);
+		Assert.assertTrue("Verified the data is not empty", hashes.size() > 0);
 
 		String firstRow = hashes.get(0);
 
 		// NOTE: apparently after invoking org.json.JSON library the order of keys
-		// inside the firstRow will be non-deterministic
+		// inside the firstRow can be non-deterministic
 		// https://stackoverflow.com/questions/4515676/keep-the-order-of-the-json-keys-during-json-conversion-to-csv
 		firstRow = firstRow.replaceAll("\n", " ").substring(1,
 				firstRow.length() - 1);

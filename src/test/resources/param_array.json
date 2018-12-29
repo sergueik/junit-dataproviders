@@ -1,0 +1,19 @@
+[{
+  "row": 1.0,
+  "keyword": "junit",
+  "comment": "comment will be ignored",
+  "count": 103
+}, {
+  "row": 2.0,
+  "keyword": "testng",
+  "count": 33
+}, {
+  "row": 3.0,
+  "keyword": "spock",
+  "count": 13,
+  "skip": true
+}, {
+  "row": 4.0,
+  "keyword": "allure",
+  "count": 123
+}]
