@@ -1,7 +1,7 @@
 package com.github.sergueik.junitparams;
 
 /**
- * Copyright 2017-2018 Serguei Kouzmine
+ * Copyright 2017-2019 Serguei Kouzmine
  */
 import java.io.File;
 import java.io.FileInputStream;
@@ -46,7 +46,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 
 /**
- * Common utilities class for JUnitParams Dataproviders
+ * Common utilities for JUnitParams Dataproviders
  * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
  */
 

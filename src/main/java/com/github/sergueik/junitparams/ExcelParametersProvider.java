@@ -1,6 +1,6 @@
 package com.github.sergueik.junitparams;
 /**
- * Copyright 2017-2018 Serguei Kouzmine
+ * Copyright 2017-209 Serguei Kouzmine
  */
 
 import java.io.FileInputStream;
@@ -18,7 +18,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * ExcelParametersProvider junitparams data providers for Excel and OpenOffice spreadsheet content 
+ * ExcelParametersProvider JUnitparams data providers for MS Excel and OpenOffice spreadsheet files 
  * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
  */
 @RunWith(JUnitParamsRunner.class)

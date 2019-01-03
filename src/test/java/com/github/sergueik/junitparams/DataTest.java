@@ -1,6 +1,6 @@
 package com.github.sergueik.junitparams;
 /**
- * Copyright 2018 Serguei Kouzmine
+ * Copyright 2018,2019 Serguei Kouzmine
  */
 
 import static org.hamcrest.MatcherAssert.assertThat;

@@ -35,6 +35,7 @@
     <maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
     <poi.version>3.17</poi.version>
     <poiooxml.version>${poi.version}</poiooxml.version>
+    <snakeyaml.version>1.23</snakeyaml.version>
   </properties>
   <dependencies>
     <dependency>
@@ -81,6 +82,11 @@
       <groupId>org.apache.poi</groupId>
       <artifactId>poi-excelant</artifactId>
       <version>${poi.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <version>${snakeyaml.version}</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

@@ -3,19 +3,24 @@
 [![BuildStatus](https://travis-ci.org/sergueik/junit-dataproviders.svg?branch=master)](https://travis-ci.org/sergueik/junit-dataproviders)
 
 This project exercises following data providers with
-[JUnitParams](https://github.com/Pragmatists/JUnitParams) Junit plugin and core Junit 4+ `Parameterized` [test runner](https://junit.org/junit4/javadoc/latest/org/junit/runners/Parameterized.html) class:
+[JUnitParams Junit plugin](https://github.com/Pragmatists/JUnitParams)
+and core Junit 4+ `Parameterized` [test runner class](https://junit.org/junit4/javadoc/latest/org/junit/runners/Parameterized.html):
 
   * Excel 2003 OLE documents - a.k.a. [Horrible SpreadSheet Format](http://shanmugavelc.blogspot.com/2011/08/apache-poi-read-excel-for-use-of.html) `org.apache.poi.hssf.usermodel.*`
   * Excel 2007 OOXML (.xlsx) [XML SpreadSheet Format](http://howtodoinjava.com/2013/06/19/readingwriting-excel-files-in-java-poi-tutorial/) `org.apache.poi.xssf.usermodel.*`
   * OpenOffice SpreadSheet (.ods) [Open Document Format for Office Applications](http://www.jopendocument.org/docs/) `org.jopendocument.dom.*`
   * JSON via [org.json](https://stleary.github.io/JSON-java/) or [com.google.gson](https://www.javadoc.io/doc/com.google.code.gson/gson) (*work in progress*) package
+  * YAML via [snakeyaml](https://github.com/asomov/snakeyaml)
 
 Unlike core Data Providers in Junit (5?) and TestNg this provider class allows
-runtime-flexible data file path modification via environment setting which is useful e.g. for enabling one to exercize different test configurations for  __DEV__ / __TEST__ / __UAT__ environments without modifying or recompiling the test suite java code.  The technical  details in __Extra Features__ section below.
+flexible uniform data file path modification at runtime through 
+environment setting which is useful e.g. for enabling one to exercize different test configurations 
+for  __DEV__ / __TEST__ / __UAT__ environments without modifying or recompiling the test suite java code.  
+The technical  details in __Extra Features__ section below.
 
-### Usage
+### Usage with JUnitParams
 
-* Create the __Exce 2003__, __Excel 2007__ or __Open Office__ spreadsheet with some test-specific parameters e.g.
+* Create the __Excel 2003__, __Excel 2007__ or __Open Office__ spreadsheet with some test-specific parameters e.g.
 
 | ROWNUM |  SEARCH | COUNT |
 |--------|---------|-------|
@@ -134,7 +139,7 @@ row 0 : [1.0, junit, 104.0]
 ...
 ```
 
-NOTE: attributes for column selection and a flag for forcing every column type to primitive `String` type
+NOTE: attributes for column selection and forcing every column type to primitive `String` type
 are *work in progress*.
 
 ### Maven Central
@@ -172,11 +177,11 @@ or, for earlier versions of the jar,
   </repository>
 </repositories>
 ```
-### Extra Features
+### Extra Features for JUnitParams Junit plugin
 
 This data provider overcomes the known difficulty of core TestNG or Junit parameter annotations: developer is
-[not allowed](https://stackoverflow.com/questions/16509065/get-rid-of-the-value-for-annotation-attribute-must-be-a-constant-expression-me)
-to redefine the dataprovider attributes like for example the data source path:
+[not allowed to redefine](https://stackoverflow.com/questions/16509065/get-rid-of-the-value-for-annotation-attribute-must-be-a-constant-expression-me)
+the dataprovider attributes like in particular the data source path:
 
 ```java
 public static final String dataPath = "file:src/test/resources/data.json";
@@ -283,12 +288,14 @@ createDataFromExcel2003: Reading Excel 2003 sheet: Employee Data
 
 One can easily tweak this behavior further: e.g. turn the name `TEST_ENVIRONMENT` of the key envirnment variable into a separate parameter or define environment specifics via property file (this is work in progress). Similar changes are available for [testNg-DataProviders](https://github.com/sergueik/testng-dataproviders).
 
-### JUnit Parameterized tests with external data file scenarios
+### Usage with JUnit Parameterized runnner
+
+.
 
 Instance Constructor and Class propetry injection annotations for test
-parameterization are basically supported by [Junit 4 onward](https://github.com/junit-team/junit4/wiki/parameterized-tests)
-via `org.junit.runners.Parameterized` class.
-However the JUnit wiki does not demonstrate reading the test data from external file which is entirely possible:
+parameterization are basically supported by 
+[Junit 4 onward](https://github.com/junit-team/junit4/wiki/parameterized-tests) via an `org.junit.runners.Parameterized` class.
+However the core JUnit wiki does not mention storing test data in external data file which is entirely possible with core JUnit Parameterized tests:
 
 instead of hard coding the data in the test class
 ```java
@@ -343,17 +350,19 @@ public class DataSource {
 	public Object[][] createDataFromJSON {
   // read and parse JSON
   }
+	public Object[][] createDataFromYAML {
+  // read and parse YAML
+  }
 ```
 and then set the instance of `DataSource` class within the `Test` class with path to the data,
 optionally with other paratemetes like column selection:
 
 ```java
 @RunWith(Parameterized.class)
-public class DataProviderClassParameterizedPropertiesInjectionTest
-		extends DataTest {
+public class DataProviderClassParameterizedPropertiesInjectionTest extends DataTest {
 
 	private static DataSource dataSource = DataSource.getInstance();
-	private static String dataFile = "src/test/resources/data2.json";
+	private static String dataFile = "src/test/resources/data.json";
 
 	@Parameters
 	public static Collection<Object[]> data() {
@@ -381,18 +390,22 @@ public class DataProviderClassParameterizedPropertiesInjectionTest
 					.println(String.format("keyword: %s , count : %d ", keyword, count));
 		}
 	}
-
 ```
 
-The only downside is that, at least with JSON data files, every `@parameter` will have to be of the `String` primitive
-type and when loading from JSON the column order is not predictable and so is better be enforced through an extra property
-(this is *work in progress*).
+The only downside is that, at least with JSON and YAML data files, the only supported `@parameter` data type
+is the `String` primitive type. 
+
+The other minor known issue when loading from JSON the column order is not fully predictable and so is 
+better be enforced through an extra property (that is *work in progress*, addressed already for YAML).
 
 ### Note
 
 This project and the [testNg-DataProviders](https://github.com/sergueik/testng-dataproviders) -
-have large code overlap for processing spreadsheets and only differ in test methdod annotation details.
+have large code overlap for processing spreadsheets, evolve in parallel and only differ in low level
+test methdod annotation details.
 
+Note: the [JUnitParams](https://github.com/Pragmatists/JUnitParams) project seems to have been dormant for quite some time,
+but the PR is in the works.
 
 ### Apache POI compatibility
 
@@ -401,7 +414,15 @@ have large code overlap for processing spreadsheets and only differ in test meth
   * Older versions of the package require minor code refactoring. Note that you may also have to clear the other versions of poi and poi-ooxml jars from maven cache '~/.m2/repository'
   * Creating branches and tags is a work in progress.
 
-  ### See Also
+### Work in Progress
+
+  * rename `JSONMapper` that is implementing a somewhat limited [DataMapper](http://javadox.com/pl.pragmatists/JUnitParams/1.0.4/junitparams/mappers/DataMapper.html)
+  interface to `JSONFileParameters` and construct the new class`JSONParameterProvider` which would fully implement `ParametersProvider<JSONParameters>` all the way for feature parity with the `ExcelParametersProvider`.
+  * produce Javadoc
+  * fix legacy JSON code
+  * add more YAML data providers
+
+### See Also
 
   * Using Excel,Open Office,JSON as [testNG data providers](https://github.com/sergueik/testng-dataproviders)
   * [testng dataProviders](http://testng.org/doc/documentation-main.html#parameters-dataproviders)

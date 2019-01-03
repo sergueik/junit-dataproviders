@@ -1,4 +1,7 @@
 package com.github.sergueik.junitparams;
+/**
+ * Copyright 2017-2019 Serguei Kouzmine
+ */
 
 /**
  * Selected test scenarios annotated for ExcelParametersProvider junitparams data provider and JSON mapper
@@ -23,12 +26,15 @@ public class ParamDataUtils {
 	// element value must be a constant expression
 
 	// The parameters are resolved at compile time - not at runtime
-	// It is possible to use some compile time tools (ant, maven?) to set it todesired value 
+	// It is possible to use some compile time tools (ant, maven?) to set it
+	// todesired value
 	// by e.g. generating ParamDataUtils.java on the fly
 	// assuming the value is know before the program is run
-	// private static Properties properties = readProperties("src/test/resources/test.properties");
+	// private static Properties properties =
+	// readProperties("src/test/resources/test.properties");
 	private static final String badDataPath = String.format("file:///%s",
-			(readProperties("src/test/resources/test.properties")).getProperty("testDataPath", "file:src/test/resources/data.ods")
+			(readProperties("src/test/resources/test.properties"))
+					.getProperty("testDataPath", "file:src/test/resources/data.ods")
 					.replaceAll("\\", "/"));
 
 	// origin:
@@ -43,7 +49,7 @@ public class ParamDataUtils {
 		}
 		return properties;
 	}
-	
+
 	public static final String param() {
 		return "file:src/test/resources/data.json";
 	}

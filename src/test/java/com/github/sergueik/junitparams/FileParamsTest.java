@@ -1,6 +1,6 @@
 package com.github.sergueik.junitparams;
 /**
- *	 Copyright 2017-2018 Serguei Kouzmine
+ *	 Copyright 2017-2019 Serguei Kouzmine
  */
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -63,7 +63,7 @@ public class FileParamsTest extends DataTest {
 	}
 
 	// TODO: Allow columns specification interface
-	// e.g. the rowNum column is present in the spreadsheet 
+	// e.g. the rowNum column is present in the spreadsheet
 	// but not needed for the test
 	@Test
 	@ExcelParameters(filepath = "classpath:data_2003.xls", sheetName = "", type = "Excel 2003", debug = true)
@@ -100,27 +100,23 @@ public class FileParamsTest extends DataTest {
 		dataTest(keyword, count);
 	}
 
-	// TODO: fix JSON jar version-specific error:
+	// TODO: Fix JSON jar version-specific error from loading the JSON fragments
+	// into strings first:
 	// org.json.JSONException: JSONObject["test"] not a string.
-	// @Ignore
 	@Test
 	@FileParameters(value = "classpath:data.json", mapper = JSONMapper.class)
 	public void loadParamsFromJSONEmbedded(String strCount, String keyword) {
 		dataTest(strCount, keyword);
 	}
 
-	// TODO: fix JSON jar version-specific error:
-	// org.json.JSONException: JSONObject["test"] not a string.
-	@Ignore
 	@Test
-	@FileParameters(value = jsonDataPath /* "file:src/test/resources/data.json"*/ , mapper = JSONMapper.class)
+	@FileParameters(value = jsonDataPath, mapper = JSONMapper.class)
 	public void loadParamsFromJSONFile(String strCount, String strKeyword) {
 		dataTest(strCount, strKeyword);
 	}
 
-	// @Ignore
 	@Test
-	@FileParameters(value = jsonDataPath, mapper = JSONMapper.class)
+	@FileParameters(value = "file:src/test/resources/data.json", mapper = JSONMapper.class)
 	public void loadParamsFromJSONFileFromStaticValue(String strCount,
 			String strKeyword) {
 		dataTest(strCount, strKeyword);

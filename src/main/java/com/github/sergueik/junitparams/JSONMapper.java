@@ -1,6 +1,6 @@
 package com.github.sergueik.junitparams;
 /**
- * Copyright 2017-2018 Serguei Kouzmine
+ * Copyright 2017-2019 Serguei Kouzmine
  */
 
 import static org.junit.Assert.assertTrue;
@@ -14,16 +14,27 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import junitparams.custom.ParametersProvider;
 import junitparams.mappers.DataMapper;
 
+// NOTE: junitparams.mappers.BufferedReaderDataMapper 
+// is not public in junitparams.mappers and cannot be accessed from outside package
+
 /**
- * JSON mapper for junitparams data provider.
+ * JSON mapper for JUnitparams data provider.
  * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
  */
+
 public class JSONMapper implements DataMapper {
 
 	private Boolean debug = false;
 	private String testName = "test";
+	private String value;
+
+	public void getValue(String value) {
+		System.err.println("messing ip with value");
+	}
+
 	private List<String> columns = new ArrayList<>();
 
 	private List<String> getColumns(String payload) {
@@ -50,7 +61,6 @@ public class JSONMapper implements DataMapper {
 	}
 
 	// NOTE: column order is indeterministic
-	@Override
 	public Object[] map(Reader reader) {
 
 		List<Object[]> result = new LinkedList<>();

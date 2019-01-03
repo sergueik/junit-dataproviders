@@ -1,6 +1,6 @@
 package com.github.sergueik.junitparams;
 /**
- * Copyright 2018 Serguei Kouzmine
+ * Copyright 2018,2019 Serguei Kouzmine
  */
 
 import static org.junit.Assert.assertFalse;
@@ -30,22 +30,33 @@ import org.junit.Assert;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
+
 /**
  * Class with an (optional) Singleton constructor for loading the data 
- * from a JSON (poi and OpenDoc also possible) data file  
- * through a Juit4 @Parameter annotation into test class parameterized constructor 
+ * from a JSON or YAML data file  
+ * through Juit4 @Parameter annotation into specially constructed  test class parameterized constructor
+ * The poi and OpenDoc formats are also possible  
  * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
  */
 
 public class DataSourceSingleton {
 
-	private String dataFile = "";
-	private String filePath = null;
-	private static String encoding = "UTF-8";
-	private String dataKey = "datakey";
 	private List<String> columns = Arrays
 			.asList(new String[] { "row", "keyword", "count" });
+
 	private boolean debug = true;
+
+	private String dataFormat = "JSON";
+	private String dataFile = "";
+	private String dataKey = "datakey";
+
+	private static String encoding = "UTF-8";
+	private String filePath = null;
+
+	private static DumperOptions options = new DumperOptions();
+	private static Yaml yaml = null;
 
 	// currently unused
 	// private String defaultKey = "row";
@@ -65,16 +76,32 @@ public class DataSourceSingleton {
 	// for injection into the test class instance via @Parameters annotated
 	// constructor
 	public Collection<Object[]> getdata() {
-
-		try {
-			// NOTE: temporarily store a close replica of JSONMapper class method
-			return Arrays.asList(createDataFromJSON());
-		} catch (JSONException e) {
+		if (dataFormat.matches("(?i:JSON)")) {
+			// NOTE: not an exception: "PatternSyntax Unclosed group near"
+			try {
+				// NOTE: temporarily store a close replica of JSONMapper class method
+				return Arrays.asList(createDataFromJSON());
+			} catch (JSONException e) {
+				if (debug) {
+					System.err.println("Failed to load data from datafile: " + dataFile);
+				}
+				return new ArrayList<Object[]>();
+			}
+		} else if (dataFormat.matches("(?i:yaml)")) {
 			if (debug) {
-				System.err.println("Failed to load data from datafile: " + dataFile);
+				System.err.println("Unsupported data format: " + dataFormat);
+			}
+			return Arrays.asList(createDataFromYAML());
+		} else {
+			if (debug) {
+				System.err.println("Unrecognized data format: " + dataFormat);
 			}
 			return new ArrayList<Object[]>();
 		}
+	}
+
+	public void setDataFormat(String value) {
+		this.dataFormat = value;
 	}
 
 	public void setDataFile(String value) {
@@ -97,6 +124,46 @@ public class DataSourceSingleton {
 
 	public void setDebug(boolean value) {
 		this.debug = value;
+	}
+
+	@SuppressWarnings("unchecked")
+	public Object[][] createDataFromYAML() {
+		if (yaml == null) {
+			options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+			yaml = new Yaml(options);
+		}
+
+		List<Map<String, Object>> yamlData = new ArrayList<>();
+		try (InputStream in = Files.newInputStream(Paths.get(filePath))) {
+			yamlData = yaml.loadAs(in, yamlData.getClass());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		// crude
+		// Object[][] testDataArray = new Object[testData.values().size()][];
+		// testData.values().toArray(testDataArray);
+
+		List<Object[]> testData = new ArrayList<>();
+		List<Object> testDataRow = new LinkedList<>();
+		Map<String, Object> yamlDataRow = new HashMap<>();
+		for (int cnt = 0; cnt != yamlData.size(); cnt++) {
+			yamlDataRow = yamlData.get(cnt);
+
+			// NOTE: somewhat lame
+			// maybe fill in the right order?
+			testDataRow = new LinkedList<>();
+			for (String column : columns) {
+				// NOTE: un-strong-type
+				testDataRow.add(yamlDataRow.getOrDefault(column, null).toString());
+			}
+
+			testData.add(testDataRow.toArray());
+		}
+
+		Object[][] testDataArray = new Object[testData.size()][];
+		testData.toArray(testDataArray);
+		return testDataArray;
+
 	}
 
 	public Object[][] createDataFromJSON() throws org.json.JSONException {
@@ -227,4 +294,5 @@ public class DataSourceSingleton {
 		testData.toArray(testDataArray);
 		return testDataArray;
 	}
+
 }

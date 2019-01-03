@@ -11,14 +11,16 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
-public class DataProviderParamConstructorTest extends DataTest {
+public class JSONDataProviderParamConstructorTest extends DataTest {
 
-	private static DataSourceSingleton dataSource = DataSourceSingleton.getInstance();
+	private static DataSourceSingleton dataSource = DataSourceSingleton
+			.getInstance();
 	private static String dataFile = "src/test/resources/hash_of_param_arrays.json";
 
 	@Parameters
 	public static Collection<Object[]> data() {
 		dataSource.setDataFile(dataFile);
+		dataSource.setDataFormat("JSON");
 		return dataSource.getdata();
 	}
 
@@ -29,8 +31,8 @@ public class DataProviderParamConstructorTest extends DataTest {
 	// string parameter constructor injection
 	// NOTE: with JSON the column order is not predictable and
 	// is better be enforced through an extra property
-	public DataProviderParamConstructorTest(String rowNum,
-			String keyword, String count) {
+	public JSONDataProviderParamConstructorTest(String rowNum, String keyword,
+			String count) {
 		this.rowNum = rowNum;
 		this.keyword = keyword;
 		this.count = count;

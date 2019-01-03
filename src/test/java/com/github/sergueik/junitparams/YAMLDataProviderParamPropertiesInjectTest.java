@@ -23,13 +23,13 @@ import com.github.sergueik.junitparams.DataSourceStatic;
 */
 
 @RunWith(Parameterized.class)
-public class DataProviderParamPropertiesInjectTest
-		extends DataTest {
+public class YAMLDataProviderParamPropertiesInjectTest extends DataTest {
 
-	private static String dataFile = "src/test/resources/param_array.json";
+	private static String dataFile = "src/test/resources/param_arrays.yaml";
 
 	@Parameters
 	public static Collection<Object[]> data() {
+		DataSourceStatic.setDataFormat("YAML");
 		DataSourceStatic.setDataFilePath(
 				String.format("%s/%s", System.getProperty("user.dir"), dataFile));
 		return DataSourceStatic.getdata();

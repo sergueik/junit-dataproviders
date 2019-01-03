@@ -1,6 +1,6 @@
 package com.github.sergueik.junitparams;
 /**
- * Copyright 2017-2018 Serguei Kouzmine
+ * Copyright 2017-2019 Serguei Kouzmine
  */
 
 import java.lang.annotation.Retention;
@@ -12,7 +12,7 @@ import junitparams.JUnitParamsRunner;
 import junitparams.custom.CustomParameters;
 
 /**
- * @ExcelParameters annotation interface for ExcelParametersProvider junitparams data provider
+ * @ExcelParameters Annotation interface for ExcelParametersProvider JUnitparams data provider
  * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
  */
 
