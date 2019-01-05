@@ -41,7 +41,10 @@ public class FileParamsTest extends DataTest {
 	// private final static String testDataPath = ParamDataUtils.testDataPath;
 
 	private final String jsonDataPath = "file:c:/ProgramData/Temp/data.json";
-	private final static String testDataPath = "file:c:/Users/${env:USERNAME}/Documents/data.ods";
+
+	// Note: commented to save the Travis build
+	// private final static String testDataPath = "file:c:/Users/${env:USERNAME}/Documents/data.ods";
+	private final static String testDataPath = "file:src/test/resources/data.ods";
 
 	@Test
 	@ExcelParameters(filepath = "classpath:data_2007.xlsx", sheetName = "", type = "Excel 2007", debug = true)
@@ -94,7 +97,11 @@ public class FileParamsTest extends DataTest {
 	}
 
 	@Test
-	@ExcelParameters(filepath = "file:${USERPROFILE}/Desktop/data.ods", sheetName = "", type = "OpenOffice Spreadsheet", debug = true)
+	// Note: setting the data directory relative to USERPROFILE would break the Travis build that it is running in a VM with no
+	// active user. Use in local development
+	// @ExcelParameters(filepath = "file:${USERPROFILE}/Desktop/data.ods",
+	// sheetName = "", type = "OpenOffice Spreadsheet", debug = true)
+	@ExcelParameters(filepath = "file:src/test/resources/data.ods", sheetName = "", type = "OpenOffice Spreadsheet", debug = true)
 	public void loadParamsFromFileOpenOfficeSpreadsheet(double rowNum,
 			String keyword, double count) {
 		dataTest(keyword, count);
