@@ -95,9 +95,11 @@ public class DataSourceStatic {
 				}
 				return new ArrayList<Object[]>();
 			}
+
+			//
 		} else if (dataFormat.matches("(?i:yaml)")) {
 			if (debug) {
-				System.err.println("Unsupported data format: " + dataFormat);
+				System.err.println("Loading data format: " + dataFormat);
 			}
 			return Arrays.asList(createDataFromYAML());
 		} else {
@@ -183,6 +185,7 @@ public class DataSourceStatic {
 			}
 
 			// actualColumns is ignored
+			// order of columns is preserved
 			for (String column : columns) {
 				testDataRow.add(entryObj.get(column).toString());
 			}
@@ -229,6 +232,5 @@ public class DataSourceStatic {
 		Object[][] testDataArray = new Object[testData.size()][];
 		testData.toArray(testDataArray);
 		return testDataArray;
-
 	}
 }

@@ -436,7 +436,7 @@ but the PR is in the works.
   * [JUnit 4 Wiki about Parameterization of test classes](https://github.com/junit-team/junit4/wiki/parameterized-tests)
   * [JUnit - Parameterized Test intro ](https://www.tutorialspoint.com/junit/junit_parameterized_test.htm).
   * [Junit test runners summary](https://github.com/junit-team/junit4/wiki/test-runners)
-
+  * [YamlDataProviderImpl](http://paypal.github.io/SeLion/html/java-docs/1.0.0/dataproviders-apis/index.html?com/paypal/selion/platform/dataprovider/impl/YamlDataProviderImpl.html) YAML data provider in `com.paypal.selion.platform.dataprovider`
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)

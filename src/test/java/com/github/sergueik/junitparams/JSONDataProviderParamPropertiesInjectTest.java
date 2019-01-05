@@ -5,8 +5,10 @@ package com.github.sergueik.junitparams;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,17 +34,25 @@ public class JSONDataProviderParamPropertiesInjectTest extends DataTest {
 		DataSourceStatic.setDataFormat("JSON");
 		DataSourceStatic.setDataFilePath(
 				String.format("%s/%s", System.getProperty("user.dir"), dataFile));
+		// This input illustrates how the data fields can be read into the object
+		// array in a different order than the
+		// natural order in the YAML data file
+		List<String> columns = new ArrayList<>();
+		for (String column : new String[] { "keyword", "count", "row" }) {
+			columns.add(column);
+		}
+		DataSourceStatic.setColumns(columns);
 		return DataSourceStatic.getdata();
 	}
 
 	// NOTE: the first property annotation is value (0) is default
 	// NOTE: not strongly typed
 	@Parameter
-	public String rowNum;
-	@Parameter(1)
 	public String keyword;
-	@Parameter(2)
+	@Parameter(1)
 	public String count;
+	@Parameter(2)
+	public String rowNum;
 
 	@Test
 	public void parameterizedTest() {

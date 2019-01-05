@@ -89,7 +89,7 @@ public class DataSourceSingleton {
 			}
 		} else if (dataFormat.matches("(?i:yaml)")) {
 			if (debug) {
-				System.err.println("Unsupported data format: " + dataFormat);
+				System.err.println("Loading data format: " + dataFormat);
 			}
 			return Arrays.asList(createDataFromYAML());
 		} else {
@@ -264,6 +264,7 @@ public class DataSourceSingleton {
 				e.printStackTrace();
 			}
 			// actualColumns is ignored
+			// order of columns is preserved
 			for (String column : columns) {
 				testDataRow.add(entryObj.get(column).toString());
 			}

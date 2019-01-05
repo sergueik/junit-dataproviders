@@ -3,6 +3,7 @@ package com.github.sergueik.junitparams;
  * Copyright 2018 - 2019 Serguei Kouzmine
  */
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import org.junit.Test;
@@ -17,12 +18,17 @@ public class YAMLDataProviderParamConstructorTest extends DataTest {
 			.getInstance();
 	// YAML loading dataSource methods are not yet supporting schema when
 	// parameters are in arrays of hashes hashed by test group
-	// nor strongly typed arrays of parameter objects
+	// neither it allows strongly typed arrays of parameter objects
 	private static String dataFile = "src/test/resources/param_arrays.yaml";
+	// This input illustrates how the data fields can be read into the object
+	// array in a different order than the
+	// natural order in the YAML data file
+	private static String dataFields = "keyword|count|row";
 
 	@Parameters
 	public static Collection<Object[]> data() {
 		dataSource.setDataFile(dataFile);
+		dataSource.setColumns(Arrays.asList(dataFields.split("\\|")));
 		dataSource.setDataFormat("YAML");
 		return dataSource.getdata();
 	}
@@ -34,8 +40,8 @@ public class YAMLDataProviderParamConstructorTest extends DataTest {
 	// string parameter constructor injection
 	// NOTE: with JSON the column order is not predictable and
 	// is better be enforced through an extra property
-	public YAMLDataProviderParamConstructorTest(String rowNum, String keyword,
-			String count) {
+	public YAMLDataProviderParamConstructorTest(String keyword, String count,
+			String rowNum) {
 		this.rowNum = rowNum;
 		this.keyword = keyword;
 		this.count = count;
