@@ -32,6 +32,7 @@ public class JSONDataProviderParamPropertiesInjectTest extends DataTest {
 	@Parameters
 	public static Collection<Object[]> data() {
 		DataSourceStatic.setDataFormat("JSON");
+		
 		DataSourceStatic.setDataFilePath(
 				String.format("%s/%s", System.getProperty("user.dir"), dataFile));
 		// This input illustrates how the data fields can be read into the object

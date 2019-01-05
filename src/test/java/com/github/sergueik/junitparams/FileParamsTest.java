@@ -10,6 +10,7 @@ import static org.hamcrest.core.Is.is;
 import java.io.Reader;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -24,7 +25,7 @@ import junitparams.custom.ParametersProvider;
 import junitparams.mappers.CsvWithHeaderMapper;
 
 /**
- * Sampe parameterized JUnit test scenarios annotated for ExcelParametersProvider 
+ * Sample parameterized JUnit test scenarios annotated for ExcelParametersProvider 
  * JUnitparams data provider plugin and JSON mapper
  * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
  */
@@ -40,11 +41,29 @@ public class FileParamsTest extends DataTest {
 	// private final String jsonDataPath = ParamDataUtils.param();
 	// private final static String testDataPath = ParamDataUtils.testDataPath;
 
-	private final String jsonDataPath = "file:c:/ProgramData/Temp/data.json";
+	private static Map<String, String> env = System.getenv();
 
-	// Note: commented to save the Travis build
-	// private final static String testDataPath = "file:c:/Users/${env:USERNAME}/Documents/data.ods";
-	private final static String testDataPath = "file:src/test/resources/data.ods";
+	// Detect Travis build
+	private static final boolean isCIBuild = (env.containsKey("TRAVIS")
+			&& env.get("TRAVIS").equals("true")) ? true : false;
+
+	// NOTE: The value for every annotation attribute must be a constant
+	// expression. One cannot evaluate it conditionally.
+	// The following commented code will fail to compile
+	/*
+	private static final String jsonDataPath = isCIBuild
+			? "file:src/test/resources/data.json"
+			: "file:c:/ProgramData/Temp/data.json";
+	*/
+	// See the README.md for more detais and workaround
+
+	// private static final String jsonDataPath =
+	// "file:c:/ProgramData/Temp/data.json";
+	private static final String jsonDataPath = "file:src/test/resources/data.json";
+	// private static final String testDataPath =
+	// "file:c:/Users/${env:USERNAME}/Documents/data.ods";
+
+	private static final String testDataPath = "file:src/test/resources/data.ods";
 
 	@Test
 	@ExcelParameters(filepath = "classpath:data_2007.xlsx", sheetName = "", type = "Excel 2007", debug = true)
@@ -97,19 +116,16 @@ public class FileParamsTest extends DataTest {
 	}
 
 	@Test
-	// Note: setting the data directory relative to USERPROFILE would break the Travis build that it is running in a VM with no
-	// active user. Use in local development
+	// NOTE: cannot conditionally evaluate the annotation attribute
 	// @ExcelParameters(filepath = "file:${USERPROFILE}/Desktop/data.ods",
 	// sheetName = "", type = "OpenOffice Spreadsheet", debug = true)
+
 	@ExcelParameters(filepath = "file:src/test/resources/data.ods", sheetName = "", type = "OpenOffice Spreadsheet", debug = true)
 	public void loadParamsFromFileOpenOfficeSpreadsheet(double rowNum,
 			String keyword, double count) {
 		dataTest(keyword, count);
 	}
 
-	// TODO: Fix JSON jar version-specific error from loading the JSON fragments
-	// into strings first:
-	// org.json.JSONException: JSONObject["test"] not a string.
 	@Test
 	@FileParameters(value = "classpath:data.json", mapper = JSONMapper.class)
 	public void loadParamsFromJSONEmbedded(String strCount, String keyword) {

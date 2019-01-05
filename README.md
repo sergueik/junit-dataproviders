@@ -191,28 +191,52 @@ public static final String dataPath = "file:src/test/resources/data.json";
    // actual code ot the  test
   }
 ```
-In the above, one is only allowed to initialize the `testDataPath` to a `String`(or `int`) primitive type, in particular even
-declaring the same (pseudo-const) data in a separate class:
+In the above, one is only allowed to initialize the `testDataPath` to a `String`(or `int`) primitive type, in particular, one can not set
+it differently for Jenkins / Travis automated build environment and IDE like below:
+```java
+
+private static final String jsonDataPath = (env.containsKey("TRAVIS")
+    && env.get("TRAVIS").equals("true")) ?
+    ? "file:src/test/resources/data.json"
+    : "file:c:/ProgramData/Temp/data.json";
+@Test
+@FileParameters(value = jsonDataPath, mapper = JSONMapper.class)
+public void loadParamsFromJSONFile(String strCount, String strKeyword) {
+  dataTest(strCount, strKeyword);
+}
+```
+or
+```java
+private static final boolean isCIBuild = (env.containsKey("TRAVIS")
+    && env.get("TRAVIS").equals("true")) ? true : false;
+
+@Test
+@ExcelParameters(filepath = isCIBuild ? "file:src/test/resources/data.ods"
+    : "file:${USERPROFILE}/Desktop/data.ods", sheetName = "", type = "OpenOffice Spreadsheet", debug = true)
+public void loadParamsFromFileOpenOfficeSpreadsheet(double rowNum,
+    String keyword, double count) {
+  dataTest(keyword, count);
+}
+```
+would fail to compile:
+```sh
+Compilation failure: The value for annotation attribute must be a constant expression
+```
+Even declaring the same (pseudo-const) data as a `static final String` in a separate class:
 
 ```java
 public class ParamData {
   public final static String dataPath = "file:src/test/resources/data.json";
 }
 ```
-and assigning the result to the vatiable in the main test class,
+and assigning the result to the variable in the main test class,
 ```java
 public class FileParamsTest {
 
   private final static String dataPath = ParamData.dataPath;
 ```
-would fail to compile:
-```sh
-Compilation failure:
-[ERROR] FileParamsTest.java: element value must be a constant expression
-```
-so it likely not doable.
-No such limitation arises when one uses core Junit `Parameterized` test runner class.
-Porting all data file kinds to use with this provideris
+will lead the the same error convinsincg one it likely not doable.
+This limitation is not observed with the core Junit `Parameterized` test runner class. Porting all data file kinds to use with this provideris
 a work in progress, currently only the JSON provider is converted.
 
 However it is quite easy to implement this functionality in the data provider class `ExcelParametersProvider` itself by adding an extra class variable named e.g. `testEnvironment` that would receive its value from e.g. the environment variable named `TEST_ENVIRONMENT` and, when non-blank, would override the data file paths which were specified through the `file://` protocol prefix

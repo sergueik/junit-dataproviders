@@ -5,8 +5,10 @@ package com.github.sergueik.junitparams;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,6 +32,16 @@ public class YAMLDataProviderParamPropertiesInjectTest extends DataTest {
 	@Parameters
 	public static Collection<Object[]> data() {
 		DataSourceStatic.setDataFormat("YAML");
+		DataSourceStatic.setDebug(true);
+		// With static class has to reset the columns otherwise different tests
+		// would interfere. This would manifest in the Assertion Error caught by the
+		// example test
+		List<String> columns = new ArrayList<>();
+		for (String column : new String[] { "row", "keyword", "count" }) {
+			columns.add(column);
+		}
+		DataSourceStatic.setColumns(columns);
+
 		DataSourceStatic.setDataFilePath(
 				String.format("%s/%s", System.getProperty("user.dir"), dataFile));
 		return DataSourceStatic.getdata();
@@ -48,9 +60,14 @@ public class YAMLDataProviderParamPropertiesInjectTest extends DataTest {
 	public void parameterizedTest() {
 		try {
 			dataTest(count, keyword);
+		} catch (AssertionError e) {
+			System.err.println(
+					String.format("Assertion Error with keyword: %s , count : %s ",
+							keyword.toString(), count.toString()));
 		} catch (IllegalStateException e) {
 			System.err
-					.println(String.format("keyword: %s , count : %d ", keyword, count));
+					.println(String.format("Illegal State with keyword: %s , count : %s ",
+							keyword.toString(), count.toString()));
 		}
 	}
 }

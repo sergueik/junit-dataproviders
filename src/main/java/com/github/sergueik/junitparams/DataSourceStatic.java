@@ -43,7 +43,7 @@ public class DataSourceStatic {
 	// reserved
 	private static String encoding = "UTF-8";
 
-	private static boolean debug = true;
+	private static boolean debug = false;
 
 	// can be used for ordering the data in rowset
 	private static String skipRowColumn = "skip";
@@ -79,7 +79,7 @@ public class DataSourceStatic {
 		columns = value;
 	}
 
-	public void setDebug(boolean value) {
+	public static void setDebug(boolean value) {
 		debug = value;
 	}
 
