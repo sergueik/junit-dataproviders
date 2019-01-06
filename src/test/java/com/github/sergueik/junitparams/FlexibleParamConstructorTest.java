@@ -15,13 +15,20 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import java.lang.UnsupportedOperationException;
 
+/**
+ * Example of parameterized JUnit test trying to update the test parameter from inside the 
+ * @test or from @Before method, both failing to achieve the immediate goal
+ * of dynamically increas the number of test iterations  
+ * Does not appear to be supported by @RunWith(Parameterized.class)
+ * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
+ */
+//   
 @RunWith(Parameterized.class)
 public class FlexibleParamConstructorTest extends DataTest {
 
-	// java.lang.UnsupportedOperationException
+	// java.lang.UnsupportedOperationException from testParamData.add(Object[])
 	// private static List<Object[]> testParamData = Arrays.asList(new Object[][]
-	// {
-	// { 1.0, "junit", 204 }, { 2.0, "testng", 51 }, { 3.0, "spock", 28 } });
+	// {{ 1.0, "junit", 204 }, { 2.0, "testng", 51 }, { 3.0, "spock", 28 }});
 
 	private static ArrayList<Object[]> testParamData = new ArrayList<Object[]>();
 
@@ -30,14 +37,13 @@ public class FlexibleParamConstructorTest extends DataTest {
 		testParamData.add(0, new Object[] { 1.0, "junit", 204 });
 		testParamData.add(1, new Object[] { 2.0, "testng", 51 });
 		testParamData.add(2, new Object[] { 3.0, "spock", 28 });
-		testParamData.add(2, new Object[] { 3.0, "test0", 28 });
 		return testParamData;
 	}
 
 	private double rowNum;
 	private String keyword;
 	private int count;
-	private static int flexibleDataCount = 1;
+	private static int flexibleTestPAramDataCount = 1;
 
 	// constructor injection
 	public FlexibleParamConstructorTest(double rowNum, String keyword,
@@ -49,23 +55,25 @@ public class FlexibleParamConstructorTest extends DataTest {
 
 	@Before
 	public void beforeEach() {
-		// Modify test param data before each test
-		flexibleDataCount++;
-		Object[] testParamEntry = new Object[] { (float) flexibleDataCount,
-				String.format("test param before each test%d", flexibleDataCount), 199 + flexibleDataCount };
-		try {
-			System.err.println("Adding entry to test param data before each test: "
-					+ testParamEntry[1].toString());
-			testParamData.add(testParamEntry);
-			System.err.println("Modified test param data before each test");
-		} catch (UnsupportedOperationException e) {
-			System.err.println("Failed to modify test param data before test.");
-			e.printStackTrace();
-		}
 	}
 
 	@Test
 	public void parameterizedTest1() {
+		// Modify test param data before test 2
+		flexibleTestPAramDataCount++;
+		Object[] testParamEntry = new Object[] { (float) flexibleTestPAramDataCount,
+				String.format("test param changed in test 1: test%d",
+						flexibleTestPAramDataCount),
+				100 + flexibleTestPAramDataCount };
+		try {
+			System.err.println("Adding entry to test param from the test: "
+					+ testParamEntry[1].toString());
+			testParamData.add(testParamEntry);
+			System.err.println("Modified test param data from the test.");
+		} catch (UnsupportedOperationException e) {
+			System.err.println("Failed to modify test param data from the test.");
+			e.printStackTrace();
+		}
 		try {
 			dataTest(keyword, count);
 		} catch (IllegalStateException e) {

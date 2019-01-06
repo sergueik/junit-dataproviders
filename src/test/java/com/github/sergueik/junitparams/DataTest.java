@@ -22,8 +22,14 @@ public class DataTest {
 		System.err.println(
 				String.format("Search keyword:'%s'\tExpected minimum link count:%d",
 						keyword, (int) count));
+
+		// Type safety:
+		// generic array of Matcher<? super String> is created for a varargs
+		// parameter -
+		// the warning appears after adding the entry to list of
+		// arguments making it longer than 6 arguments
 		assertThat("search", keyword, anyOf(is("junit"), is("testng"), is("spock"),
-				is("whatever"), is("test0"), is("allure"), is("there is no such thing")));
+				is("whatever"), is("allure"), is("there is no such thing")));
 		assertThat((int) count, greaterThan(0));
 	}
 
