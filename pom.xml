@@ -392,12 +392,18 @@
       <activation>
         <jdk>9</jdk>
       </activation>
-      <dependencies>
-		</dependencies>
+      <dependencies/>
       <properties>
         <java.version>9</java.version>
         <java.build>9.0.4</java.build>
         <maven-enforcer-plugin.java.version>[${java.build}, )</maven-enforcer-plugin.java.version>
+      </properties>
+    </profile>
+    <profile>
+      <id>json-2018</id>
+      <dependencies/>
+      <properties>
+        <json.version>20180813</json.version>
       </properties>
     </profile>
   </profiles>

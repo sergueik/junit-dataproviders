@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import junitparams.custom.ParametersProvider;
@@ -89,11 +90,21 @@ public class JSONMapper implements DataMapper {
 			// possible org.json.JSONException
 			allTestData = new JSONObject(rawData);
 			assertTrue(allTestData.has(testName));
-			String dataString = allTestData.getString(testName);
-
-			rows = new JSONArray(dataString);
+			try {
+				String dataString = allTestData.getString(testName);
+				rows = new JSONArray(dataString);
+			} catch (JSONException e) {
+				// JSONObject["test"] not a string.
+				// compatibility with JSON 2007
+				rows = allTestData.optJSONArray(testName);
+			}
 			for (int i = 0; i < rows.length(); i++) {
-				hashes.add(rows.getString(i));
+				// JSONArray[0] not a string
+				try {
+					hashes.add(rows.getString(i));
+				} catch (JSONException e) {
+					hashes.add(rows.getJSONObject(i).toString());
+				}
 			}
 			assertTrue(hashes.size() > 0);
 			// NOTE: order of keys after invoking JSON library will be

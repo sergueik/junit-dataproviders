@@ -136,10 +136,12 @@ public class DataSourceStatic {
 
 		for (int i = 0; i < rows.length(); i++) {
 			try {
-				String entry = rows.getString(i);
-				hashes.add(entry);
-			} catch (org.json.JSONException e) {
-				System.err.println("Exception (ignored) : " + e.toString());
+				hashes.add(rows.getString(i));
+			} catch (JSONException e) {
+				hashes.add(rows.getJSONObject(i).toString());
+			}
+			if (debug) {
+				System.err.println("Loaded " + hashes);
 			}
 		}
 		Assert.assertTrue(hashes.size() > 0);

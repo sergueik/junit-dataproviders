@@ -227,8 +227,9 @@ public class DataSourceSingleton {
 				String entry = rows.getString(i);
 				hashes.add(entry);
 			} catch (org.json.JSONException e) {
-				System.err.println("Exception (ignored) : " + e.toString());
-			}
+				// System.err.println("Exception (ignored) : " + e.toString());
+				hashes.add(rows.getJSONObject(i).toString());
+		}
 		}
 		Assert.assertTrue("Verified the data is not empty", hashes.size() > 0);
 
