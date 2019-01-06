@@ -20,9 +20,13 @@ import com.github.sergueik.junitparams.DataSourceStatic;
 /* Test class parameter injection that is supported by Junit 4
  * out of the box
  * https://github.com/junit-team/junit4/wiki/parameterized-tests
- * but fed from the file via DataSource class
-* @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
-*/
+ * fed from the JSON file via DataSource class static methods.
+ * This example also illustrates how the data fields can be read into the object
+ * array in a different order than the
+ * natural order in the YAML data file through 
+ * columns input.
+ * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
+ */
 
 @RunWith(Parameterized.class)
 public class JSONDataProviderParamPropertiesInjectTest extends DataTest {
@@ -32,12 +36,9 @@ public class JSONDataProviderParamPropertiesInjectTest extends DataTest {
 	@Parameters
 	public static Collection<Object[]> data() {
 		DataSourceStatic.setDataFormat("JSON");
-		
+
 		DataSourceStatic.setDataFilePath(
 				String.format("%s/%s", System.getProperty("user.dir"), dataFile));
-		// This input illustrates how the data fields can be read into the object
-		// array in a different order than the
-		// natural order in the YAML data file
 		List<String> columns = new ArrayList<>();
 		for (String column : new String[] { "keyword", "count", "row" }) {
 			columns.add(column);
@@ -47,7 +48,7 @@ public class JSONDataProviderParamPropertiesInjectTest extends DataTest {
 	}
 
 	// NOTE: the first property annotation is value (0) is default
-	// NOTE: not strongly typed
+	// NOTE: cannot currently be strongly typed
 	@Parameter
 	public String keyword;
 	@Parameter(1)

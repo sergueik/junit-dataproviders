@@ -10,6 +10,12 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+/* JUnit Parameterized test class relying on
+ * properties injection 
+ * modified to use JSON file to load parameters (singleton class version)
+ * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com) 
+ */
+
 @RunWith(Parameterized.class)
 public class JSONDataProviderParamConstructorTest extends DataTest {
 
@@ -29,8 +35,6 @@ public class JSONDataProviderParamConstructorTest extends DataTest {
 	private String count;
 
 	// string parameter constructor injection
-	// NOTE: with JSON the column order is not predictable and
-	// is better be enforced through an extra property
 	public JSONDataProviderParamConstructorTest(String rowNum, String keyword,
 			String count) {
 		this.rowNum = rowNum;

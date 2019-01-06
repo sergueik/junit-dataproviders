@@ -167,7 +167,7 @@ or, for earlier versions of the jar,
 <dependency>
   <groupId>com.github.sergueik.junitparams</groupId>
   <artifactId>junit_params</artifactId>
-  <version>0.0.14-SNAPSHOT</version>
+  <version>0.0.15-SNAPSHOT</version>
 </dependency>
 
 <repositories>

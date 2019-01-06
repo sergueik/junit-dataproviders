@@ -8,8 +8,12 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-// Boilerplate code for straightforward JUnit test class constructor parameter injection 
-// documented in Junit 4 wiki https://github.com/junit-team/junit4/wiki/parameterized-tests
+/* Boilerplate code of JUnit Parameterized test class relying on
+ * test class constructor parameter injection 
+ * based on https://github.com/junit-team/junit4/wiki/parameterized-tests
+ * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com) 
+ */
+
 @RunWith(Parameterized.class)
 public class StandardParamConstructorTest extends DataTest {
 

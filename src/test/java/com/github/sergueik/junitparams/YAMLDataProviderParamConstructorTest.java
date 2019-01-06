@@ -11,6 +11,16 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+/* JUnit Parameterized test class relying on
+ * properties injection 
+ * modified to use YAML file for parameter loading (singleton class version)
+ * This example illustrates how the data fields input governs the order 
+ * the YAML parameter hash is read into the parameters object
+ * in a different order than the
+ * natural order in the YAML data file
+ * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com) 
+ */
+
 @RunWith(Parameterized.class)
 public class YAMLDataProviderParamConstructorTest extends DataTest {
 
@@ -20,9 +30,6 @@ public class YAMLDataProviderParamConstructorTest extends DataTest {
 	// parameters are in arrays of hashes hashed by test group
 	// neither it allows strongly typed arrays of parameter objects
 	private static String dataFile = "src/test/resources/param_arrays.yaml";
-	// This input illustrates how the data fields can be read into the object
-	// array in a different order than the
-	// natural order in the YAML data file
 	private static String dataFields = "keyword|count|row";
 
 	@Parameters
@@ -38,8 +45,6 @@ public class YAMLDataProviderParamConstructorTest extends DataTest {
 	private String count;
 
 	// string parameter constructor injection
-	// NOTE: with JSON the column order is not predictable and
-	// is better be enforced through an extra property
 	public YAMLDataProviderParamConstructorTest(String keyword, String count,
 			String rowNum) {
 		this.rowNum = rowNum;

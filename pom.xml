@@ -6,7 +6,7 @@
   <description>Demo project for parameterized Junit tests with external file based dataproviers</description>
   <url>https://github.com/sergueik/junit-dataproviders</url>
   <name>JUnit Data Providers</name>
-  <version>0.0.14-SNAPSHOT</version>
+  <version>0.0.15-SNAPSHOT</version>
   <developers>
     <developer>
       <name>Serguei Kouzmine</name>

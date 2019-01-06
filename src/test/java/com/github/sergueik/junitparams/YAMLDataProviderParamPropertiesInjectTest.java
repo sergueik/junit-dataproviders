@@ -20,9 +20,9 @@ import com.github.sergueik.junitparams.DataSourceStatic;
 /* Test class parameter injection that is supported by Junit 4
  * out of the box
  * https://github.com/junit-team/junit4/wiki/parameterized-tests
- * but fed from the file via DataSource class
-* @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
-*/
+ * but fed from the YAML file DataSource class
+ * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
+ */
 
 @RunWith(Parameterized.class)
 public class YAMLDataProviderParamPropertiesInjectTest extends DataTest {
@@ -33,9 +33,10 @@ public class YAMLDataProviderParamPropertiesInjectTest extends DataTest {
 	public static Collection<Object[]> data() {
 		DataSourceStatic.setDataFormat("YAML");
 		DataSourceStatic.setDebug(true);
-		// With static class has to reset the columns otherwise different tests
-		// would interfere. This would manifest in the Assertion Error caught by the
-		// example test
+		// NOTE: With static class one has to reset the columns
+		// otherwise different tests would interfere.
+		// This problem would be manifest by the Assertion Error
+		// caught by the example test below
 		List<String> columns = new ArrayList<>();
 		for (String column : new String[] { "row", "keyword", "count" }) {
 			columns.add(column);

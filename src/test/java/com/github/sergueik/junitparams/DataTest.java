@@ -10,8 +10,8 @@ import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.Is.is;
 
 /**
- * Sampe test exposing the passed parameters for ExcelParametersProvider and JSON  
- * junitparams data provider annotated Juit test scenarios 
+ * Sample test exposing the passed parameters for ExcelParametersProvider and JSON  
+ * junitParams data provider annotated Juit test scenarios 
  * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
  */
 
