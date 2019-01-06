@@ -18,13 +18,19 @@ import java.lang.UnsupportedOperationException;
 @RunWith(Parameterized.class)
 public class FlexibleParamConstructorTest extends DataTest {
 
-	private static List<Object[]> testParamData = Arrays.asList(new Object[][] {
-			{ 1.0, "junit", 204 }, { 2.0, "testng", 51 }, { 3.0, "spock", 28 } });
+	// java.lang.UnsupportedOperationException
+	// private static List<Object[]> testParamData = Arrays.asList(new Object[][]
+	// {
+	// { 1.0, "junit", 204 }, { 2.0, "testng", 51 }, { 3.0, "spock", 28 } });
 
+	private static ArrayList<Object[]> testParamData = new ArrayList<Object[]>();
 	private static ArrayList<Object[]> dummyData = new ArrayList<Object[]>();
 
 	@Parameters
 	public static Collection<Object[]> data() {
+		testParamData.add(0, new Object[] { 1.0, "junit", 204 });
+		testParamData.add(1, new Object[] { 2.0, "testng", 51 });
+		testParamData.add(2, new Object[] { 3.0, "spock", 28 });
 		return testParamData;
 	}
 
@@ -56,12 +62,13 @@ public class FlexibleParamConstructorTest extends DataTest {
 	public void beforeEach() {
 		// Modify dummy data before each test
 		cnt++;
-		String[] entry = new String[] { String.format("before each test%d", cnt) };
+		Object[] entry = new Object[] { (float) cnt,
+				String.format("before each test%d", cnt), 110 + cnt };
 		Object[] testParamEntry = new Object[] { (float) cnt,
 				String.format("test param before each test%d", cnt), 199 + cnt };
 		try {
 			System.err.println("Adding entry to dummy data before each test: "
-					+ entry[0].toString());
+					+ entry[1].toString());
 			dummyData.add(entry);
 			System.err.println("Modified dummy data before each test");
 		} catch (UnsupportedOperationException e) {
@@ -87,10 +94,11 @@ public class FlexibleParamConstructorTest extends DataTest {
 	public void parameterizedTest1() {
 		// Modify dummy data during test
 		try {
-			Object[] entry = new Object[] { String.format("test%d", cnt) };
+			Object[] entry = new Object[] { (float) cnt,
+					String.format("from test%d", cnt), 130 + cnt };
 			cnt++;
 			System.err.println(
-					"Adding entry to dummy data during test: " + entry[0].toString());
+					"Adding entry to dummy data during test: " + entry[1].toString());
 			dummyData.add(entry);
 			System.err.println("Modified dummy data during test");
 		} catch (UnsupportedOperationException e) {
