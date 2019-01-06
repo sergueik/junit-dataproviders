@@ -23,7 +23,7 @@ public class DataTest {
 				String.format("Search keyword:'%s'\tExpected minimum link count:%d",
 						keyword, (int) count));
 		assertThat("search", keyword, anyOf(is("junit"), is("testng"), is("spock"),
-				is("whatever"), is("allure"), is("there is no such thing")));
+				is("whatever"), is("test0"), is("allure"), is("there is no such thing")));
 		assertThat((int) count, greaterThan(0));
 	}
 

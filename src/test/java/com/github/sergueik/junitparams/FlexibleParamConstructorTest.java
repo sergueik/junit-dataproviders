@@ -24,35 +24,24 @@ public class FlexibleParamConstructorTest extends DataTest {
 	// { 1.0, "junit", 204 }, { 2.0, "testng", 51 }, { 3.0, "spock", 28 } });
 
 	private static ArrayList<Object[]> testParamData = new ArrayList<Object[]>();
-	private static ArrayList<Object[]> dummyData = new ArrayList<Object[]>();
 
 	@Parameters
 	public static Collection<Object[]> data() {
 		testParamData.add(0, new Object[] { 1.0, "junit", 204 });
 		testParamData.add(1, new Object[] { 2.0, "testng", 51 });
 		testParamData.add(2, new Object[] { 3.0, "spock", 28 });
+		testParamData.add(2, new Object[] { 3.0, "test0", 28 });
 		return testParamData;
 	}
 
 	private double rowNum;
 	private String keyword;
 	private int count;
-	private static int cnt = 42;
+	private static int flexibleDataCount = 1;
 
 	// constructor injection
 	public FlexibleParamConstructorTest(double rowNum, String keyword,
 			int count) {
-		Object[] entry = new Object[] { (float) cnt, String.format("test%d", cnt),
-				150 + cnt };
-		cnt++;
-		System.err.println(
-				"Initialize dummy data in constructor: " + entry[1].toString());
-		try {
-			dummyData.add(entry);
-		} catch (UnsupportedOperationException e) {
-			System.err.println("Failed to modify dummy data during test.");
-			e.printStackTrace();
-		}
 		this.rowNum = rowNum;
 		this.keyword = keyword;
 		this.count = count;
@@ -60,21 +49,10 @@ public class FlexibleParamConstructorTest extends DataTest {
 
 	@Before
 	public void beforeEach() {
-		// Modify dummy data before each test
-		cnt++;
-		Object[] entry = new Object[] { (float) cnt,
-				String.format("before each test%d", cnt), 110 + cnt };
-		Object[] testParamEntry = new Object[] { (float) cnt,
-				String.format("test param before each test%d", cnt), 199 + cnt };
-		try {
-			System.err.println("Adding entry to dummy data before each test: "
-					+ entry[1].toString());
-			dummyData.add(entry);
-			System.err.println("Modified dummy data before each test");
-		} catch (UnsupportedOperationException e) {
-			System.err.println("Failed to modify dummy data before test.");
-		}
 		// Modify test param data before each test
+		flexibleDataCount++;
+		Object[] testParamEntry = new Object[] { (float) flexibleDataCount,
+				String.format("test param before each test%d", flexibleDataCount), 199 + flexibleDataCount };
 		try {
 			System.err.println("Adding entry to test param data before each test: "
 					+ testParamEntry[1].toString());
@@ -83,29 +61,11 @@ public class FlexibleParamConstructorTest extends DataTest {
 		} catch (UnsupportedOperationException e) {
 			System.err.println("Failed to modify test param data before test.");
 			e.printStackTrace();
-			// Throwable.printStackTrace() writes the stack trace to System.err
-			// PrintStream.
-			// System.setErr(System.out);
-			// e.printStackTrace();
 		}
 	}
 
 	@Test
 	public void parameterizedTest1() {
-		// Modify dummy data during test
-		try {
-			Object[] entry = new Object[] { (float) cnt,
-					String.format("from test%d", cnt), 130 + cnt };
-			cnt++;
-			System.err.println(
-					"Adding entry to dummy data during test: " + entry[1].toString());
-			dummyData.add(entry);
-			System.err.println("Modified dummy data during test");
-		} catch (UnsupportedOperationException e) {
-			System.err.println("Failed to modify dummy data during test.");
-			e.printStackTrace();
-		}
-
 		try {
 			dataTest(keyword, count);
 		} catch (IllegalStateException e) {
