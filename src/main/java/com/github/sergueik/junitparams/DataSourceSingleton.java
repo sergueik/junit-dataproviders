@@ -181,46 +181,33 @@ public class DataSourceSingleton {
 
 		JSONArray rows = new JSONArray();
 
-		// NOTE: some code here is JSON-20080701 legacy
 		try {
 			byte[] encoded = Files.readAllBytes(Paths.get(filePath));
 			obj = new JSONObject(new String(encoded, Charset.forName(encoding)));
 		} catch (org.json.JSONException e) {
-			System.err.println("Exception (ignored) : " + e.toString());
+			System.err
+					.println(String.format("Exception reading JSON from %s (ignored): %s",
+							filePath, e.toString()));
 		} catch (IOException e) {
-			System.err.println("Exception (ignored) : " + e.toString());
+			System.err.println(String.format(
+					"Exception reading file %s (ignored): %s", filePath, e.toString()));
 		}
 
 		Assert.assertTrue("Verifying presence of " + dataKey, obj.has(dataKey));
-		String dataString = null;
 		try {
-			dataString = obj.getString(dataKey);
+			String dataString = obj.getString(dataKey);
 			if (debug) {
 				System.err.println(
 						"Loaded data as string for key: " + dataKey + " as " + dataString);
 			}
+			rows = new JSONArray(dataString);
 		} catch (org.json.JSONException e) {
-			// JSON-20170516 and later
-			// org.json.JSONException: JSONObject["datakey"] not a string.
-			System.err.println("Exception (ignored) : " + e.toString());
+			// JSON-20170516 and later: JSONObject["datakey"] not a string.
+			rows = obj.getJSONArray(dataKey);
 		}
-
-		if (dataString != null) {
-			try {
-				rows = new JSONArray(dataString);
-			} catch (org.json.JSONException e) {
-				System.err.println("Exception (ignored) : " + e.toString());
-			}
-		} else {
-			try {
-				rows = obj.getJSONArray(dataKey);
-				if (debug) {
-					System.err.println("Loaded data rows for key: " + dataKey + " "
-							+ rows.length() + " rows.");
-				}
-			} catch (org.json.JSONException e) {
-				System.err.println("Exception (ignored) : " + e.toString());
-			}
+		if (debug) {
+			System.err.println("Loaded data rows for key: " + dataKey + " "
+					+ rows.length() + " rows.");
 		}
 		for (int i = 0; i < rows.length(); i++) {
 			try {
@@ -229,7 +216,7 @@ public class DataSourceSingleton {
 			} catch (org.json.JSONException e) {
 				// System.err.println("Exception (ignored) : " + e.toString());
 				hashes.add(rows.getJSONObject(i).toString());
-		}
+			}
 		}
 		Assert.assertTrue("Verified the data is not empty", hashes.size() > 0);
 

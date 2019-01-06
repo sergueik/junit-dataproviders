@@ -129,9 +129,13 @@ public class DataSourceStatic {
 			byte[] encoded = Files.readAllBytes(Paths.get(dataFilePath));
 			rows = new JSONArray(new String(encoded, Charset.forName(encoding)));
 		} catch (org.json.JSONException e) {
-			System.err.println("Exception (ignored) : " + e.toString());
+			System.err
+					.println(String.format("Exception reading JSON from %s (ignored): %s",
+							dataFilePath, e.toString()));
 		} catch (IOException e) {
-			System.err.println("Exception (ignored) : " + e.toString());
+			System.err
+					.println(String.format("Exception reading file %s (ignored): %s",
+							dataFilePath, e.toString()));
 		}
 
 		for (int i = 0; i < rows.length(); i++) {
