@@ -36,10 +36,11 @@ public class FlexibleParamConstructorTest extends DataTest {
 	// constructor injection
 	public FlexibleParamConstructorTest(double rowNum, String keyword,
 			int count) {
-		Object[] entry = new Object[] { String.format("test%d", cnt) };
+		Object[] entry = new Object[] { (float) cnt, String.format("test%d", cnt),
+				150 + cnt };
 		cnt++;
 		System.err.println(
-				"Initialize dummy data in constructor: " + entry[0].toString());
+				"Initialize dummy data in constructor: " + entry[1].toString());
 		try {
 			dummyData.add(entry);
 		} catch (UnsupportedOperationException e) {
@@ -68,9 +69,8 @@ public class FlexibleParamConstructorTest extends DataTest {
 		}
 		// Modify test param data before each test
 		try {
-			System.err
-					.println("Adding entry to test param data before each test: "
-							+ testParamEntry[1].toString());
+			System.err.println("Adding entry to test param data before each test: "
+					+ testParamEntry[1].toString());
 			testParamData.add(testParamEntry);
 			System.err.println("Modified test param data before each test");
 		} catch (UnsupportedOperationException e) {
