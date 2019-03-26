@@ -43,12 +43,6 @@ public class ExcelParametersProvider
 	// TODO: pass flag to skip / collect the first row through ExcelParameters
 	// interface annotation - may be an overkill
 	// private static Boolean skipFirstRow = false;
-
-	// passed via ExcelParameters
-	// public void setDebug(boolean debug) {
-	// this.debug = debug;
-	// }
-
 	@Override
 	public void initialize(ExcelParameters parametersAnnotation,
 			FrameworkMethod frameworkMethod) {
@@ -61,6 +55,7 @@ public class ExcelParametersProvider
 		filename = filepath.substring(filepath.indexOf(':') + 1);
 
 		debug = parametersAnnotation.debug();
+
 		if (testEnvironment != null && testEnvironment != "") {
 			if (protocol.matches("file")) {
 				filename = amendFileName(filename);

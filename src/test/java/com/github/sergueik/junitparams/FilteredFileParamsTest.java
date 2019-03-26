@@ -36,8 +36,13 @@ public class FilteredFileParamsTest extends DataTest {
 	/*
 	   FilteredFileParamsTest.com.github.sergueik.junitparams.FilteredFileParamsTest: IllegalState
 	 */
+
+	// TODO:  separate test for currently failing with an NPE 
+	// Reading Open Office named Spreadsheet: Filtered Employee Data
+	// java.lang.NullPointerException
+	
 	@Test
-	@ExcelParameters(filepath = "file:src/test/resources/data.ods", sheetName = "Filtered", type = "OpenOffice Spreadsheet", debug = true, controlColumn = "ENABLED", withValue = "1")
+	@ExcelParameters(filepath = "file:src/test/resources/filtered_data.ods", sheetName = "Filtered Employee Data", type = "OpenOffice Spreadsheet", debug = true, controlColumn = "ENABLED", withValue = "1")
 	public void loadParamsFromFileOpenOfficeSpreadsheetFilteredByColumn(
 			double rowNum, String keyword, double count) {
 		dataTest(keyword, count);
