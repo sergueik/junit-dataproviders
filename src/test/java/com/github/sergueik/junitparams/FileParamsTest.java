@@ -119,7 +119,6 @@ public class FileParamsTest extends DataTest {
 	// NOTE: cannot conditionally evaluate the annotation attribute
 	// @ExcelParameters(filepath = "file:${USERPROFILE}/Desktop/data.ods",
 	// sheetName = "", type = "OpenOffice Spreadsheet", debug = true)
-
 	@ExcelParameters(filepath = "file:src/test/resources/data.ods", sheetName = "", type = "OpenOffice Spreadsheet", debug = true)
 	public void loadParamsFromFileOpenOfficeSpreadsheet(double rowNum,
 			String keyword, double count) {

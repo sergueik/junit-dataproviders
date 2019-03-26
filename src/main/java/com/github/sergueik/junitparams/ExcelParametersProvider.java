@@ -35,6 +35,8 @@ public class ExcelParametersProvider
 	private String type;
 	private String sheetName;
 	private String columnNames = "*";
+	private String controlColumn = null;
+	private String withValue = null;
 	private boolean loadEmptyColumns = false;
 	private boolean debug = false;
 
@@ -53,6 +55,8 @@ public class ExcelParametersProvider
 		filepath = parametersAnnotation.filepath();
 		type = parametersAnnotation.type();
 		sheetName = parametersAnnotation.sheetName();
+		controlColumn = parametersAnnotation.controlColumn();
+		withValue = parametersAnnotation.withValue();
 		protocol = filepath.substring(0, filepath.indexOf(':'));
 		filename = filepath.substring(filepath.indexOf(':') + 1);
 
@@ -61,7 +65,7 @@ public class ExcelParametersProvider
 			if (protocol.matches("file")) {
 				filename = amendFileName(filename);
 			}
-		} else {			
+		} else {
 			if (debug) {
 				System.err.println("Evaluating: " + filename);
 			}
@@ -75,6 +79,12 @@ public class ExcelParametersProvider
 		utils.setSheetName(sheetName);
 		utils.setColumnNames(columnNames);
 		utils.setLoadEmptyColumns(loadEmptyColumns);
+		if (!controlColumn.isEmpty()) {
+			utils.setControlColumn(controlColumn);
+		}
+		if (!withValue.isEmpty()) {
+			utils.setWithValue(withValue);
+		}
 	}
 
 	@Override

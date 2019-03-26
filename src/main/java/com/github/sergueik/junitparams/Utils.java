@@ -64,7 +64,19 @@ public class Utils {
 	private String sheetName;
 	private String columnNames = "*";
 	private boolean loadEmptyColumns = true;
+
+	private String controlColumn = null;
+	private String withValue = null;
+
 	private boolean debug = false;
+
+	public void setControlColumn(String value) {
+		this.controlColumn = value;
+	}
+
+	public void setWithValue(String value) {
+		this.withValue = value;
+	}
 
 	public void setLoadEmptyColumns(boolean value) {
 		this.loadEmptyColumns = value;
@@ -134,8 +146,16 @@ public class Utils {
 			if (StringUtils.isBlank(columnHeader)) {
 				break;
 			}
+
 			String columnName = CellReference.convertNumToColString(columnIndex);
-			columns.put(columnName, columnHeader);
+			if (!controlColumn.equals(columnHeader)) {
+				columns.put(columnName, columnHeader);
+				if (debug) {
+					System.err.println("Ignore " + columnIndex + " = " + columnName + " "
+							+ columnHeader);
+				}
+			}
+
 			if (debug) {
 				System.err
 						.println(columnIndex + " = " + columnName + " " + columnHeader);
@@ -415,7 +435,6 @@ public class Utils {
 
 	public List<Object[]> createDataFromExcel2007(XSSFWorkbook workBook) {
 
-		// TODO
 		List<Object[]> result = new LinkedList<>();
 		Map<String, String> columns = new HashMap<>();
 		XSSFSheet sheet = (sheetName.isEmpty()) ? workBook.getSheetAt(0)
