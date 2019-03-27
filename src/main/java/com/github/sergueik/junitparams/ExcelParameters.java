@@ -26,12 +26,6 @@ public @interface ExcelParameters {
 	boolean loadEmptyColumns() default false;
 	// TODO: parameter for column names
 	boolean debug() default false;
-
-	// inspired by
-	// https://docs.pytest.org/en/latest/fixture.html#parametrizing-fixtures
-	// http://software-testing.ru/forum/index.php?/topic/37870-kastomizatciia-parametrizatcii-v-pytest/
-	// storing more then one set of tests in one spreadsheet and picking the ones
-	// which column is set to a specified value
 	String controlColumn() default "";
 	String withValue() default "";
 }

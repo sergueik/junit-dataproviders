@@ -33,18 +33,21 @@ import junitparams.mappers.CsvWithHeaderMapper;
 @RunWith(JUnitParamsRunner.class)
 public class FilteredFileParamsTest extends DataTest {
 
-	/*
-	   FilteredFileParamsTest.com.github.sergueik.junitparams.FilteredFileParamsTest: IllegalState
-	 */
+	// NOTE: when special extra column is mishandled:
+	// FilteredFileParamsTest.com.github.sergueik.junitparams.FilteredFileParamsTest:
+	// IllegalState
 
-	// TODO:  separate test for currently failing with an NPE 
-	// Reading Open Office named Spreadsheet: Filtered Employee Data
-	// java.lang.NullPointerException
-	
 	@Test
-	@ExcelParameters(filepath = "file:src/test/resources/filtered_data.ods", sheetName = "Filtered Employee Data", type = "OpenOffice Spreadsheet", debug = true, controlColumn = "ENABLED", withValue = "1")
-	public void loadParamsFromFileOpenOfficeSpreadsheetFilteredByColumn(
-			double rowNum, String keyword, double count) {
+	@ExcelParameters(filepath = "file:src/test/resources/filtered_data.ods", sheetName = "Filtered Employee Data", type = "OpenOffice Spreadsheet", debug = false, controlColumn = "ENABLED", withValue = "1")
+	public void loadParamsFilteredByColumnTest1(double rowNum, String keyword,
+			double count) {
+		dataTest(keyword, count);
+	}
+
+	@Test
+	@ExcelParameters(filepath = "file:src/test/resources/filtered_data.ods", sheetName = "Filtered Example #2", type = "OpenOffice Spreadsheet", debug = true, controlColumn = "ENABLED", withValue = "true" /* string */)
+	public void loadParamsFilteredByColumnTest2(double rowNum, String keyword,
+			double count) {
 		dataTest(keyword, count);
 	}
 

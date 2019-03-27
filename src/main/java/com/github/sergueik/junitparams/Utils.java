@@ -130,22 +130,40 @@ public class Utils {
 
 		HashMap<String, String> columns = new HashMap<>();
 		List<Object[]> result = new LinkedList<>();
-		Sheet sheet = (sheetName.isEmpty()) ? spreadSheet.getFirstSheet()
-				: spreadSheet.getSheet(sheetName);
-		// hack around unability to spreadSheet.getSheet by name
-		if (sheet == null) {
+		Sheet sheet = null;
+		if (sheetName.isEmpty()) {
+			if (debug) {
+				System.err.println("Resding 1st Open Office sheet");
+			}
 			sheet = spreadSheet.getFirstSheet();
+		} else {
+			if (debug) {
+				System.err.println("Reading Open Office sheet named: " + sheetName);
+			}
+			sheet = spreadSheet.getSheet(sheetName);
+			if (sheet == null) {
+				if (debug) {
+					System.err.println("Failed to find Open Office sheet named: "
+							+ sheetName + "." + "Fallback to opening 1st sheet");
+				}
+				sheet = spreadSheet.getFirstSheet();
+			} else {
+
+				if (debug) {
+					System.err
+							.println("Read Open Office sheet named: " + sheet.getName());
+				}
+
+			}
 		}
-		if (debug) {
-			System.err.println("Reading Open Office sheet named: " + sheetName
-					+ " as " + sheet.getName());
-		}
+
 		int columnCount = sheet.getColumnCount();
 		int rowCount = sheet.getRowCount();
 		@SuppressWarnings("rawtypes")
 		Cell cell = null;
+		@SuppressWarnings("rawtypes")
 		Cell controlCell = null;
-		int controlColumnIndex = 0;
+		int controlColumnIndex = -1;
 		if (debug) {
 			System.err.println("Determine control column index for " + controlColumn);
 		}
@@ -162,7 +180,8 @@ public class Utils {
 				System.err.println("Processing column # " + columnIndex + " row 0 "
 						+ columnName + " " + columnHeader);
 			}
-			if (!controlColumn.equals(columnHeader)) {
+			if (controlColumn == null || controlColumn.isEmpty()
+					|| !controlColumn.equals(columnHeader)) {
 				columns.put(columnName, columnHeader);
 			} else {
 				controlColumnIndex = columnIndex;
@@ -170,13 +189,13 @@ public class Utils {
 						+ " and " + columnName + " for " + columnHeader);
 			}
 		}
-		// NOTE: often there may be no ranges defined
+		// NOTE: often there can be no ranges defined
 		Set<String> rangeeNames = sheet.getRangesNames();
 		Iterator<String> rangeNamesIterator = rangeeNames.iterator();
 
 		while (rangeNamesIterator.hasNext()) {
 			if (debug) {
-				System.err.println("Range = " + rangeNamesIterator.next());
+				System.err.println("Range: " + rangeNamesIterator.next());
 			}
 		}
 		// NOTE: org.jopendocument.dom.spreadsheet.Table.isCellBlank(columnIndex,
@@ -185,7 +204,7 @@ public class Utils {
 				.getImmutableCellAt(0, rowIndex).getValue().toString()); rowIndex++) {
 			List<Object> resultRow = new LinkedList<>();
 
-			if (controlColumnIndex != 0) {
+			if (controlColumnIndex != -1) {
 				controlCell = sheet.getImmutableCellAt(controlColumnIndex, rowIndex);
 				String controlCellValue = controlCell.getValue().toString();
 				if (StringUtils.isNotBlank(controlCellValue)) {

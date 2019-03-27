@@ -467,9 +467,13 @@ public void loadParamsFilteredByColumn(
 ```
 
 
-with this setting only the rows 1,2 and 4 from the extract above will be used as `loadParamsFilteredByColumn` test method parameters.
+with this data setting only rows 1,2 and 4 from the data extract above would be used as `loadParamsFilteredByColumn` test method parameters.
+The control column itself is not passed to the subject test method.
 Currently this functionality is implemented for __OpenOffice__ spreadsheet only,  in the __junit__ data provider.
 Remaining format and testng provider data filtering is a work in progress.
+This feature of storing more then one set of tests in one spreadsheet and picking the ones which column is set to a specified value
+ has been inspired by some python [post](https://docs.pytest.org/en/latest/fixture.html#parametrizing-fixtures)
+and the [forum (in Russian)(http://software-testing.ru/forum/index.php?/topic/37870-kastomizatciia-parametrizatcii-v-pytest/).
 
 ### Work in Progress
 
