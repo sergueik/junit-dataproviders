@@ -13,17 +13,17 @@ and core Junit 4+ `Parameterized` [test runner class](https://junit.org/junit4/j
   * YAML via [snakeyaml](https://github.com/asomov/snakeyaml)
 
 Unlike core Data Providers in Junit (5?) and TestNg this provider class allows
-flexible uniform data file path modification at runtime through 
-environment setting which is useful e.g. for enabling one to exercize different test configurations 
-for  __DEV__ / __TEST__ / __UAT__ environments without modifying or recompiling the test suite java code.  
+flexible uniform data file path modification at runtime through
+environment setting which is useful e.g. for enabling one to exercize different test configurations
+for  __DEV__ / __TEST__ / __UAT__ environments without modifying or recompiling the test suite java code.
 The technical  details in __Extra Features__ section below.
 
 ### Usage with JUnitParams
 
 * Create the __Excel 2003__, __Excel 2007__ or __Open Office__ spreadsheet with some test-specific parameters e.g.
 
-| ROWNUM |  SEARCH | COUNT |
-|--------|---------|-------|
+| ROWNUM |    SEARCH   | COUNT |
+|--------|-------------|-------|
 | 1      | __junit__   | 100   |
 | 2      | __testng__  | 30    |
 
@@ -317,7 +317,7 @@ One can easily tweak this behavior further: e.g. turn the name `TEST_ENVIRONMENT
 .
 
 Instance Constructor and Class propetry injection annotations for test
-parameterization are basically supported by 
+parameterization are basically supported by
 [Junit 4 onward](https://github.com/junit-team/junit4/wiki/parameterized-tests) via an `org.junit.runners.Parameterized` class.
 However the core JUnit wiki does not mention storing test data in external data file which is entirely possible with core JUnit Parameterized tests:
 
@@ -417,9 +417,9 @@ public class DataProviderClassParameterizedPropertiesInjectionTest extends DataT
 ```
 
 The only downside is that, at least with JSON and YAML data files, the only supported `@parameter` data type
-is the `String` primitive type. 
+is the `String` primitive type.
 
-The other minor known issue when loading from JSON the column order is not fully predictable and so is 
+The other minor known issue when loading from JSON the column order is not fully predictable and so is
 better be enforced through an extra property (that is *work in progress*, addressed already for YAML).
 
 ### Note
@@ -438,6 +438,39 @@ but the PR is in the works.
   * Older versions of the package require minor code refactoring. Note that you may also have to clear the other versions of poi and poi-ooxml jars from maven cache '~/.m2/repository'
   * Creating branches and tags is a work in progress.
 
+
+### Filtering Data Rows for JUnitParams
+
+In addition to using *every row* of spreadsheet as test parameter one may create a designated column which value
+would be indicating to use or skip that row of data, like:
+
+
+
+| ROWNUM |    SEARCH    | COUNT |ENABLED
+|--------|--------------|-------|-------
+| 1      | __junit__    | 100   | 1
+| 2      | __testng__   | 30    | 1
+| 3      | __spock__    | 20    | 0
+| 4      | __mockito__  | 41    | 1
+
+and annotate the method like
+
+```java
+@Test
+@ExcelParameters(filepath = "file:src/test/resources/filtered_data.ods",
+sheetName = "Filtered Employee Data", type = "OpenOffice Spreadsheet",
+debug = true, controlColumn = "ENABLED", withValue = "1")
+public void loadParamsFilteredByColumn(
+    double rowNum, String keyword, double count) {
+  dataTest(keyword, count);
+}
+```
+
+
+with this setting only the rows 1,2 and 4 from the extract above will be used as `loadParamsFilteredByColumn` test method parameters.
+Currently this functionality is implemented for __OpenOffice__ spreadsheet only,  in the __junit__ data provider.
+Remaining format and testng provider data filtering is a work in progress.
+
 ### Work in Progress
 
   * rename `JSONMapper` that is implementing a somewhat limited [DataMapper](http://javadox.com/pl.pragmatists/JUnitParams/1.0.4/junitparams/mappers/DataMapper.html)
@@ -445,6 +478,7 @@ but the PR is in the works.
   * produce Javadoc
   * fix legacy JSON code
   * add more YAML data providers
+
 
 ### See Also
 
