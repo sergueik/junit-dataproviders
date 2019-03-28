@@ -133,7 +133,7 @@ public class Utils {
 		Sheet sheet = null;
 		if (sheetName.isEmpty()) {
 			if (debug) {
-				System.err.println("Resding 1st Open Office sheet");
+				System.err.println("Reading 1st Open Office sheet");
 			}
 			sheet = spreadSheet.getFirstSheet();
 		} else {
@@ -143,17 +143,11 @@ public class Utils {
 			sheet = spreadSheet.getSheet(sheetName);
 			if (sheet == null) {
 				if (debug) {
-					System.err.println("Failed to find Open Office sheet named: "
-							+ sheetName + "." + "Fallback to opening 1st sheet");
+					System.err.println(String.format(
+							"Failed to find Open Office sheet named: \"%s\". Fallback to opening 1st sheet",
+							sheetName));
 				}
 				sheet = spreadSheet.getFirstSheet();
-			} else {
-
-				if (debug) {
-					System.err
-							.println("Read Open Office sheet named: " + sheet.getName());
-				}
-
 			}
 		}
 
@@ -164,9 +158,6 @@ public class Utils {
 		@SuppressWarnings("rawtypes")
 		Cell controlCell = null;
 		int controlColumnIndex = -1;
-		if (debug) {
-			System.err.println("Determine control column index for " + controlColumn);
-		}
 		for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
 			String columnHeader = sheet.getImmutableCellAt(columnIndex, 0).getValue()
 					.toString();
@@ -176,17 +167,14 @@ public class Utils {
 			}
 
 			String columnName = CellReference.convertNumToColString(columnIndex);
-			if (debug) {
-				System.err.println("Processing column # " + columnIndex + " row 0 "
-						+ columnName + " " + columnHeader);
-			}
 			if (controlColumn == null || controlColumn.isEmpty()
 					|| !controlColumn.equals(columnHeader)) {
 				columns.put(columnName, columnHeader);
 			} else {
 				controlColumnIndex = columnIndex;
-				System.err.println("Determined control column index " + columnIndex
-						+ " and " + columnName + " for " + columnHeader);
+				System.err.println(String.format(
+						"Determined control column index %d and name \"%s\" for \"%s\"",
+						columnIndex, columnName, columnHeader));
 			}
 		}
 		// NOTE: often there can be no ranges defined
@@ -198,8 +186,6 @@ public class Utils {
 				System.err.println("Range: " + rangeNamesIterator.next());
 			}
 		}
-		// NOTE: org.jopendocument.dom.spreadsheet.Table.isCellBlank(columnIndex,
-		// rowIndex, false) method is protected
 		for (int rowIndex = 1; rowIndex < rowCount && StringUtils.isNotBlank(sheet
 				.getImmutableCellAt(0, rowIndex).getValue().toString()); rowIndex++) {
 			List<Object> resultRow = new LinkedList<>();
@@ -207,50 +193,29 @@ public class Utils {
 			if (controlColumnIndex != -1) {
 				controlCell = sheet.getImmutableCellAt(controlColumnIndex, rowIndex);
 				String controlCellValue = controlCell.getValue().toString();
-				if (StringUtils.isNotBlank(controlCellValue)) {
-					if (debug) {
-						System.err.println("Control Cell Value is: " + controlCellValue);
-					}
-				}
-				if (!controlCellValue.equals(withValue)) {
+				if (!controlCellValue.equals(withValue.toString())) {
 					continue;
 				}
 			}
 			for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
 				cell = sheet.getImmutableCellAt(columnIndex, rowIndex);
-				if (controlColumnIndex == columnIndex) {
+				String columnName = CellReference.convertNumToColString(columnIndex);
+				if (!columns.containsKey(columnName)) {
 					continue;
 				}
 				if (StringUtils.isNotBlank(cell.getValue().toString())) {
 					// TODO: column selection
-					/*
-					String cellName = CellReference.convertNumToColString(columnIndex);
-					if (columns.get(cellName).equals("COUNT")) {
-						assertEquals(cell.getValueType(), ODValueType.FLOAT);
-						expected_count = Double.valueOf(cell.getValue().toString());
-					}
-					if (columns.get(cellName).equals("SEARCH")) {
-						assertEquals(cell.getValueType(), ODValueType.STRING);
-						search_keyword = cell.getTextValue();
-					}
-					if (columns.get(cellName).equals("ID")) {
-						System.err.println("Column: " + columns.get(cellName));
-						assertEquals(cell.getValueType(), ODValueType.FLOAT);
-						id = Integer.decode(cell.getValue().toString());
-					}
-					*/
 					@SuppressWarnings("unchecked")
 					Object cellValue = safeOOCellValue(cell);
-					if (debug) {
-						System.err.println(String.format("Cell Value: \"%s\" %s",
-								cellValue.toString(), cellValue.getClass()));
-					}
 					resultRow.add(cellValue);
 				} else {
 					if (loadEmptyColumns) {
 						resultRow.add(null);
 					}
 				}
+			}
+			if (debug) {
+				System.err.println("Added row of parameters: " + resultRow.toString());
 			}
 			result.add(resultRow.toArray());
 		}
