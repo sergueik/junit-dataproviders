@@ -500,6 +500,7 @@ and the [forum (in Russian)(http://software-testing.ru/forum/index.php?/topic/37
   * [Junit test runners summary](https://github.com/junit-team/junit4/wiki/test-runners)
   * [YamlDataProviderImpl](http://paypal.github.io/SeLion/html/java-docs/1.0.0/dataproviders-apis/index.html?com/paypal/selion/platform/dataprovider/impl/YamlDataProviderImpl.html) YAML data provider in `com.paypal.selion.platform.dataprovider`
   * [Examples of Fillo SQL DSL](https://github.com/GladsonAntony/Fillo-Examples)  for Excel spreadsheet-backed Select and Update operations.
+  * [JUnit4,JUnit5, TestNG comparison](https://www.baeldung.com/junit-vs-testng), covers parameteterized tests
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
