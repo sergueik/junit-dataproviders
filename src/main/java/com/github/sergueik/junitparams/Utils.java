@@ -359,10 +359,16 @@ public class Utils {
 						if (cell != null) {
 							cellValue = safeUserModeCellValue(cell);
 							if (debug) {
+								System.err.println(String.format(
+										"Cell address: row: %d col: %d", cell.getAddress().getRow(),
+										cell.getAddress().getColumn()));
+							}
+							if (debug) {
 								try {
-									System.err.println(String.format("Loading Cell[%d] = %s %s",
+									System.err.println(String.format(
+											"Loading Cell[%d] = value: \"%s\" class: \"%s\"",
 											cell.getColumnIndex(), cellValue.toString(),
-											cellValue.getClass()));
+											cellValue.getClass().getName()));
 								} catch (NullPointerException e) {
 									System.err.println(
 											"Exception loading cell " + cell.getColumnIndex());
@@ -378,10 +384,16 @@ public class Utils {
 						if (cell != null) {
 							cellValue = safeUserModeCellValue(cell);
 							if (debug) {
+								System.err.println(String.format(
+										"Cell address: row: %d col: %d", cell.getAddress().getRow(),
+										cell.getAddress().getColumn()));
+							}
+							if (debug) {
 								try {
-									System.err.println(String.format("Loading Cell[%d] = %s %s",
+									System.err.println(String.format(
+											"Loading Cell[%d] = value: \"%s\" class: \"%s\"",
 											cell.getColumnIndex(), cellValue.toString(),
-											cellValue.getClass()));
+											cellValue.getClass().getName()));
 								} catch (NullPointerException e) {
 									System.err.println(
 											"Exception loading cell " + cell.getColumnIndex());
@@ -488,8 +500,14 @@ public class Utils {
 						if (cell != null) {
 							Object cellValue = safeUserModeCellValue(cell);
 							if (debug) {
-								System.err.println(String.format("Cell Value: \"%s\" %s",
-										cellValue.toString(), cellValue.getClass()));
+								System.err.println(String.format(
+										"Cell address: row: %d col: %d", cell.getAddress().getRow(),
+										cell.getAddress().getColumn()));
+							}
+							if (debug) {
+								System.err
+										.println(String.format("Cell value: \"%s\" class: \"%s\"",
+												cellValue.toString(), cellValue.getClass().getName()));
 							}
 							resultRow.add(cellValue);
 						}
@@ -501,8 +519,13 @@ public class Utils {
 						if (cell != null) {
 							Object cellValue = safeUserModeCellValue(cell);
 							if (debug) {
-								System.err.println(String.format("Cell Value: \"%s\" %s",
-										cellValue.toString(), cellValue.getClass()));
+								System.err.println(String.format(
+										"Cell address: row: %d col: %d", cell.getAddress().getRow(),
+										cell.getAddress().getColumn()));
+							}
+							if (debug) {
+								System.err.println(String.format("Cell Value: \"%s\" class: %s",
+										cellValue.toString(), cellValue.getClass().getName()));
 							}
 							resultRow.add(cellValue);
 						}

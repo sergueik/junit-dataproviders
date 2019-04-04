@@ -5,7 +5,9 @@ package com.github.sergueik.junitparams;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.AnyOf.anyOf;
+import static org.hamcrest.CoreMatchers.is;
+// import static org.hamcrest.core.Is.is;
 
 import java.io.Reader;
 import java.util.LinkedList;

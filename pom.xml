@@ -3,10 +3,10 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.sergueik.junitparams</groupId>
   <artifactId>junit_dataproviders</artifactId>
-  <description>Demo project for parameterized Junit tests with external file based dataproviers</description>
+  <description>Parameterized Junit test annotation backed by various desktop spreadsheet data files through poi</description>
   <url>https://github.com/sergueik/junit-dataproviders</url>
   <name>JUnit Data Providers</name>
-  <version>0.0.17-SNAPSHOT</version>
+  <version>0.0.18-SNAPSHOT</version>
   <developers>
     <developer>
       <name>Serguei Kouzmine</name>

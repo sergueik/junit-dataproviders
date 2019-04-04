@@ -7,7 +7,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.AnyOf.anyOf;
-import static org.hamcrest.core.Is.is;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.equalTo;
 
 /**
  * Sample test exposing the passed parameters for ExcelParametersProvider and JSON  
@@ -22,8 +24,14 @@ public class DataTest {
 		System.err.println(
 				String.format("Search keyword:'%s'\tExpected minimum link count:%d",
 						keyword, (int) count));
-		assertThat("search", keyword, anyOf(is("junit"), is("testng"), is("spock"),
-				is("whatever"), is("allure"), is("there is no such thing")));
+		// NOTE: remove one of the alternatives e.g. the "whatever" to trigger
+		// assertionError
+		//
+		assertThat("search", keyword,
+				not(anyOf(equalTo("not"), equalTo("found"), equalTo("keyword"))));
+		assertThat("search", keyword,
+				anyOf(equalTo("junit"), equalTo("testng"), equalTo("spock"),
+						is("whatever"), equalTo("allure"), is("there is no such thing")));
 		assertThat((int) count, greaterThan(0));
 	}
 
