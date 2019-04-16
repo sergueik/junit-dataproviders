@@ -366,9 +366,9 @@
       </properties>
     </profile>
     <profile>
-      <id>poi40</id>
+      <id>poi410</id>
       <properties>
-        <poi.version>4.0.0</poi.version>
+        <poi.version>4.1.0</poi.version>
         <poiooxml.version>${poi.version}</poiooxml.version>
       </properties>
     </profile>

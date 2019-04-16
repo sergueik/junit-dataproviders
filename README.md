@@ -434,7 +434,7 @@ but the PR is in the works.
 ### Apache POI compatibility
 
   * The default version of the supported Apache POI is __3.17__.
-  * Project can be compiled with release of Apache POI __4.0.0__ with the help of profile `poi40`.
+  * Project can be compiled with latest release of Apache POI __4.1.0__ with the help of profile `poi410`.
   * Older versions of the package require minor code refactoring. Note that you may also have to clear the other versions of poi and poi-ooxml jars from maven cache '~/.m2/repository'
   * Creating branches and tags is a work in progress.
 
