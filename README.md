@@ -1,3 +1,4 @@
+
 ###  JUnit-DataProviders
 
 [![BuildStatus](https://travis-ci.org/sergueik/junit-dataproviders.svg?branch=master)](https://travis-ci.org/sergueik/junit-dataproviders)
@@ -486,6 +487,7 @@ and the [forum (in Russian)(http://software-testing.ru/forum/index.php?/topic/37
 
 ### See Also
 
+  * [Introduction to JUnitParams](https://www.baeldung.com/junit-params)
   * Using Excel,Open Office,JSON as [testNG data providers](https://github.com/sergueik/testng-dataproviders)
   * [testng dataProviders](http://testng.org/doc/documentation-main.html#parameters-dataproviders)
   * [TNG/junit-dataprovider](https://github.com/TNG/junit-dataprovider) - a different TestNG-like dataprovider runner for JUnit and Allure.
@@ -501,6 +503,7 @@ and the [forum (in Russian)(http://software-testing.ru/forum/index.php?/topic/37
   * [YamlDataProviderImpl](http://paypal.github.io/SeLion/html/java-docs/1.0.0/dataproviders-apis/index.html?com/paypal/selion/platform/dataprovider/impl/YamlDataProviderImpl.html) YAML data provider in `com.paypal.selion.platform.dataprovider`
   * [Examples of Fillo SQL DSL](https://github.com/GladsonAntony/Fillo-Examples)  for Excel spreadsheet-backed Select and Update operations.
   * [JUnit4,JUnit5, TestNG comparison](https://www.baeldung.com/junit-vs-testng), covers parameteterized tests
+  * JUnit5 test selector annotation [article](https://habr.com/ru/post/464881/)(in Russian) and the [repository](https://github.com/bvn13/JavaLessons/tree/master/springboot2-junit5-skiptest)
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
