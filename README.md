@@ -504,6 +504,7 @@ and the [forum (in Russian)(http://software-testing.ru/forum/index.php?/topic/37
   * [Examples of Fillo SQL DSL](https://github.com/GladsonAntony/Fillo-Examples)  for Excel spreadsheet-backed Select and Update operations.
   * [JUnit4,JUnit5, TestNG comparison](https://www.baeldung.com/junit-vs-testng), covers parameteterized tests
   * JUnit5 test selector annotation [article](https://habr.com/ru/post/464881/)(in Russian) and the [repository](https://github.com/bvn13/JavaLessons/tree/master/springboot2-junit5-skiptest)
+  * [JUnit5 test executuin order support](https://junit.org/junit5/docs/current/user-guide/#writing-tests-test-execution-order) and [discussion](https://automated-testing.info/t/junit5-zapusk-serii-testov-strogo-posledovatelno-ili-v-polzovatelskom-poryadke-varianty/18609)(in Russian)
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
