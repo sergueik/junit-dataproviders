@@ -128,6 +128,20 @@ public class FileParamsTest extends DataTest {
 	}
 
 	@Test
+	@ExcelParameters(filepath = "file:${USERPROFILE}\\Desktop\\data.ods", sheetName = "", type = "OpenOffice Spreadsheet", debug = true)
+	public void loadParamsFromFileOpenOfficeSpreadsheetDesktop(double rowNum,
+			String keyword, double count) {
+		dataTest(keyword, count);
+	}
+
+	@Test
+	@ExcelParameters(filepath = "file:${HOME}/Desktop/data.ods", sheetName = "", type = "OpenOffice Spreadsheet", debug = true)
+	public void loadParamsFromFileOpenOfficeSpreadsheet2Desktop(double rowNum,
+			String keyword, double count) {
+		dataTest(keyword, count);
+	}
+
+	@Test
 	@FileParameters(value = "classpath:data.json", mapper = JSONMapper.class)
 	public void loadParamsFromJSONEmbedded(String strCount, String keyword) {
 		dataTest(strCount, keyword);

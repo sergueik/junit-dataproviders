@@ -6,7 +6,7 @@
   <description>Parameterized Junit test annotation backed by various desktop spreadsheet data files through poi</description>
   <url>https://github.com/sergueik/junit-dataproviders</url>
   <name>JUnit Data Providers</name>
-  <version>0.0.18-SNAPSHOT</version>
+  <version>0.0.19-SNAPSHOT</version>
   <developers>
     <developer>
       <name>Serguei Kouzmine</name>

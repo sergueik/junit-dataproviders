@@ -94,21 +94,46 @@ public class Utils {
 		this.debug = value;
 	}
 
+	private static String osName = getOsName();
+	private static final String homeDir = System
+			.getenv((osName.startsWith("windows")) ? "USERPROFILE" : "HOME");
+
+	public static String getOsName() {
+		if (osName == null) {
+			osName = System.getProperty("os.name").toLowerCase();
+			if (osName.startsWith("windows")) {
+				osName = "windows";
+			}
+		}
+		return osName;
+	}
+
 	public static String resolveEnvVars(String input) {
 		if (null == input) {
 			return null;
 		}
-		Pattern p = Pattern.compile("\\$(?:\\{(?:env:)?(\\w+)\\}|(\\w+))");
-		Matcher m = p.matcher(input);
-		StringBuffer sb = new StringBuffer();
-		while (m.find()) {
-			String envVarName = null == m.group(1) ? m.group(2) : m.group(1);
+		/*
+				System.err.println("original input: " + input + "\n" + "osname: " + osName
+						+ "\n" + "processing input: "
+						+ input.replaceAll("(?:HOME|HOMEDIR|USERPROFILE)",
+								osName.equals("windows") ? "USERPROFILE" : "HOME"));
+		*/
+		// NOTE: currently ignoring $HOMEDRIVE, $HOMEPATH on Windows
+		Matcher matcher = Pattern.compile("\\$(?:\\{(?:env:)?(\\w+)\\}|(\\w+))")
+				.matcher(input.replaceAll("(?:HOME|HOMEDIR|USERPROFILE)",
+						osName.equals("windows") ? "USERPROFILE" : "HOME"));
+		StringBuffer stringBuffer = new StringBuffer();
+		while (matcher.find()) {
+			String envVarName = null == matcher.group(1) ? matcher.group(2)
+					: matcher.group(1);
 			String envVarValue = System.getenv(envVarName);
-			m.appendReplacement(sb,
+			matcher.appendReplacement(stringBuffer,
 					null == envVarValue ? "" : envVarValue.replace("\\", "\\\\"));
 		}
-		m.appendTail(sb);
-		return sb.toString();
+		matcher.appendTail(stringBuffer);
+
+		return stringBuffer.toString().replaceAll("(?:\\\\|/)",
+				(File.separator.indexOf("\\") > -1) ? "\\\\" : "/");
 	}
 
 	// origin:

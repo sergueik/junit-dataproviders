@@ -112,6 +112,27 @@ The known system environment settings are being interpolated:
 `file:c:/Users/${env:USERNAME}/Documents/data.json`
 `file:${USERPROFILE}`
 for Excel and Opend Office but not yet for the JSON mapper (*work in progress*)
+
+When test data file is placed outside the project directory, it is often desired to have it in 
+`Desktop`, `Downloads` or some other directory of the current user.
+
+The environment variables being OS specific and annotation spec enforcing that every annotation parameter is 
+a constant expressions makes it a little bit challenging, preventing one from using class variables or static methods - e.g. code like below:
+@Test
+@ExcelParameters(filepath = String.format(
+    "file:${USERPROFILE}%sDesktop%sdata.ods",
+    File.separator), sheetName = "", type = "Spreadsheet", debug = true)
+```
+will fail with
+```
+The value for annotation attribute ExcelParameters.filepath must be a constant expression
+```
+
+Therefore __JUnit-DataProviders__ internally converts
+between `${USERPRFILE}` and `${HOME}` eliminating the need to tweak the path expressions
+like `filepath = "file:${USERPROFILE}/Desktop/data.ods"` or `filepath = "file:${HOMEDIR}/Desktop/data.ods" - both would work across OS.
+
+
 or from inside the jar when `filepath` is defined with a `classpath:` prefix and executes the test for every row of data.
 The test developer is responsible for matching the test method argument types and the column data types.
 
