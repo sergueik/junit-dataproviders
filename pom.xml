@@ -31,6 +31,7 @@
     <junit.version>4.12</junit.version>
     <jUnitParams.version>1.1.1</jUnitParams.version>
     <maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
+    <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
     <poi.version>3.17</poi.version>
     <poiooxml.version>${poi.version}</poiooxml.version>
     <snakeyaml.version>1.24</snakeyaml.version>
@@ -107,6 +108,11 @@
       <artifactId>JUnitParams</artifactId>
       <version>${jUnitParams.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-antrun-plugin</artifactId>
+      <version>${maven-antrun-plugin.version}</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -158,6 +164,50 @@
         <groupId>org.eluder.coveralls</groupId>
         <artifactId>coveralls-maven-plugin</artifactId>
         <version>4.3.0</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>${maven-antrun-plugin.version}</version>
+        <executions>
+          <!-- https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html#Lifecycle_Reference -->
+          <execution>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <condition property="is_mac">
+                  <os family="mac"/>
+                </condition>
+                <condition property="is_windows">
+                  <os family="windows"/>
+                </condition>
+                <condition property="is_unix">
+                  <os family="unix"/>
+                </condition>
+                <!-- https://cduu.wordpress.com/2012/10/17/echo-the-value-of-a-maven-property/ -->
+                <echo>profile_os: ${profile_os} (from profile)</echo>
+                <property environment="env"/>
+                <condition property="desktop_path" value="${env.USERPROFILE}\Desktop" else="${env.HOME}/Desktop">
+                  <istrue value="${is_windows}"/>
+                </condition>
+                <echo>ant os details:</echo>
+                <echo message="os.name = ${os.name}"/>
+                <echo message="os.arch = ${os.arch}"/>
+                <echo message="os.version = ${os.version}"/>
+                <echo>custom properties:</echo>
+                <echo message="is_mac = ${is_mac}"/>
+                <echo message="is_windows = ${is_windows}"/>
+                <echo message="is_unix = ${is_unix}"/>
+                <echo message="desktop_path = ${desktop_path}"/>
+                <mkdir dir="${desktop_path}"/>
+                <copy file="src/test/resources/data.ods" todir="${desktop_path}" failonerror="true"/>
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <!--
       <plugin>
