@@ -29,34 +29,12 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/home/sergueik/.m2/repository/com/google/oauth-client/google-oauth-client/1.23.0/google-oauth-client-1.23.0.jar" sourcepath="/home/sergueik/.m2/repository/com/google/oauth-client/google-oauth-client/1.23.0/google-oauth-client-1.23.0-sources.jar">
+	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="maven.groupId" value="com.google.oauth-client"/>
-			<attribute name="maven.artifactId" value="google-oauth-client"/>
-			<attribute name="maven.version" value="1.23.0"/>
-			<attribute name="maven.scope" value="compile"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/home/sergueik/.m2/repository/com/google/oauth-client/google-oauth-client-java6/1.23.0/google-oauth-client-java6-1.23.0.jar" sourcepath="/home/sergueik/.m2/repository/com/google/oauth-client/google-oauth-client-java6/1.23.0/google-oauth-client-java6-1.23.0-sources.jar">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="maven.groupId" value="com.google.oauth-client"/>
-			<attribute name="maven.artifactId" value="google-oauth-client-java6"/>
-			<attribute name="maven.version" value="1.23.0"/>
-			<attribute name="maven.scope" value="compile"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/home/sergueik/.m2/repository/com/google/http-client/google-http-client-jackson2/1.23.0/google-http-client-jackson2-1.23.0.jar" sourcepath="/home/sergueik/.m2/repository/com/google/http-client/google-http-client-jackson2/1.23.0/google-http-client-jackson2-1.23.0-sources.jar">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="maven.groupId" value="com.google.http-client"/>
-			<attribute name="maven.artifactId" value="google-http-client-jackson2"/>
-			<attribute name="maven.version" value="1.23.0"/>
-			<attribute name="maven.scope" value="compile"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/home/sergueik/.m2/repository/com/google/api-client/google-api-client/1.23.0/google-api-client-1.23.0.jar" sourcepath="/home/sergueik/.m2/repository/com/google/api-client/google-api-client/1.23.0/google-api-client-1.23.0-sources.jar">
+	<classpathentry kind="lib" path="C:/Users/Serguei/.m2/repository/com/google/api-client/google-api-client/1.23.0/google-api-client-1.23.0.jar">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
 			<attribute name="maven.groupId" value="com.google.api-client"/>
@@ -65,7 +43,7 @@
 			<attribute name="maven.scope" value="compile"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/home/sergueik/.m2/repository/com/google/oauth-client/google-oauth-client-jetty/1.23.0/google-oauth-client-jetty-1.23.0.jar" sourcepath="/home/sergueik/.m2/repository/com/google/oauth-client/google-oauth-client-jetty/1.23.0/google-oauth-client-jetty-1.23.0-sources.jar">
+	<classpathentry kind="lib" path="C:/Users/Serguei/.m2/repository/com/google/oauth-client/google-oauth-client-jetty/1.23.0/google-oauth-client-jetty-1.23.0.jar">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
 			<attribute name="maven.groupId" value="com.google.oauth-client"/>
@@ -74,7 +52,25 @@
 			<attribute name="maven.scope" value="compile"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/home/sergueik/.m2/repository/com/google/http-client/google-http-client/1.23.0/google-http-client-1.23.0.jar" sourcepath="/home/sergueik/.m2/repository/com/google/http-client/google-http-client/1.23.0/google-http-client-1.23.0-sources.jar">
+	<classpathentry kind="lib" path="C:/Users/Serguei/.m2/repository/com/google/http-client/google-http-client-jackson2/1.23.0/google-http-client-jackson2-1.23.0.jar">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="maven.groupId" value="com.google.http-client"/>
+			<attribute name="maven.artifactId" value="google-http-client-jackson2"/>
+			<attribute name="maven.version" value="1.23.0"/>
+			<attribute name="maven.scope" value="compile"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Serguei/.m2/repository/com/google/apis/google-api-services-sheets/v4-rev493-1.23.0/google-api-services-sheets-v4-rev493-1.23.0.jar" sourcepath="C:/Users/Serguei/.m2/repository/com/google/apis/google-api-services-sheets/v4-rev493-1.23.0/google-api-services-sheets-v4-rev493-1.23.0-sources.jar">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="maven.groupId" value="com.google.apis"/>
+			<attribute name="maven.artifactId" value="google-api-services-sheets"/>
+			<attribute name="maven.version" value="v4-rev493-1.23.0"/>
+			<attribute name="maven.scope" value="compile"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Serguei/.m2/repository/com/google/http-client/google-http-client/1.23.0/google-http-client-1.23.0.jar">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
 			<attribute name="maven.groupId" value="com.google.http-client"/>
@@ -83,12 +79,21 @@
 			<attribute name="maven.scope" value="compile"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/home/sergueik/.m2/repository/com/google/apis/google-api-services-sheets/v4-rev493-1.23.0/google-api-services-sheets-v4-rev493-1.23.0.jar" sourcepath="/home/sergueik/.m2/repository/com/google/apis/google-api-services-sheets/v4-rev493-1.23.0/google-api-services-sheets-v4-rev493-1.23.0-sources.jar">
+	<classpathentry kind="lib" path="C:/Users/Serguei/.m2/repository/com/google/oauth-client/google-oauth-client/1.23.0/google-oauth-client-1.23.0.jar">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="maven.groupId" value="com.google.apis"/>
-			<attribute name="maven.artifactId" value="google-api-services-sheets"/>
-			<attribute name="maven.version" value="v4-rev493-1.23.0"/>
+			<attribute name="maven.groupId" value="com.google.oauth-client"/>
+			<attribute name="maven.artifactId" value="google-oauth-client"/>
+			<attribute name="maven.version" value="1.23.0"/>
+			<attribute name="maven.scope" value="compile"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Serguei/.m2/repository/com/google/oauth-client/google-oauth-client-java6/1.23.0/google-oauth-client-java6-1.23.0.jar">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="maven.groupId" value="com.google.oauth-client"/>
+			<attribute name="maven.artifactId" value="google-oauth-client-java6"/>
+			<attribute name="maven.version" value="1.23.0"/>
 			<attribute name="maven.scope" value="compile"/>
 		</attributes>
 	</classpathentry>

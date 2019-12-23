@@ -1,6 +1,6 @@
 package com.github.sergueik.junitparams;
 /**
- * Copyright 2017-2019 Serguei Kouzmine
+ * Copyright 2019 Serguei Kouzmine
  */
 
 import java.lang.annotation.Retention;
@@ -21,11 +21,10 @@ import junitparams.custom.CustomParameters;
 @CustomParameters(provider = GoogleSheetParametersProvider.class)
 public @interface GoogleSheetParameters {
 	String filepath();
-	String sheetName() default "";
-	String type();
+	String applicationName() default "Google Sheets Example";
+	String sheetName() default "*";
 	boolean loadEmptyColumns() default false;
 	// TODO: parameter for column names
 	boolean debug() default false;
-	String controlColumn() default "";
-	String withValue() default "";
+	String secretFilePath(); // TODO: add a a default
 }

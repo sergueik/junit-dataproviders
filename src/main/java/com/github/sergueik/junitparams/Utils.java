@@ -588,13 +588,11 @@ public class Utils {
 	// temporarily add to signature
 	public List<Object[]> createDataFromGoogleSpreadsheet(String spreadsheetId, String sheetName) {
 		// TODO: deal with unspecified sheetName
-		String range = String.format("%s!A2:Z", sheetName);
+		String range = String.format("%s!A1:Z", sheetName);
 		// A2:Z for value columns only
 		List<Object[]> result = new LinkedList<>();
 
 		try {
-			String secretFilePath = Paths.get(System.getProperty("user.home")).resolve(".secret")
-					.resolve("client_secret.json").toAbsolutePath().toString();
 			sheetsServiceUtil = SheetsServiceUtil.getInstance();
 			sheetsServiceUtil.setApplicationName(applicationName);
 			sheetsServiceUtil.setSecretFilePath(secretFilePath);

@@ -12,6 +12,7 @@ and core Junit 4+ `Parameterized` [test runner class](https://junit.org/junit4/j
   * OpenOffice SpreadSheet (.ods) [Open Document Format for Office Applications](http://www.jopendocument.org/docs/) `org.jopendocument.dom.*`
   * JSON via [org.json](https://stleary.github.io/JSON-java/) or [com.google.gson](https://www.javadoc.io/doc/com.google.code.gson/gson) (*work in progress*) package
   * YAML via [snakeyaml](https://github.com/asomov/snakeyaml)
+  * [Google sheet](https://www.google.com/sheets/about/) (experimental).
 
 Unlike core Data Providers in Junit (5?) and TestNg this provider class allows
 flexible uniform data file path modification at runtime through
