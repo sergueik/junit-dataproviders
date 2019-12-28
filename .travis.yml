@@ -1,17 +1,15 @@
 language: java
-script: 
-  - jdk_switcher use openjdk8
-  - mvn test
-# dist: xenial
+script: mvn test
+#  - jdk_switcher use openjdk8
+#  jdk_switcher: command not found
+#  The command "jdk_switcher use openjdk8" exited with 127.
+#
+dist: xenial
 install: mvn install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true -B -V
 jdk: openjdk8
   # Expected feature release number in range of 9 to 12, but got: 8
   # - oraclejdk8
   # - oraclejdk9
-  # TRAVIS is apparently unable to download the JDK 9 from 
-  # http://download.oracle.com/otn-pub/java/jdk/9.0.4+11/c2514751926b4512b076cc82f959763f/jdk-9.0.4_linux-x64_bin.tar.gz
-  # - oraclejdk7
-  # - openjdk6
 notifications:
   email:
     on_success: never
