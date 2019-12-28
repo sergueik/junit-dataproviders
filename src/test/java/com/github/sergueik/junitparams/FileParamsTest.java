@@ -27,8 +27,9 @@ import junitparams.custom.ParametersProvider;
 import junitparams.mappers.CsvWithHeaderMapper;
 
 /**
- * Sample parameterized JUnit test scenarios annotated for ExcelParametersProvider 
+ * Sample parameterized JUnit test scenarios annotated for FileParameters
  * JUnitparams data provider plugin and JSON mapper
+ * 
  * @author: Serguei Kouzmine (kouzmine_serguei@yahoo.com)
  */
 
@@ -46,100 +47,21 @@ public class FileParamsTest extends DataTest {
 	private static Map<String, String> env = System.getenv();
 
 	// Detect Travis build
-	private static final boolean isCIBuild = (env.containsKey("TRAVIS")
-			&& env.get("TRAVIS").equals("true")) ? true : false;
+	private static final boolean isCIBuild = (env.containsKey("TRAVIS") && env.get("TRAVIS").equals("true")) ? true
+			: false;
 
 	// NOTE: The value for every annotation attribute must be a constant
 	// expression. One cannot evaluate it conditionally.
 	// The following commented code will fail to compile
 	/*
-	private static final String jsonDataPath = isCIBuild
-			? "file:src/test/resources/data.json"
-			: "file:c:/ProgramData/Temp/data.json";
-	*/
+	 * private static final String jsonDataPath = isCIBuild ?
+	 * "file:src/test/resources/data.json" : "file:c:/ProgramData/Temp/data.json";
+	 */
 	// See the README.md for more detais and workaround
 
 	// private static final String jsonDataPath =
 	// "file:c:/ProgramData/Temp/data.json";
 	private static final String jsonDataPath = "file:src/test/resources/data.json";
-	// private static final String testDataPath =
-	// "file:c:/Users/${env:USERNAME}/Documents/data.ods";
-
-	private static final String testDataPath = "file:src/test/resources/data.ods";
-
-	@Test
-	@ExcelParameters(filepath = "classpath:data_2007.xlsx", sheetName = "", type = "Excel 2007", debug = true)
-	public void loadParamsFromEmbeddedExcel2007(double rowNum, String keyword,
-			double count) {
-		dataTest(keyword, count);
-	}
-
-	@Test
-	@ExcelParameters(filepath = "file:src/test/resources/data_2007.xlsx", sheetName = "", type = "Excel 2007")
-	public void loadParamsFromFileExcel2007(double rowNum, String keyword,
-			double count) {
-		try {
-			dataTest(keyword, count);
-		} catch (IllegalStateException e) {
-			System.err
-					.println(String.format("keyword: %s , cound : %d ", keyword, count));
-		}
-	}
-
-	// TODO: Allow columns specification interface
-	// e.g. the rowNum column is present in the spreadsheet
-	// but not needed for the test
-	@Test
-	@ExcelParameters(filepath = "classpath:data_2003.xls", sheetName = "", type = "Excel 2003", debug = true)
-	public void loadParamsFromEmbeddedExcel2003(double rowNum, String keyword,
-			double count) {
-		dataTest(keyword, count);
-	}
-
-	@Test
-	@ExcelParameters(filepath = "file:src/test/resources/data_2003.xls", sheetName = "", type = "Excel 2003", debug = true)
-	public void loadParamsFromFileExcel2003(double rowNum, String keyword,
-			double count) {
-		dataTest(keyword, count);
-	}
-
-	@Test
-	@ExcelParameters(filepath = "classpath:data.ods", sheetName = "", type = "OpenOffice Spreadsheet")
-	public void loadParamsFromEmbeddedOpenOfficeSpreadsheet(double rowNum,
-			String keyword, double count) {
-		dataTest(keyword, count);
-	}
-
-	@Test
-	@ExcelParameters(filepath = testDataPath, sheetName = "", type = "OpenOffice Spreadsheet", debug = true)
-	public void loadParamsFromFileOpenOfficeSpreadsheetUsingVariable(
-			double rowNum, String keyword, double count) {
-		dataTest(keyword, count);
-	}
-
-	@Test
-	// NOTE: cannot conditionally evaluate the annotation attribute
-	// @ExcelParameters(filepath = "file:${USERPROFILE}/Desktop/data.ods",
-	// sheetName = "", type = "OpenOffice Spreadsheet", debug = true)
-	@ExcelParameters(filepath = "file:src/test/resources/data.ods", sheetName = "", type = "OpenOffice Spreadsheet", debug = true)
-	public void loadParamsFromFileOpenOfficeSpreadsheet(double rowNum,
-			String keyword, double count) {
-		dataTest(keyword, count);
-	}
-
-	@Test
-	@ExcelParameters(filepath = "file:${USERPROFILE}\\Desktop\\data.ods", sheetName = "", type = "OpenOffice Spreadsheet", debug = true)
-	public void loadParamsFromFileOpenOfficeSpreadsheetDesktop(double rowNum,
-			String keyword, double count) {
-		dataTest(keyword, count);
-	}
-
-	@Test
-	@ExcelParameters(filepath = "file:${HOME}/Desktop/data.ods", sheetName = "", type = "OpenOffice Spreadsheet", debug = true)
-	public void loadParamsFromFileOpenOfficeSpreadsheet2Desktop(double rowNum,
-			String keyword, double count) {
-		dataTest(keyword, count);
-	}
 
 	@Test
 	@FileParameters(value = "classpath:data.json", mapper = JSONMapper.class)
@@ -155,8 +77,7 @@ public class FileParamsTest extends DataTest {
 
 	@Test
 	@FileParameters(value = "file:src/test/resources/data.json", mapper = JSONMapper.class)
-	public void loadParamsFromJSONFileFromStaticValue(String strCount,
-			String strKeyword) {
+	public void loadParamsFromJSONFileFromStaticValue(String strCount, String strKeyword) {
 		dataTest(strCount, strKeyword);
 	}
 
@@ -174,16 +95,17 @@ public class FileParamsTest extends DataTest {
 			this.age = age;
 		}
 
+		// NOTE: nested classes do not really need property getters and setters
 		public String getName() {
 			return name;
 		}
 
-		public boolean isAdult() {
-			return age >= 18;
-		}
-
 		public int getAge() {
 			return age;
+		}
+
+		public boolean isAdult() {
+			return age >= 18;
 		}
 
 		@Override
@@ -199,8 +121,7 @@ public class FileParamsTest extends DataTest {
 			List<Object[]> result = new LinkedList<>();
 			for (Object lineObj : map) {
 				String line = (String) lineObj;
-				result.add(new Object[] { line.substring(2),
-						Integer.parseInt(line.substring(0, 1)) });
+				result.add(new Object[] { line.substring(2), Integer.parseInt(line.substring(0, 1)) });
 			}
 			return result.toArray();
 		}
@@ -225,13 +146,11 @@ public class FileParamsTest extends DataTest {
 		assertThat(name, equalTo("getDataMethodName"));
 	}
 
-	public static class MethodNameReader
-			implements ParametersProvider<CustomParameters> {
+	public static class MethodNameReader implements ParametersProvider<CustomParameters> {
 		private FrameworkMethod frameworkMethod;
 
 		@Override
-		public void initialize(CustomParameters parametersAnnotation,
-				FrameworkMethod frameworkMethod) {
+		public void initialize(CustomParameters parametersAnnotation, FrameworkMethod frameworkMethod) {
 			this.frameworkMethod = frameworkMethod;
 		}
 

@@ -6,7 +6,7 @@
   <description>Parameterized Junit test annotation backed by various desktop spreadsheet Excel and Open Office data files through poi, Google sheets via their api, YAML, JSON, CSV</description>
   <url>https://github.com/sergueik/junit-dataproviders</url>
   <name>JUnit Data Providers</name>
-  <version>0.0.20-SNAPSHOT</version>
+  <version>0.0.21-SNAPSHOT</version>
   <developers>
     <developer>
       <name>Serguei Kouzmine</name>
@@ -230,46 +230,42 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>${maven-antrun-plugin.version}</version>
+        <executions>
+          <!-- https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html#Lifecycle_Reference -->
+          <execution>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <condition property="is_mac">
+                  <os family="mac"/>
+                </condition>
+                <condition property="is_windows">
+                  <os family="windows"/>
+                </condition>
+                <condition property="is_unix">
+                  <os family="unix"/>
+                </condition>
+                <echo>profile_os: ${profile_os} (from profile)</echo>
+                <property environment="env"/>
+                <condition property="desktop_path" value="${env.USERPROFILE}\Desktop" else="${env.HOME}/Desktop">
+                  <istrue value="${is_windows}"/>
+                </condition>
+                <echo message="desktop_path = ${desktop_path}"/>
+                <mkdir dir="${desktop_path}"/>
+                <copy file="src/test/resources/data.ods" todir="${desktop_path}" failonerror="true"/>
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-antrun-plugin</artifactId>
-          <version>${maven-antrun-plugin.version}</version>
-          <executions>
-            <!-- https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html#Lifecycle_Reference -->
-            <execution>
-              <phase>generate-resources</phase>
-              <goals>
-                <goal>run</goal>
-              </goals>
-              <configuration>
-                <tasks>
-                  <condition property="is_mac">
-                    <os family="mac"/>
-                  </condition>
-                  <condition property="is_windows">
-                    <os family="windows"/>
-                  </condition>
-                  <condition property="is_unix">
-                    <os family="unix"/>
-                  </condition>
-                  <echo>profile_os: ${profile_os} (from profile)</echo>
-                  <property environment="env"/>
-                  <condition property="desktop_path" value="${env.USERPROFILE}\Desktop" else="${env.HOME}/Desktop">
-                    <istrue value="${is_windows}"/>
-                  </condition>
-                  <echo message="desktop_path = ${desktop_path}"/>
-                  <mkdir dir="${desktop_path}"/>
-                  <copy file="src/test/resources/data.ods" todir="${desktop_path}" failonerror="true"/>
-                </tasks>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-      </plugins>
-    </pluginManagement>
   </build>
   <licenses>
     <license>

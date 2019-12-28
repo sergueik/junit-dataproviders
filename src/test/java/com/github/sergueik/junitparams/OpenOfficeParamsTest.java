@@ -82,5 +82,4 @@ public class OpenOfficeParamsTest extends DataTest {
 			String keyword, double count) {
 		dataTest(keyword, count);
 	}
-
 }
