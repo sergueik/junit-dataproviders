@@ -1,4 +1,3 @@
-
 ###  JUnit-DataProviders
 
 [![BuildStatus](https://travis-ci.org/sergueik/junit-dataproviders.svg?branch=master)](https://travis-ci.org/sergueik/junit-dataproviders)
@@ -13,6 +12,8 @@ and core Junit 4+ `Parameterized` [test runner class](https://junit.org/junit4/j
   * JSON via [org.json](https://stleary.github.io/JSON-java/) or [com.google.gson](https://www.javadoc.io/doc/com.google.code.gson/gson) (*work in progress*) package
   * YAML via [snakeyaml](https://github.com/asomov/snakeyaml)
   * [Google sheet](https://www.google.com/sheets/about/) (experimental).
+
+The providers can be integrated with Junit 5 tests via adapter (see below).
 
 Unlike core Data Providers in Junit (5?) and TestNg this provider class allows
 flexible uniform data file path modification at runtime through
@@ -498,6 +499,126 @@ This feature of storing more then one set of tests in one spreadsheet and pickin
  has been inspired by some python [post](https://docs.pytest.org/en/latest/fixture.html#parametrizing-fixtures)
 and the [forum (in Russian)(http://software-testing.ru/forum/index.php?/topic/37870-kastomizatciia-parametrizatcii-v-pytest/).
 
+### Junit 5 Adapter
+
+To use the Excel and other data providers with Jnit5 `@ParameterizedTest` one can embed an [adapter](https://www.baeldung.com/java-adapter-pattern) 
+into the `@MethodSource` method (for simlicity the needed arguments made class-level static)
+
+```java
+
+private final static String filepath = "classpath:data2_2007.xlsx";
+private final static String sheetName = "";
+private final static String type = "Excel 2007";
+private final static boolean debug = false;
+private final static String controlColumn = "";
+private final static String withValue = "";
+private static final ExcelParameters parametersAnnotation = new ExcelParameters() {
+	@Override
+	public String filepath() {
+		return filepath;
+	}
+
+	@Override
+	public Class<? extends Annotation> annotationType() {
+		// NOTE: the method needed for the interface is Junit 4 legacy:
+		// Returns the annotation type of this annotation.
+		return null;
+	}
+
+	@Override
+	public String sheetName() {
+		return sheetName;
+	}
+
+	@Override
+	public String type() {
+		return type;
+	}
+
+	@Override
+	public boolean loadEmptyColumns() {
+		return false;
+	}
+
+	@Override
+	public boolean debug() {
+		return debug;
+	}
+
+	@Override
+	public String controlColumn() {
+		return controlColumn;
+	}
+
+	@Override
+	public String withValue() {
+		return withValue;
+	}
+};
+
+// adapter
+private static Stream<Object> testData() {
+	ExcelParametersProvider provider = new ExcelParametersProvider();
+
+	try {
+		Class<?> _class = Class.forName("com.github.sergueik.junit5params.CurrentMethodDataTest");
+		Method _method = _class.getMethod("dummy", String.class);
+		FrameworkMethod _frameworkMedhod = new FrameworkMethod(_method);
+		provider.initialize(parametersAnnotation, _frameworkMedhod);
+	} catch (ClassNotFoundException | NoSuchMethodException | SecurityException e) {
+		System.err.println("Exception (ignored): " + e.getMessage());
+		// e.printStackTrace();
+	} catch (java.lang.NullPointerException e) {
+		// for unsatisfied Excel Parameter properties
+		e.printStackTrace();
+	}
+	Object[] parameters = provider.getParameters();
+	if (debug) {
+		System.err.println(String.format("Received %d parameters", parameters.length));
+	}
+	if (debug) {
+		for (int cnt = 0; cnt != parameters.length; cnt++) {
+			Object[] row = (Object[]) parameters[cnt];
+			System.err.println(String.format("parameter # %d: %s", cnt, String.valueOf(row[0])));
+		}
+	}
+	return Stream.of(parameters);
+
+}
+```
+NOTE: the `frameworkMethod` argument  in `initialize` 
+seems to be a legacy
+ - represents a method on a test class to be invoked
+  at the appropriate point in test execution.
+		Such methods are usually annotated via
+		`@Test`, `@Before`, `@After`, `@BeforeClass`, `@AfterClass`, etc.
+Therefore add a dummy public method just for the adapter needs
+
+```java
+static public void dummy(String data) {
+
+}
+
+```
+then inject paramers as [usual](https://www.baeldung.com/parameterized-tests-junit-5):
+```java
+@ParameterizedTest
+@MethodSource("testData")
+public void test(Object param) {
+	// TODO: debug being called
+	assertThat(param, notNullValue());
+	System.err.println("Parameter: " + param.toString());
+}
+```
+
+This will produce:
+```sh
+Parameter: junit
+Parameter: testng
+Parameter: spock
+```
+
+NOTE: for this test only, leave just ine column of data in Excel file. Converion of multi parameter annotations is a work in proggess.
 ### Work in Progress
 
   * rename `JSONMapper` that is implementing a somewhat limited [DataMapper](http://javadox.com/pl.pragmatists/JUnitParams/1.0.4/junitparams/mappers/DataMapper.html)
@@ -528,7 +649,9 @@ and the [forum (in Russian)(http://software-testing.ru/forum/index.php?/topic/37
   * JUnit5 test selector annotation [article](https://habr.com/ru/post/464881/)(in Russian) and the [repository](https://github.com/bvn13/JavaLessons/tree/master/springboot2-junit5-skiptest)
   * [JUnit5 test execution order support](https://junit.org/junit5/docs/current/user-guide/#writing-tests-test-execution-order) and [discussion](https://automated-testing.info/t/junit5-zapusk-serii-testov-strogo-posledovatelno-ili-v-polzovatelskom-poryadke-varianty/18609)(in Russian)
   * [Jackcess](https://jackcess.sourceforge.io) java library for working with MS Access databases
- * [memory-optimizied](https://github.com/alibaba/easyexcel) rewrite of Apache poi
+  * [memory-optimizied](https://github.com/alibaba/easyexcel) rewrite of Apache poi
+  * [guide](https://www.baeldung.com/parameterized-tests-junit-5) to Junit 5 `@ParameterizedTest`
+  * general [user guide](https://junit.org/junit5/docs/current/user-guide/)
 
 ### Author
 [Serguei Kouzmine](kouzmine_serguei@yahoo.com)
