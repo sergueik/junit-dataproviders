@@ -37,7 +37,7 @@
     <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
     <poi.version>3.17</poi.version>
     <poiooxml.version>${poi.version}</poiooxml.version>
-    <snakeyaml.version>1.24</snakeyaml.version>
+    <snakeyaml.version>1.26</snakeyaml.version>
   </properties>
   <dependencies>
     <dependency>
