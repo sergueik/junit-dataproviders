@@ -6,7 +6,7 @@
   <description>Parameterized Junit test annotation backed by various desktop spreadsheet Excel and Open Office data files through poi, Google sheets via their api, YAML, JSON, CSV</description>
   <url>https://github.com/sergueik/junit-dataproviders</url>
   <name>JUnit Data Providers</name>
-  <version>0.23.0-SNAPSHOT</version>
+  <version>0.24.0-SNAPSHOT</version>
   <developers>
     <developer>
       <name>Serguei Kouzmine</name>
@@ -27,10 +27,10 @@
     <hamcrest-all.version>1.3</hamcrest-all.version>
     <java.version>1.8</java.version>
     <!-- https://blog.codefx.org/tools/maven-on-java-9/ the version numbering changed with JDK 9  -->
-    <maven-enforcer-plugin.java.version>[1.7, 1.8)</maven-enforcer-plugin.java.version>
     <jOpenDocument.version>1.3</jOpenDocument.version>
     <!-- TODO : study the version depenencies -->
     <json.version>20180813</json.version>
+    <json.version>20231013</json.version>
     <junit.version>4.13.2</junit.version>
     <jUnitParams.version>1.1.1</jUnitParams.version>
     <maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
@@ -211,25 +211,6 @@
         TODO: check the best practices of specifying the maven-enforcer-plugin's 
         requireJavaVersion rule to handle both legacy Java 1.8 and older and Java 9+
       -->
-      <plugin>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <version>1.4.1</version>
-        <executions>
-          <execution>
-            <id>enforce-java</id>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <configuration>
-              <rules>
-                <requireJavaVersion>
-                  <version>${maven-enforcer-plugin.java.version}</version>
-                </requireJavaVersion>
-              </rules>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
