@@ -29,7 +29,7 @@
     <!-- https://blog.codefx.org/tools/maven-on-java-9/ the version numbering changed with JDK 9  -->
     <jOpenDocument.version>1.3</jOpenDocument.version>
     <!-- TODO : study the version depenencies -->
-    <json.version>20180813</json.version>
+    <json.version>20231013</json.version>
     <json.version>20231013</json.version>
     <junit.version>4.13.2</junit.version>
     <jUnitParams.version>1.1.1</jUnitParams.version>
